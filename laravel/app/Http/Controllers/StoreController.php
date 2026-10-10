@@ -1,0 +1,259 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Services\CommerceWorkflow;
+use App\Services\FulfillmentWorkflow;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
+
+class StoreController extends Controller
+{
+    public function home(): View
+    {
+        $categoryImages = ['XI-MANG' => 'mat-cement', 'GACH' => 'mat-brick', 'THEP' => 'mat-steel', 'CAT-DA' => 'mat-sand'];
+
+        return view('store.home', [
+            'featured' => DB::table('products')->where('active', true)->orderBy('id')->limit(4)->get(),
+            'categories' => DB::table('categories')->where('active', true)->whereIn('code', array_keys($categoryImages))
+                ->get()->sortBy(fn ($category) => array_search($category->code, array_keys($categoryImages), true)),
+            'categoryImages' => $categoryImages,
+            'productCounts' => DB::table('products')->where('active', true)->select('category_id')
+                ->selectRaw('COUNT(*) as total')->groupBy('category_id')->pluck('total', 'category_id'),
+        ]);
+    }
+
+    public function catalog(Request $request): View
+    {
+        $products = DB::table('products')->where('products.active', true)
+            ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+            ->select('products.*', 'categories.name as category_name');
+        if ($request->filled('category')) {
+            $products->where('categories.code', $request->query('category'));
+        }
+        if ($request->filled('q')) {
+            $q = trim($request->query('q'));
+            $products->where(fn ($query) => $query->where('products.name', 'like', "%{$q}%")
+                ->orWhere('products.code', 'like', "%{$q}%"));
+        }
+        match ($request->query('sort')) {
+            'price_asc' => $products->orderBy('products.price'),
+            'price_desc' => $products->orderByDesc('products.price'),
+            default => $products->orderBy('products.id'),
+        };
+
+        return view('store.catalog', [
+            'products' => $products->paginate(15)->withQueryString(),
+            'categories' => DB::table('categories')->where('active', true)->orderBy('name')->get(),
+        ]);
+    }
+
+    public function product(int $id): View
+    {
+        $product = DB::table('products')->where('active', true)->where('id', $id)->firstOrFail();
+        $category = DB::table('categories')->where('id', $product->category_id)->first(['name', 'code']);
+
+        return view('store.product', [
+            'product' => $product,
+            'categoryName' => $category?->name ?: 'Vật liệu xây dựng',
+            'categoryCode' => $category?->code,
+            'related' => $product->category_id
+                ? DB::table('products')->where('active', true)->where('category_id', $product->category_id)
+                    ->where('id', '!=', $product->id)->orderBy('id')->limit(4)->get()
+                : collect(),
+        ]);
+    }
+
+    public function cart(Request $request): View
+    {
+        $cart = $request->session()->get('cart', []);
+        $products = DB::table('products')->whereIn('id', array_keys($cart))->get();
+        $total = '0.00';
+        foreach ($products as $product) {
+            $total = bcadd($total, bcmul((string) $product->price, (string) $cart[$product->id], 2), 2);
+        }
+
+        $warehouses = DB::table('warehouses')->where('active', true)->orderBy('name')->get();
+        $canPickup = $products->every(fn ($product) => $product->direct_purchase_allowed);
+
+        return view('store.cart', compact('cart', 'products', 'total', 'warehouses', 'canPickup'));
+    }
+
+    public function addToCart(Request $request): RedirectResponse
+    {
+        $data = $request->validate(['product_id' => ['required', 'integer', 'exists:products,id'], 'quantity' => ['required', 'numeric', 'gt:0', 'lte:1000000'], 'replace' => ['sometimes', 'boolean']]);
+        $product = DB::table('products')->where('id', $data['product_id'])->where('active', true)->first(['id', 'name', 'unit', 'image_path']);
+        abort_unless($product, 404);
+        $cart = $request->session()->get('cart', []);
+        $id = (int) $data['product_id'];
+        $replaced = (bool) ($data['replace'] ?? false);
+        $quantity = $replaced ? $data['quantity'] : min(1000000, ($cart[$id] ?? 0) + $data['quantity']);
+        $this->validateQuantityUnit($quantity, $product->unit);
+        $cart[$id] = $quantity;
+        $request->session()->put('cart', $cart);
+
+        return back()->with('cart_added', ['name' => $product->name, 'unit' => $product->unit, 'image' => $product->image_path, 'quantity' => $quantity, 'replaced' => $replaced]);
+    }
+
+    public function updateCart(Request $request): RedirectResponse
+    {
+        $data = $request->validate(['product_id' => ['required', 'integer'], 'quantity' => ['required', 'numeric', 'min:0', 'lte:1000000'], 'action' => ['sometimes', 'in:increase,decrease,remove']]);
+        $cart = $request->session()->get('cart', []);
+        $product = DB::table('products')->where('id', $data['product_id'])->where('active', true)->first(['id', 'unit']);
+        if (($data['action'] ?? null) === 'remove' || $data['quantity'] == 0 && ! isset($data['action'])) {
+            unset($cart[$data['product_id']]);
+        } elseif ($product) {
+            $step = $product->unit === 'm³' ? '0.1' : '1';
+            $quantity = match ($data['action'] ?? null) {
+                'increase' => bcadd((string) ($cart[$data['product_id']] ?? 0), $step, 3),
+                'decrease' => max(in_array($product->unit, ['m³', 'kg'], true) ? 0.001 : 1,
+                    (float) bcsub((string) ($cart[$data['product_id']] ?? 0), $step, 3)),
+                default => $data['quantity'],
+            };
+            if (bccomp((string) $quantity, '1000000', 3) > 0) {
+                throw ValidationException::withMessages(['quantity' => 'Số lượng không được vượt 1.000.000.']);
+            }
+            $this->validateQuantityUnit($quantity, $product->unit);
+            $cart[$data['product_id']] = $quantity;
+        }
+        $request->session()->put('cart', $cart);
+
+        return redirect()->route('cart');
+    }
+
+    private function validateQuantityUnit(int|float|string $quantity, string $unit): void
+    {
+        if (! in_array($unit, ['m³', 'kg'], true) && floor((float) $quantity) !== (float) $quantity) {
+            throw ValidationException::withMessages(['quantity' => 'Vật liệu tính theo '.$unit.' cần số lượng nguyên.']);
+        }
+    }
+
+    public function requestQuote(Request $request, CommerceWorkflow $workflow): RedirectResponse
+    {
+        $data = $request->validate(['delivery_address' => ['required', 'string', 'max:1000'], 'note' => ['nullable', 'string', 'max:2000']]);
+        $cart = $request->session()->get('cart', []);
+        $id = $workflow->requestQuote($request->user()->id, $cart, $data['delivery_address'], $data['note'] ?? null);
+        $request->session()->forget('cart');
+
+        return redirect()->route('my.quotes')->with('success', 'Đã gửi yêu cầu báo giá '.DB::table('quotes')->find($id)->code.'.');
+    }
+
+    public function placePickupOrder(Request $request, CommerceWorkflow $workflow): RedirectResponse
+    {
+        $data = $request->validate(['warehouse_id' => ['required', 'integer', 'exists:warehouses,id']]);
+        $id = $workflow->placePickupOrder($request->user()->id, $request->session()->get('cart', []), $data['warehouse_id']);
+        $request->session()->forget('cart');
+
+        return redirect()->route('my.orders')->with('success', 'Đã đặt đơn '.DB::table('orders')->find($id)->code.'. Thanh toán tại quầy trước khi nhận hàng.');
+    }
+
+    public function cancelPickupOrder(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
+    {
+        $workflow->cancelPickupOrder($id, $request->user()->id);
+
+        return back()->with('success', 'Đã hủy đơn nhận tại kho.');
+    }
+
+    public function myQuotes(Request $request): View
+    {
+        $quotes = DB::table('quotes')->where('customer_id', $request->user()->id)->orderByDesc('id')->paginate(10);
+
+        return view('store.quotes', compact('quotes'));
+    }
+
+    public function showQuote(Request $request, int $id): View
+    {
+        $quote = DB::table('quotes')->where('customer_id', $request->user()->id)->where('id', $id)->firstOrFail();
+        $items = DB::table('quote_items')->join('products', 'products.id', '=', 'quote_items.product_id')
+            ->where('quote_id', $id)->select('quote_items.*', 'products.name', 'products.image_path', 'products.unit')->get();
+
+        return view('store.quote', compact('quote', 'items'));
+    }
+
+    public function acceptQuote(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
+    {
+        $workflow->acceptQuote($id, $request->user()->id);
+
+        return redirect()->route('my.quote', $id)->with('success', 'Đã chấp nhận báo giá. Nhân viên sẽ lập hợp đồng.');
+    }
+
+    public function myContracts(Request $request): View
+    {
+        $contracts = DB::table('contracts')->join('quotes', 'quotes.id', '=', 'contracts.quote_id')
+            ->where('quotes.customer_id', $request->user()->id)
+            ->select('contracts.*')->orderByDesc('contracts.id')->get();
+
+        return view('store.contracts', compact('contracts'));
+    }
+
+    public function respondToContract(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
+    {
+        $data = $request->validate(['decision' => ['required', 'in:accept,revise'], 'note' => ['nullable', 'string', 'max:2000']]);
+        $workflow->respondToContract($id, $request->user()->id, $data['decision'] === 'accept', $data['note'] ?? null);
+
+        return back()->with('success', $data['decision'] === 'accept' ? 'Đã xác nhận hợp đồng.' : 'Đã gửi yêu cầu sửa hợp đồng.');
+    }
+
+    public function myOrders(Request $request): View
+    {
+        $orders = DB::table('orders')->where('customer_id', $request->user()->id)->orderByDesc('id')->get();
+        $items = DB::table('order_items')->join('products', 'products.id', '=', 'order_items.product_id')
+            ->whereIn('order_id', $orders->pluck('id'))->select('order_items.*', 'products.name', 'products.image_path')->get()->groupBy('order_id');
+        $returns = DB::table('returns')->whereIn('order_id', $orders->pluck('id'))->get()->groupBy('order_id');
+        $invoices = DB::table('invoices')->whereIn('order_id', $orders->pluck('id'))->get()->keyBy('order_id');
+
+        return view('store.orders', compact('orders', 'items', 'returns', 'invoices'));
+    }
+
+    public function showInvoice(Request $request, int $id): View
+    {
+        $invoice = DB::table('invoices')->join('orders', 'orders.id', '=', 'invoices.order_id')
+            ->where('invoices.id', $id)->where('orders.customer_id', $request->user()->id)
+            ->select('invoices.*', 'orders.code as order_code', 'orders.delivery_address')->firstOrFail();
+        $items = DB::table('order_items')->join('products', 'products.id', '=', 'order_items.product_id')
+            ->where('order_items.order_id', $invoice->order_id)
+            ->select('order_items.*', 'products.name', 'products.unit')->get();
+
+        return view('store.invoice', compact('invoice', 'items'));
+    }
+
+    public function requestReturn(Request $request, FulfillmentWorkflow $workflow, int $id): RedirectResponse
+    {
+        $data = $request->validate([
+            'product_id' => ['required', 'integer', 'exists:products,id'],
+            'quantity' => ['required', 'numeric', 'gt:0', 'lte:1000000'],
+            'reason' => ['required', 'string', 'max:2000'], 'type' => ['required', 'in:return,exchange'],
+        ]);
+        $workflow->requestReturn($id, $request->user()->id, $data['product_id'], (string) $data['quantity'], $data['reason'], $data['type']);
+
+        return back()->with('success', 'Đã gửi yêu cầu trả hàng để kho kiểm tra.');
+    }
+
+    public function profile(Request $request): View
+    {
+        $debts = DB::table('debts')->where('customer_id', $request->user()->id)->orderByDesc('id')->get();
+        $credits = DB::table('customer_credits')->where('customer_id', $request->user()->id)
+            ->orderByDesc('id')->get();
+        $creditUsed = DB::table('customer_credit_movements')->whereIn('customer_credit_id', $credits->pluck('id'))
+            ->select('customer_credit_id')->selectRaw('SUM(amount) as total')
+            ->groupBy('customer_credit_id')->pluck('total', 'customer_credit_id');
+
+        return view('store.profile', compact('debts', 'credits', 'creditUsed'));
+    }
+
+    public function updateProfile(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:150'],
+            'phone' => ['required', 'regex:/^[0-9+() .-]{9,20}$/', Rule::unique('users', 'phone')->ignore($request->user()->id)],
+            'address' => ['required', 'string', 'max:1000'],
+        ]);
+        $request->user()->update($data);
+
+        return back()->with('success', 'Đã cập nhật thông tin.');
+    }
+}

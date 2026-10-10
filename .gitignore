@@ -1,0 +1,18 @@
+# Local secrets and generated files
+.env
+.env.*
+!.env.example
+**/vendor/
+**/node_modules/
+**/database/*.sqlite
+**/bootstrap/cache/*.php
+**/.playwright-cli/
+**/.phpunit.cache/
+**/.phpunit.result.cache
+**/*.log
+**/storage/app/private/**
+**/storage/framework/cache/data/**
+**/storage/framework/sessions/**
+**/storage/framework/views/**
+**/public/storage/
+**/public/build/

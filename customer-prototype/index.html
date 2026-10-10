@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f4ef">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <title>Vật liệu An Thành — Vững từ nền móng</title>
+  <meta name="description" content="Bản mẫu giao diện cửa hàng vật liệu xây dựng An Thành.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Bỏ qua điều hướng</a>
+  <div class="announcement">Giao hàng linh hoạt cho công trình <span aria-hidden="true">·</span> Tư vấn vật tư theo khối lượng <a href="?page=estimate">Dự toán ngay</a></div>
+  <header class="site-header" id="siteHeader">
+    <div class="container-fluid container-wide topbar">
+      <a class="small-link d-none d-md-inline" href="?page=estimate">Tư vấn công trình</a>
+      <a class="brand" href="index.html" aria-label="An Thành, về trang chủ"><span class="brand-mark" aria-hidden="true">A</span><span>AN THÀNH<small>VẬT LIỆU XÂY DỰNG</small></span></a>
+      <div class="header-actions">
+        <a class="icon-link d-none d-md-flex" href="?page=login" aria-label="Tài khoản"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.4-4 3-6 7.5-6s7.1 2 7.5 6"/></svg></a>
+        <a class="icon-link cart-link" href="?page=cart" aria-label="Giỏ hàng"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16l-1.2 12H5.2L4 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg><span class="cart-count" id="cartCount">0</span></a>
+      </div>
+    </div>
+    <div class="container-fluid container-wide nav-row">
+      <button class="menu-trigger" type="button" data-bs-toggle="offcanvas" data-bs-target="#siteMenu" aria-controls="siteMenu"><span class="menu-lines" aria-hidden="true"></span><span>Danh mục</span></button>
+      <nav class="desktop-nav" aria-label="Điều hướng chính"><a href="?page=catalog">Sản phẩm</a><a href="?page=catalog&category=xi-mang">Xi măng</a><a href="?page=catalog&category=gach">Gạch xây dựng</a><a href="?page=estimate">Dự toán vật liệu</a><a href="?page=orders">Đơn hàng của tôi</a></nav>
+      <form class="header-search" id="headerSearch" role="search"><label for="searchInput" class="visually-hidden">Tìm sản phẩm</label><input id="searchInput" type="search" placeholder="Tìm vật liệu cho công trình..."><button type="submit" aria-label="Tìm kiếm"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></button></form>
+    </div>
+  </header>
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="siteMenu" aria-labelledby="menuTitle"><div class="offcanvas-header"><h2 class="offcanvas-title" id="menuTitle">Khám phá An Thành</h2><button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng"></button></div><div class="offcanvas-body menu-links"><a href="index.html">Trang chủ</a><a href="?page=catalog">Tất cả sản phẩm</a><a href="?page=catalog&category=xi-mang">Xi măng</a><a href="?page=catalog&category=gach">Gạch xây dựng</a><a href="?page=catalog&category=thep">Sắt thép</a><a href="?page=catalog&category=cat-da">Cát &amp; đá</a><a href="?page=catalog&category=vat-tu-phu">Vật tư phụ</a><hr><a href="?page=estimate">Dự toán vật liệu</a><a href="?page=orders">Đơn hàng của tôi</a><a href="?page=login">Tài khoản</a></div></div>
+  <main id="main" tabindex="-1"></main>
+  <footer class="site-footer"><div class="container-fluid container-wide"><div class="row gy-5"><div class="col-lg-5"><div class="footer-brand"><span class="brand-mark" aria-hidden="true">A</span><span>AN THÀNH<small>VẬT LIỆU XÂY DỰNG</small></span></div><p>Vững từ nền móng. Đồng hành cùng từng công trình bằng vật liệu rõ nguồn gốc và dịch vụ tận tâm.</p></div><div class="col-6 col-lg-2"><h3>Khám phá</h3><a href="?page=catalog">Sản phẩm</a><a href="?page=estimate">Dự toán</a><a href="?page=cart">Giỏ hàng</a></div><div class="col-6 col-lg-2"><h3>Hỗ trợ</h3><a href="?page=orders">Đơn hàng</a><a href="?page=login">Tài khoản</a><a href="?page=estimate">Liên hệ</a></div><div class="col-lg-3"><h3>Nhận tư vấn vật tư</h3><p class="footer-note">Để lại yêu cầu qua trang dự toán; đội ngũ sẽ hỗ trợ bạn chọn đúng vật liệu.</p><a class="footer-cta" href="?page=estimate">Bắt đầu dự toán</a></div></div><div class="footer-bottom"><span>© 2026 An Thành. Giao diện mẫu để duyệt.</span><span>Ảnh sản phẩm và giá chỉ mang tính minh họa.</span></div></div></footer>
+  <div class="toast-container position-fixed bottom-0 end-0 p-3"><div id="noticeToast" class="toast" role="status" aria-live="polite"><div class="toast-body" id="toastMessage"></div></div></div>
+  <script src="bootstrap.bundle.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
+
+
+
+
