@@ -29,6 +29,16 @@ document.querySelectorAll('select:not([multiple]):not([size])').forEach((select,
     arrow.setAttribute('aria-hidden', 'true');
     button.append(value, arrow);
     wrapper.append(button);
+    const validationMessage = select.dataset.validationMessage;
+    const error = validationMessage ? document.createElement('p') : null;
+    if (error) {
+        error.className = 'cmc-select-error';
+        error.id = `cmc-select-error-${number}`;
+        error.setAttribute('role', 'alert');
+        error.hidden = true;
+        error.textContent = validationMessage;
+        wrapper.after(error);
+    }
 
     const menu = document.createElement('div');
     menu.className = 'cmc-select-menu';
@@ -46,6 +56,7 @@ document.querySelectorAll('select:not([multiple]):not([size])').forEach((select,
         item.textContent = option.textContent;
         item.dataset.index = String(index);
         if (option.disabled) item.setAttribute('aria-disabled', 'true');
+        if (option.hidden) item.hidden = true;
         menu.append(item);
         return item;
     });
@@ -55,6 +66,10 @@ document.querySelectorAll('select:not([multiple]):not([size])').forEach((select,
         value.textContent = select.selectedOptions[0]?.textContent || 'Chọn giá trị';
         options.forEach((item, index) => item.setAttribute('aria-selected', String(index === select.selectedIndex)));
         wrapper.classList.remove('is-invalid');
+        if (error) {
+            error.hidden = true;
+            button.removeAttribute('aria-describedby');
+        }
     };
     const highlight = index => {
         if (!options[index] || select.options[index].disabled) return;
@@ -120,6 +135,10 @@ document.querySelectorAll('select:not([multiple]):not([size])').forEach((select,
     select.addEventListener('invalid', event => {
         event.preventDefault();
         wrapper.classList.add('is-invalid');
+        if (error) {
+            error.hidden = false;
+            button.setAttribute('aria-describedby', error.id);
+        }
         button.focus();
     });
     sync();
@@ -130,3 +149,21 @@ document.addEventListener('pointerdown', event => {
 });
 window.addEventListener('resize', () => activeSelect?.position());
 window.addEventListener('scroll', () => activeSelect?.position(), true);
+
+document.querySelectorAll('[data-product-stepper]').forEach(stepper => {
+    const input = stepper.querySelector('input');
+    const decrease = stepper.querySelector('[data-step="down"]');
+    const increase = stepper.querySelector('[data-step="up"]');
+    const sync = () => {
+        decrease.disabled = Number(input.value) <= Number(input.min);
+        increase.disabled = Number(input.value) >= Number(input.max);
+    };
+    stepper.addEventListener('click', event => {
+        const button = event.target.closest('[data-step]');
+        if (!button || button.disabled) return;
+        if (button.dataset.step === 'up') input.stepUp();
+        else input.stepDown();
+        sync();
+    });
+    sync();
+});

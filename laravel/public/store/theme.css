@@ -21,13 +21,16 @@ html[data-theme=dark] :is(.site-header,.site-menu,.account-dropdown-menu) a{colo
 html[data-theme=dark] :is(.brand,.brand-mark,.footer-brand,.menu-trigger,.icon-link,.header-search button,.header-search input,.header-search input::placeholder){color:var(--ink)}
 html[data-theme=dark] :is(.header-search,.nav-row,.topbar,.site-menu-head,.site-menu-body a,.account-dropdown-head,.account-dropdown-menu .dropdown-item){border-color:var(--line)}
 html[data-theme=dark] :is(.account-dropdown-menu .dropdown-item:hover,.site-menu-body a:hover,.cmc-select-option:hover,.cmc-select-option.is-highlighted,.cmc-select-button:hover,.cmc-select.is-open .cmc-select-button){background:#304237;color:var(--ink)}
-html[data-theme=dark] :is(.auth-content,.summary-card,.estimate-result,.editorial,.product-editorial,.account-credit-card,.account-form-card,.account-table-scroll,.account-hero){background:#1d2923;color:var(--ink)}
-html[data-theme=dark] :is(.editorial-copy p,.product-editorial-copy p,.account-hero p,.account-identity small,.account-card-intro,.account-empty p,.account-table-scroll small){color:var(--muted)}
+html[data-theme=dark] :is(.auth-content,.summary-card,.estimate-result,.editorial,.account-credit-card,.account-form-card,.account-table-scroll,.account-hero){background:#1d2923;color:var(--ink)}
+html[data-theme=dark] :is(.editorial-copy p,.account-hero p,.account-identity small,.account-card-intro,.account-empty p,.account-table-scroll small){color:var(--muted)}
 html[data-theme=dark] :is(.account-empty,.account-table-scroll th){background:#26372c;color:var(--ink)}
 html[data-theme=dark] :is(.auth-field input,.auth-field textarea,.form-control,.form-select,.product-purchase-row input,.quantity input){background-color:#17231c;color:var(--ink);border-color:var(--line)}
+html[data-theme=dark] .product-quantity-stepper{border-color:var(--line)}
+html[data-theme=dark] .product-quantity-stepper button{background:#26372c;color:var(--ink)}
+html[data-theme=dark] .product-quantity-stepper button:hover{background:#354b3c}
 html[data-theme=dark] :is(input,textarea,select)::placeholder{color:#9aab9d}
 html[data-theme=dark] :is(.category-pill,.catalog-toolbar select,.quantity button,.detail-accordion button,.detail-accordion a,.product-gallery-thumbs button,.cart-toast-check){background:#26372c;color:var(--ink);border-color:var(--line)}
-html[data-theme=dark] :is(.cmc-select-option[aria-selected=true],.auth-switch a,.site-menu-label,.cart-checkout-option .cart-quote-button,.account-logout){color:#e2ae79}
+html[data-theme=dark] :is(.cmc-select-option[aria-selected=true],.auth-switch a,.site-menu-label,.cart-checkout-option .cart-quote-button){color:#e2ae79}
 html[data-theme=dark] :is(.product-at-a-glance>div+div,.product-detail-links,.product-detail-links button,.product-detail-links a,.product-price-panel,.cart-checkout-option,.account-table-scroll td,.account-table-scroll th){border-color:var(--line)}
 html[data-theme=dark] .product-gallery-stage{background:#28332b}
 html[data-theme=dark] .product-visual .material-image{background-color:#28332b}
@@ -44,6 +47,12 @@ html[data-theme=dark] .cart-remove{color:#f0b18d}
 html[data-theme=dark] .btn-outline-dark{color:var(--ink);border-color:#718a75}
 html[data-theme=dark] .btn-outline-dark:hover{color:#10231a;background:#cadcca}
 html[data-theme=dark] .btn-close{filter:invert(1) grayscale(1)}
+html[data-theme=dark] .add-line{background:#e2ae79;border-color:#e2ae79;color:#14251b}
+html[data-theme=dark] .add-line:hover{background:#f0c997;border-color:#f0c997;color:#14251b}
+html[data-theme=dark] .account-logout{background:#e2ae79;border-color:#e2ae79;color:#14251b}
+html[data-theme=dark] .account-logout:hover,html[data-theme=dark] .account-logout:focus-visible{background:#f0c997;border-color:#f0c997;color:#14251b}
+html[data-theme=dark] .account-form-card .btn-editorial.dark{background:#b9d9b6;border-color:#b9d9b6;background-image:none;color:#13251b}
+html[data-theme=dark] .account-form-card .btn-editorial.dark:hover{background:#d6e8d2;border-color:#d6e8d2;color:#13251b}
 
 /* Internal surfaces inherit Bootstrap dark controls, then match the CMC palette. */
 html[data-theme=dark] .staff-app{background:var(--staff-paper);color:var(--staff-ink)}
@@ -76,3 +85,17 @@ html[data-theme=dark] :is(.staff-app .page-subtitle,.staff-stat small,.staff-scr
 html[data-theme=dark] :is(.staff-app .form-label,.staff-app .staff-management-section label){color:#d1e5d5}
 html[data-theme=dark] .staff-app .staff-record-list,html[data-theme=dark] .staff-workspace-scroll,html[data-theme=dark] .staff-app .table-responsive{scrollbar-color:#587760 #17261d}
 @media(prefers-reduced-motion:reduce){.theme-toggle,.theme-toggle svg{transition:none!important}.theme-toggle:hover{transform:none}}
+
+html[data-theme=dark] .cmc-select-error{color:#ffb6a8}html[data-theme=dark] .btn-outline-danger{color:#ffb6a8;border-color:#bc7b70}html[data-theme=dark] .btn-outline-danger:hover{background:#5d302b;color:#fff}
+html[data-theme=dark] .quote-card .status,html[data-theme=dark] .order-list .status{border-color:#5b7562}
+html[data-theme=dark] :is(.quote-card .status-requested,.quote-card .status-draft,.quote-card .status-pending_discount_approval,.order-list .status-awaiting_payment){background:#5b421e;color:#ffe7ab;border-color:#aa8542}
+html[data-theme=dark] :is(.quote-card .status-sent,.quote-card .status-accepted,.order-list .status-ready_to_issue,.order-list .status-ready_to_ship,.order-list .status-delivered){background:#1e5036;color:#d6f3df;border-color:#5c9c72}
+html[data-theme=dark] :is(.quote-card .status-rejected,.quote-card .status-cancelled,.order-list .status-cancelled,.order-list .status-delivery_incident){background:#602e2b;color:#ffe0d8;border-color:#b07168}
+html[data-theme=dark] .quote-actions .btn-outline-dark,html[data-theme=dark] .order-manage summary,html[data-theme=dark] .order-manage .btn-editorial.dark{background:#3b7956;color:#fff;border-color:#83bd92}
+html[data-theme=dark] .quote-actions .btn-outline-dark:hover,html[data-theme=dark] .order-manage summary:hover,html[data-theme=dark] .order-manage .btn-editorial.dark:hover{background:#4d936c;color:#fff;border-color:#a9d9ad}
+html[data-theme=dark] .quote-actions .btn-outline-danger,html[data-theme=dark] .order-manage .btn-outline-danger{background:#4e2926;color:#ffe1d9;border-color:#bd8177}
+html[data-theme=dark] .quote-actions .btn-outline-danger:hover,html[data-theme=dark] .order-manage .btn-outline-danger:hover{background:#77382f;color:#fff;border-color:#e4a096}
+html[data-theme=dark] .quote-card .quote-view{color:#a8ddba}
+html[data-theme=dark] .quote-card .quote-view:hover{color:#f0c692}
+html[data-theme=dark] .quote-card .quote-view{border-color:#76b78a}
+html[data-theme=dark] .quote-card .quote-view:hover{background:#2b4e39;border-color:#a8ddba}

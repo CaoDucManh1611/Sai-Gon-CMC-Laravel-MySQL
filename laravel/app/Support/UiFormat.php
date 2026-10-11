@@ -11,6 +11,13 @@ class UiFormat
         return rtrim(rtrim($formatted, '0'), ',');
     }
 
+    public static function inputQuantity(int|float|string|null $value): string
+    {
+        $formatted = number_format((float) ($value ?? 0), 3, '.', '');
+
+        return rtrim(rtrim($formatted, '0'), '.');
+    }
+
     public static function status(?string $status): string
     {
         return [

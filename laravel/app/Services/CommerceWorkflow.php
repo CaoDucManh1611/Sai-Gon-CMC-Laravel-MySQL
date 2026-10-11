@@ -49,6 +49,80 @@ class CommerceWorkflow
         });
     }
 
+    public function updateRequestedQuote(int $quoteId, int $customerId, array $quantities, string $address, ?string $note): void
+    {
+        DB::transaction(function () use ($quoteId, $customerId, $quantities, $address, $note) {
+            $quote = DB::table('quotes')->where('id', $quoteId)->where('customer_id', $customerId)->lockForUpdate()->first();
+            if (! $quote || $quote->status !== 'requested') {
+                $this->fail('Chỉ có thể sửa yêu cầu báo giá chưa được xử lý.');
+            }
+            $items = DB::table('quote_items')->join('products', 'products.id', '=', 'quote_items.product_id')
+                ->where('quote_id', $quoteId)->select('quote_items.*', 'products.unit')->get();
+            $total = '0.00';
+            foreach ($items as $item) {
+                $quantity = $quantities[$item->id] ?? null;
+                if (! preg_match('/^\d+(?:\.\d{1,3})?$/', (string) $quantity) || bccomp((string) $quantity, '0', 3) <= 0
+                    || bccomp((string) $quantity, '1000000', 3) > 0
+                    || (! in_array($item->unit, ['m³', 'kg'], true) && floor((float) $quantity) !== (float) $quantity)) {
+                    $this->fail('Số lượng vật liệu không hợp lệ.');
+                }
+                $line = bcmul((string) $item->unit_price, (string) $quantity, 2);
+                $total = bcadd($total, $line, 2);
+                DB::table('quote_items')->where('id', $item->id)->update(['quantity' => $quantity, 'line_total' => $line, 'updated_at' => now()]);
+            }
+            DB::table('quotes')->where('id', $quoteId)->update([
+                'delivery_address' => trim($address), 'customer_note' => $note,
+                'total' => $total, 'updated_at' => now(),
+            ]);
+        });
+    }
+
+    public function withdrawRequestedQuote(int $quoteId, int $customerId): void
+    {
+        $changed = DB::table('quotes')->where('id', $quoteId)->where('customer_id', $customerId)
+            ->where('status', 'requested')->update(['status' => 'cancelled', 'updated_at' => now()]);
+        if (! $changed) {
+            $this->fail('Chỉ có thể rút yêu cầu báo giá chưa được xử lý.');
+        }
+    }
+
+    public function updateUnpaidPickupOrder(int $orderId, int $customerId, array $quantities): void
+    {
+        DB::transaction(function () use ($orderId, $customerId, $quantities) {
+            $order = DB::table('orders')->where('id', $orderId)->where('customer_id', $customerId)->lockForUpdate()->first();
+            if (! $order || $order->fulfillment_method !== 'pickup' || $order->status !== 'awaiting_payment'
+                || bccomp((string) $order->paid, '0', 2) !== 0) {
+                $this->fail('Chỉ có thể sửa đơn nhận tại kho chưa thanh toán.');
+            }
+            $items = DB::table('order_items')->join('products', 'products.id', '=', 'order_items.product_id')
+                ->where('order_id', $orderId)->select('order_items.*', 'products.unit')->get();
+            $total = '0.00';
+            foreach ($items as $item) {
+                $quantity = $quantities[$item->id] ?? null;
+                if (! preg_match('/^\d+(?:\.\d{1,3})?$/', (string) $quantity) || bccomp((string) $quantity, '0', 3) <= 0
+                    || bccomp((string) $quantity, '1000000', 3) > 0
+                    || (! in_array($item->unit, ['m³', 'kg'], true) && floor((float) $quantity) !== (float) $quantity)) {
+                    $this->fail('Số lượng vật liệu không hợp lệ.');
+                }
+                $stock = DB::table('inventory')->where('warehouse_id', $order->pickup_warehouse_id)
+                    ->where('product_id', $item->product_id)->lockForUpdate()->first();
+                $reserved = DB::table('order_items')->join('orders', 'orders.id', '=', 'order_items.order_id')
+                    ->where('orders.pickup_warehouse_id', $order->pickup_warehouse_id)
+                    ->whereIn('orders.status', ['awaiting_payment', 'ready_to_issue'])
+                    ->where('orders.id', '!=', $orderId)->where('order_items.product_id', $item->product_id)
+                    ->sum('order_items.quantity');
+                if (bccomp(bcsub((string) ($stock->quantity ?? 0), (string) $reserved, 3), (string) $quantity, 3) < 0) {
+                    $this->fail('Kho không đủ hàng cho số lượng mới.');
+                }
+                $line = bcmul((string) $item->unit_price, (string) $quantity, 2);
+                $total = bcadd($total, $line, 2);
+                DB::table('order_items')->where('id', $item->id)->update(['quantity' => $quantity, 'line_total' => $line, 'updated_at' => now()]);
+            }
+            DB::table('orders')->where('id', $orderId)->update(['total' => $total, 'updated_at' => now()]);
+            DB::table('debts')->where('order_id', $orderId)->update(['amount' => $total, 'updated_at' => now()]);
+        });
+    }
+
     public function placePickupOrder(int $customerId, array $items, int $warehouseId): int
     {
         return DB::transaction(function () use ($customerId, $items, $warehouseId) {

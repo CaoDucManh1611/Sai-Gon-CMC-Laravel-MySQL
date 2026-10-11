@@ -30,11 +30,14 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::post('/pickup-orders', [StoreController::class, 'placePickupOrder'])->name('pickup-orders.store');
     Route::get('/my/quotes', [StoreController::class, 'myQuotes'])->name('my.quotes');
     Route::get('/my/quotes/{id}', [StoreController::class, 'showQuote'])->name('my.quote');
+    Route::put('/my/quotes/{id}', [StoreController::class, 'updateQuote'])->name('my.quote.update');
+    Route::post('/my/quotes/{id}/withdraw', [StoreController::class, 'withdrawQuote'])->name('my.quote.withdraw');
     Route::post('/my/quotes/{id}/accept', [StoreController::class, 'acceptQuote'])->name('my.quote.accept');
     Route::get('/my/contracts', [StoreController::class, 'myContracts'])->name('my.contracts');
     Route::post('/my/contracts/{id}/respond', [StoreController::class, 'respondToContract'])->name('my.contracts.respond');
     Route::get('/my/orders', [StoreController::class, 'myOrders'])->name('my.orders');
     Route::post('/my/orders/{id}/cancel', [StoreController::class, 'cancelPickupOrder'])->name('my.orders.cancel');
+    Route::put('/my/orders/{id}', [StoreController::class, 'updatePickupOrder'])->name('my.orders.update');
     Route::get('/my/invoices/{id}', [StoreController::class, 'showInvoice'])->name('my.invoices.show');
     Route::post('/my/orders/{id}/returns', [StoreController::class, 'requestReturn'])->name('my.orders.returns');
     Route::get('/my/profile', [StoreController::class, 'profile'])->name('profile');

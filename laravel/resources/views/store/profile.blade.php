@@ -4,7 +4,6 @@
 <div class="container-fluid container-wide account-page">
     <header class="account-hero">
         <div>
-            <span class="eyebrow muted">TÀI KHOẢN KHÁCH HÀNG</span>
             <h1>Thông tin của bạn.</h1>
             <p>Quản lý thông tin liên hệ, công nợ và các khoản hoàn từ công trình của bạn.</p>
         </div>
@@ -23,16 +22,16 @@
                 @csrf
                 @method('put')
                 <label class="form-label" for="name">Họ và tên</label>
-                <input class="form-control" id="name" name="name" value="{{ old('name', auth()->user()->name) }}" required>
+                <input class="form-control" id="name" name="name" value="{{ old('name', auth()->user()->name) }}" required oninvalid="this.setCustomValidity('Vui lòng nhập họ và tên.')" oninput="this.setCustomValidity('')">
                 <label class="form-label" for="phone">Số điện thoại</label>
-                <input class="form-control" id="phone" name="phone" value="{{ old('phone', auth()->user()->phone) }}" required>
+                <input class="form-control" id="phone" name="phone" value="{{ old('phone', auth()->user()->phone) }}" required oninvalid="this.setCustomValidity('Vui lòng nhập số điện thoại liên hệ.')" oninput="this.setCustomValidity('')">
                 <label class="form-label" for="address">Địa chỉ</label>
-                <textarea class="form-control" id="address" name="address" required>{{ old('address', auth()->user()->address) }}</textarea>
+                <textarea class="form-control" id="address" name="address" required oninvalid="this.setCustomValidity('Vui lòng nhập địa chỉ liên hệ.')" oninput="this.setCustomValidity('')">{{ old('address', auth()->user()->address) }}</textarea>
                 <button class="btn-editorial dark" type="submit">Lưu thông tin</button>
             </form>
             <form method="post" action="{{ route('logout') }}" class="account-logout-form">
                 @csrf
-                <button type="submit" class="account-logout">Đăng xuất khỏi tài khoản</button>
+                <button type="submit" class="account-logout">Đăng xuất</button>
             </form>
         </section>
 

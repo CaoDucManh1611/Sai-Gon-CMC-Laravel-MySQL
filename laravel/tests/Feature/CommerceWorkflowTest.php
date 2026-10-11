@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Services\CommerceWorkflow;
 use App\Services\FulfillmentWorkflow;
+use App\Support\UiFormat;
 use Database\Seeders\DemoOpeningStockSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,130 @@ use Tests\TestCase;
 class CommerceWorkflowTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_quantity_input_uses_plain_decimal_without_thousands_separator(): void
+    {
+        $this->assertSame('3', UiFormat::inputQuantity('3.000'));
+        $this->assertSame('1000', UiFormat::inputQuantity('1000.000'));
+        $this->assertSame('1.25', UiFormat::inputQuantity('1.250'));
+    }
+
+    public function test_customer_edits_and_withdraws_only_unprocessed_quote(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer', 'status' => 'active']);
+        $other = User::factory()->create(['role' => 'customer', 'status' => 'active']);
+        $product = DB::table('products')->insertGetId(['code' => 'Q-EDIT', 'name' => 'Gạch', 'unit' => 'viên', 'price' => 1000]);
+        $workflow = app(CommerceWorkflow::class);
+        $quoteId = $workflow->requestQuote($customer->id, [$product => 2], 'Công trình A');
+        $itemId = DB::table('quote_items')->where('quote_id', $quoteId)->value('id');
+
+        $this->actingAs($other)->put('/my/quotes/'.$quoteId, [
+            'delivery_address' => 'Công trình B', 'quantities' => [$itemId => 3],
+        ])->assertSessionHasErrors('workflow');
+        $this->actingAs($customer)->put('/my/quotes/'.$quoteId, [
+            'delivery_address' => 'Công trình B', 'note' => 'Gọi trước khi giao', 'quantities' => [$itemId => 3],
+        ])->assertRedirect();
+        $this->assertDatabaseHas('quotes', ['id' => $quoteId, 'delivery_address' => 'Công trình B', 'total' => 3000]);
+        $this->assertDatabaseHas('quote_items', ['id' => $itemId, 'quantity' => 3, 'line_total' => 3000]);
+        $this->get('/my/quotes')->assertOk()->assertSee('order-product')->assertSee('Gạch × 3')
+            ->assertSee('Sửa yêu cầu')->assertSee('Rút yêu cầu');
+        $this->get('/my/quotes/'.$quoteId.'?edit=1')->assertOk()->assertSee('quote-product')
+            ->assertSee('Chỉnh sửa yêu cầu báo giá')->assertSee('value="3"', false)
+            ->assertDontSee('value="3.000"', false);
+        $this->actingAs($customer)->post('/my/quotes/'.$quoteId.'/withdraw')->assertRedirect('/my/quotes');
+        $this->assertDatabaseHas('quotes', ['id' => $quoteId, 'status' => 'cancelled']);
+        $this->actingAs($customer)->put('/my/quotes/'.$quoteId, [
+            'delivery_address' => 'Công trình C', 'quantities' => [$itemId => 4],
+        ])->assertSessionHasErrors('workflow');
+    }
+
+    public function test_customer_can_edit_unpaid_pickup_quantity_with_stock_and_debt_consistency(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer', 'status' => 'active']);
+        $warehouse = DB::table('warehouses')->insertGetId(['code' => 'P-EDIT', 'name' => 'Kho']);
+        $product = DB::table('products')->insertGetId(['code' => 'G-EDIT', 'name' => 'Gạch', 'unit' => 'viên', 'price' => 1000, 'direct_purchase_allowed' => true]);
+        DB::table('inventory')->insert(['warehouse_id' => $warehouse, 'product_id' => $product, 'quantity' => 3]);
+        $orderId = app(CommerceWorkflow::class)->placePickupOrder($customer->id, [$product => 1], $warehouse);
+        $itemId = DB::table('order_items')->where('order_id', $orderId)->value('id');
+
+        $this->actingAs($customer)->put('/my/orders/'.$orderId, ['quantities' => [$itemId => 4]])->assertSessionHasErrors('workflow');
+        $this->actingAs($customer)->put('/my/orders/'.$orderId, ['quantities' => [$itemId => 2]])->assertRedirect();
+        $this->assertDatabaseHas('orders', ['id' => $orderId, 'total' => 2000]);
+        $this->assertDatabaseHas('debts', ['order_id' => $orderId, 'amount' => 2000]);
+        $this->assertDatabaseHas('order_items', ['id' => $itemId, 'quantity' => 2]);
+        $this->get('/my/orders')->assertOk()->assertSee('value="2"', false)->assertDontSee('value="2.000"', false);
+        DB::table('orders')->where('id', $orderId)->update(['paid' => 1000]);
+        $this->put('/my/orders/'.$orderId, ['quantities' => [$itemId => 1]])->assertSessionHasErrors('workflow');
+        $this->assertDatabaseHas('orders', ['id' => $orderId, 'total' => 2000]);
+    }
+
+    public function test_shortage_is_shown_to_staff_on_requested_quote(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer', 'status' => 'active']);
+        $sales = User::factory()->create(['role' => 'sales', 'status' => 'active']);
+        $product = DB::table('products')->insertGetId(['code' => 'XM-THIEU', 'name' => 'Xi măng thiếu', 'unit' => 'bao', 'price' => 100]);
+        $quote = app(CommerceWorkflow::class)->requestQuote($customer->id, [$product => 5], 'Công trình A');
+
+        $this->assertDatabaseHas('quotes', ['id' => $quote, 'status' => 'requested']);
+        $this->actingAs($sales)->get('/staff/work/quotes')->assertOk()->assertSee('cần nhập thêm');
+    }
+
+    public function test_accounting_can_pay_supplier_debt_but_cannot_overpay(): void
+    {
+        $accountant = User::factory()->create(['role' => 'accounting', 'status' => 'active']);
+        $sales = User::factory()->create(['role' => 'sales', 'status' => 'active']);
+        $supplier = DB::table('suppliers')->insertGetId(['code' => 'NCC-TT', 'name' => 'Nhà cung cấp']);
+        $debt = DB::table('debts')->insertGetId([
+            'code' => 'CN-NCC-TT', 'direction' => 'payable', 'supplier_id' => $supplier,
+            'amount' => 100, 'paid' => 0, 'status' => 'open',
+        ]);
+
+        $url = '/staff/debts/'.$debt.'/payments';
+        $this->actingAs($sales)->post($url, ['amount' => 40, 'method' => 'bank_transfer'])->assertForbidden();
+        $this->actingAs($accountant)->post($url, ['amount' => 40, 'method' => 'bank_transfer', 'reference' => 'BANK-001'])->assertRedirect();
+        $this->assertDatabaseHas('debts', ['id' => $debt, 'paid' => 40, 'status' => 'open']);
+        $this->assertDatabaseHas('payments', ['debt_id' => $debt, 'amount' => 40, 'reference' => 'BANK-001']);
+        $this->post($url, ['amount' => 61, 'method' => 'cash'])->assertSessionHasErrors('workflow');
+        $this->assertDatabaseCount('payments', 1);
+        $this->post($url, ['amount' => 60, 'method' => 'cash'])->assertRedirect();
+        $this->assertDatabaseHas('debts', ['id' => $debt, 'paid' => 100, 'status' => 'settled']);
+    }
+
+    public function test_exchange_waits_for_manual_restock_when_replacement_is_unavailable(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer', 'status' => 'active']);
+        $staff = User::factory()->create(['role' => 'warehouse', 'status' => 'active']);
+        $warehouse = DB::table('warehouses')->insertGetId(['code' => 'K-DOI', 'name' => 'Kho đổi hàng']);
+        $product = DB::table('products')->insertGetId(['code' => 'G-DOI', 'name' => 'Gạch đổi', 'unit' => 'viên', 'price' => 100]);
+        $commerce = app(CommerceWorkflow::class);
+        $fulfillment = app(FulfillmentWorkflow::class);
+        $quote = $commerce->requestQuote($customer->id, [$product => 1], 'Công trình A');
+        $commerce->sendQuote($quote, $staff->id, [], now()->addWeek()->toDateString());
+        $commerce->acceptQuote($quote, $customer->id);
+        $contract = $commerce->createContract($quote, $staff->id, '0', 'Thanh toán sau', 'Giao công trình');
+        $commerce->submitContract($contract);
+        $commerce->reviewContract($contract, $staff->id, true);
+        $commerce->respondToContract($contract, $customer->id, true);
+        $order = $commerce->signContract($contract, 'contracts/signed.pdf');
+        DB::table('orders')->where('id', $order)->update(['status' => 'delivered']);
+        $return = $fulfillment->requestReturn($order, $customer->id, $product, '1', 'Một viên vỡ', 'exchange');
+        $fulfillment->inspectReturn($return, $warehouse, $staff->id, false, 'Hư hỏng');
+
+        try {
+            $fulfillment->issueExchange($return, $warehouse, $staff->id, 'Giao nhận', 'Xe máy', 'Công trình A');
+            $this->fail('Không được lập chuyến giao đổi khi kho hết hàng.');
+        } catch (ValidationException) {
+            $this->assertDatabaseHas('returns', ['id' => $return, 'status' => 'inspected']);
+            $this->assertDatabaseCount('shipments', 0);
+            $this->assertDatabaseCount('stock_documents', 0);
+        }
+
+        DB::table('inventory')->insert(['warehouse_id' => $warehouse, 'product_id' => $product, 'quantity' => 1]);
+        $replacement = $fulfillment->issueExchange($return, $warehouse, $staff->id, 'Giao nhận', 'Xe máy', 'Công trình A');
+        $this->assertDatabaseHas('shipments', ['id' => $replacement, 'return_id' => $return, 'status' => 'planned']);
+        $this->assertDatabaseHas('returns', ['id' => $return, 'status' => 'replacement_shipping']);
+        $this->assertDatabaseHas('inventory', ['warehouse_id' => $warehouse, 'product_id' => $product, 'quantity' => 0]);
+    }
 
     public function test_demo_opening_stock_is_audited_and_seeded_only_once(): void
     {

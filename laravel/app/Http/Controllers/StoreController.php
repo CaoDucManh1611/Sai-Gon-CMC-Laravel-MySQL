@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\CommerceWorkflow;
 use App\Services\FulfillmentWorkflow;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -96,10 +97,11 @@ class StoreController extends Controller
         $cart[$id] = $quantity;
         $request->session()->put('cart', $cart);
 
-        return back()->with('cart_added', ['name' => $product->name, 'unit' => $product->unit, 'image' => $product->image_path, 'quantity' => $quantity, 'replaced' => $replaced]);
+        return ($request->input('next') === 'cart' ? redirect()->route('cart') : back())
+            ->with('cart_added', ['name' => $product->name, 'unit' => $product->unit, 'image' => $product->image_path, 'quantity' => $quantity, 'replaced' => $replaced]);
     }
 
-    public function updateCart(Request $request): RedirectResponse
+    public function updateCart(Request $request): JsonResponse|RedirectResponse
     {
         $data = $request->validate(['product_id' => ['required', 'integer'], 'quantity' => ['required', 'numeric', 'min:0', 'lte:1000000'], 'action' => ['sometimes', 'in:increase,decrease,remove']]);
         $cart = $request->session()->get('cart', []);
@@ -109,7 +111,7 @@ class StoreController extends Controller
         } elseif ($product) {
             $step = $product->unit === 'm³' ? '0.1' : '1';
             $quantity = match ($data['action'] ?? null) {
-                'increase' => bcadd((string) ($cart[$data['product_id']] ?? 0), $step, 3),
+                'increase' => rtrim(rtrim(bcadd((string) ($cart[$data['product_id']] ?? 0), $step, 3), '0'), '.'),
                 'decrease' => max(in_array($product->unit, ['m³', 'kg'], true) ? 0.001 : 1,
                     (float) bcsub((string) ($cart[$data['product_id']] ?? 0), $step, 3)),
                 default => $data['quantity'],
@@ -121,6 +123,21 @@ class StoreController extends Controller
             $cart[$data['product_id']] = $quantity;
         }
         $request->session()->put('cart', $cart);
+
+        if ($request->expectsJson() && $product && isset($cart[$data['product_id']])) {
+            $prices = DB::table('products')->whereIn('id', array_keys($cart))->pluck('price', 'id');
+            $total = '0.00';
+            foreach ($prices as $id => $price) {
+                $total = bcadd($total, bcmul((string) $price, (string) $cart[$id], 2), 2);
+            }
+
+            return response()->json([
+                'quantity' => (string) $cart[$data['product_id']],
+                'lineTotal' => number_format((float) bcmul((string) $prices[$data['product_id']], (string) $cart[$data['product_id']], 2), 0, ',', '.').' ₫',
+                'total' => number_format((float) $total, 0, ',', '.').' ₫',
+                'canDecrease' => (float) $cart[$data['product_id']] > (in_array($product->unit, ['m³', 'kg'], true) ? 0.001 : 1),
+            ]);
+        }
 
         return redirect()->route('cart');
     }
@@ -158,11 +175,23 @@ class StoreController extends Controller
         return back()->with('success', 'Đã hủy đơn nhận tại kho.');
     }
 
+    public function updatePickupOrder(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
+    {
+        $data = $request->validate(['quantities' => ['required', 'array'], 'quantities.*' => ['required', 'numeric', 'gt:0', 'lte:1000000']]);
+        $workflow->updateUnpaidPickupOrder($id, $request->user()->id, $data['quantities']);
+
+        return back()->with('success', 'Đã cập nhật số lượng trong đơn hàng.');
+    }
+
     public function myQuotes(Request $request): View
     {
         $quotes = DB::table('quotes')->where('customer_id', $request->user()->id)->orderByDesc('id')->paginate(10);
+        $items = DB::table('quote_items')->join('products', 'products.id', '=', 'quote_items.product_id')
+            ->whereIn('quote_id', $quotes->pluck('id'))
+            ->select('quote_items.quote_id', 'quote_items.product_id', 'quote_items.quantity', 'products.name', 'products.image_path')
+            ->get()->groupBy('quote_id');
 
-        return view('store.quotes', compact('quotes'));
+        return view('store.quotes', compact('quotes', 'items'));
     }
 
     public function showQuote(Request $request, int $id): View
@@ -172,6 +201,26 @@ class StoreController extends Controller
             ->where('quote_id', $id)->select('quote_items.*', 'products.name', 'products.image_path', 'products.unit')->get();
 
         return view('store.quote', compact('quote', 'items'));
+    }
+
+    public function updateQuote(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
+    {
+        $data = $request->validate([
+            'delivery_address' => ['required', 'string', 'max:1000'],
+            'note' => ['nullable', 'string', 'max:2000'],
+            'quantities' => ['required', 'array'],
+            'quantities.*' => ['required', 'numeric', 'gt:0', 'lte:1000000'],
+        ]);
+        $workflow->updateRequestedQuote($id, $request->user()->id, $data['quantities'], $data['delivery_address'], $data['note'] ?? null);
+
+        return back()->with('success', 'Đã cập nhật yêu cầu báo giá.');
+    }
+
+    public function withdrawQuote(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
+    {
+        $workflow->withdrawRequestedQuote($id, $request->user()->id);
+
+        return redirect()->route('my.quotes')->with('success', 'Đã rút yêu cầu báo giá. Lịch sử vẫn được lưu.');
     }
 
     public function acceptQuote(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
@@ -202,7 +251,7 @@ class StoreController extends Controller
     {
         $orders = DB::table('orders')->where('customer_id', $request->user()->id)->orderByDesc('id')->get();
         $items = DB::table('order_items')->join('products', 'products.id', '=', 'order_items.product_id')
-            ->whereIn('order_id', $orders->pluck('id'))->select('order_items.*', 'products.name', 'products.image_path')->get()->groupBy('order_id');
+            ->whereIn('order_id', $orders->pluck('id'))->select('order_items.*', 'products.name', 'products.image_path', 'products.unit')->get()->groupBy('order_id');
         $returns = DB::table('returns')->whereIn('order_id', $orders->pluck('id'))->get()->groupBy('order_id');
         $invoices = DB::table('invoices')->whereIn('order_id', $orders->pluck('id'))->get()->keyBy('order_id');
 

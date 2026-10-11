@@ -10,7 +10,7 @@
                         @csrf
                         <label>Ngày quyết toán<input class="form-control" type="date" name="due_on" min="{{ now()->toDateString() }}" value="{{ $debt->due_on }}" required></label>
                         <label>Ghi chú đối chiếu<input class="form-control" name="settlement_note" value="{{ $debt->settlement_note }}" maxlength="2000" required></label>
-                        <button class="btn btn-outline-dark">Lưu lịch</button>
+                        <button class="btn finance-save-schedule">Lưu lịch</button>
                     </form>
                 @endif
             </details>

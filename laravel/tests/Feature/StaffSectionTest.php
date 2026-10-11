@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
@@ -15,7 +16,8 @@ class StaffSectionTest extends TestCase
     {
         $staff = User::factory()->create(['role' => 'admin', 'status' => 'active']);
         $this->actingAs($staff)->get('/staff')->assertOk()
-            ->assertSee('Bảng làm việc')->assertSee('staff-overview-grid')->assertDontSee('Báo giá của tôi');
+            ->assertSee('Tổng quan | Sài Gòn CMC')->assertSee('Tài khoản nội bộ')
+            ->assertSee('Không có hồ sơ chờ phê duyệt.')->assertDontSee('Báo giá của tôi');
         $this->actingAs($staff)->get('/staff/work/finance')->assertOk()
             ->assertSee('staff-workspace-scroll')->assertSee('Danh sách và thao tác Tài chính &amp; công nợ', false);
 
@@ -67,21 +69,32 @@ class StaffSectionTest extends TestCase
         $this->actingAs($sales)->get('/staff/work/finance')->assertForbidden();
 
         $delivery = User::factory()->create(['role' => 'delivery', 'status' => 'active']);
+        $this->actingAs($delivery)->get('/staff')->assertOk()
+            ->assertSee('Chuyến hàng cần theo dõi')->assertSee('Chờ nhận hàng')
+            ->assertSee('Không có chuyến hàng cần xử lý.');
         $this->actingAs($delivery)->get('/staff/work/orders')->assertOk()->assertSee('Xuất kho & giao nhận');
         $this->actingAs($delivery)->get('/staff/work/inventory')->assertForbidden();
         $this->actingAs($delivery)->get('/staff/work/unknown')->assertNotFound();
 
         $warehouse = User::factory()->create(['role' => 'warehouse', 'status' => 'active']);
         $this->actingAs($warehouse)->get('/staff/work/purchases')->assertOk()->assertSee('Hàng giao thiếu hoặc hỏng');
-        $this->actingAs($warehouse)->get('/staff/work/orders')->assertOk()->assertSee('Lộ trình nhiều đơn');
+        $this->actingAs($warehouse)->get('/staff/work/orders')->assertOk()->assertSee('Xuất kho &amp; giao nhận', false);
 
         $accounting = User::factory()->create(['role' => 'accounting', 'status' => 'active']);
+        $this->actingAs($accounting)->get('/staff')->assertOk()
+            ->assertSee('Tình hình kế toán')->assertSee('Phải thu chưa tất toán')
+            ->assertSee('Hóa đơn cần lập')->assertSee('Không có công nợ chưa tất toán.');
         $this->actingAs($accounting)->get('/staff/work/finance')->assertOk()->assertSee('Lịch quyết toán công nợ');
 
         $this->actingAs($sales)->post('/staff/debts/1/schedule')->assertForbidden();
         $this->actingAs($sales)->post('/staff/supplier-returns/1/settle')->assertForbidden();
         $this->actingAs($sales)->post('/staff/customer-credits/1/use')->assertForbidden();
         $manager = User::factory()->create(['role' => 'manager', 'status' => 'active']);
+        $this->actingAs($manager)->get('/staff')->assertOk()
+            ->assertSee('Tổng quan | Sài Gòn CMC')->assertSee('Việc chờ phê duyệt')
+            ->assertSee('Không có hồ sơ chờ phê duyệt.');
+        $this->actingAs($manager)->get('/staff/work/contracts')->assertOk()
+            ->assertSee('contract-empty')->assertSee('Chưa có hợp đồng.');
         $this->actingAs($manager)->get('/staff/work/finance')->assertOk()->assertSee('Tiền khách được hoàn hoặc cấn trừ');
         $this->actingAs($manager)->post('/staff/customer-credits/1/use')->assertForbidden();
         $admin = User::factory()->create(['role' => 'admin', 'status' => 'active']);
@@ -90,5 +103,40 @@ class StaffSectionTest extends TestCase
         $this->actingAs($sales)->post('/staff/purchases/1/incidents')->assertForbidden();
         $this->actingAs($delivery)->post('/staff/contracts/1/cancel')->assertForbidden();
         $this->actingAs($delivery)->post('/staff/delivery-runs')->assertForbidden();
+    }
+
+    public function test_sales_quote_filters_search_status_and_sort_records(): void
+    {
+        $sales = User::factory()->create(['role' => 'sales', 'status' => 'active']);
+        $firstCustomer = User::factory()->create(['role' => 'customer', 'status' => 'active', 'name' => 'Khách Minh']);
+        $secondCustomer = User::factory()->create(['role' => 'customer', 'status' => 'active', 'name' => 'Khách An']);
+        foreach ([
+            ['code' => 'BG-TEST-01', 'customer_id' => $firstCustomer->id, 'status' => 'requested'],
+            ['code' => 'BG-TEST-02', 'customer_id' => $secondCustomer->id, 'status' => 'draft'],
+            ['code' => 'BG-TEST-03', 'customer_id' => $firstCustomer->id, 'status' => 'sent'],
+        ] as $quote) {
+            DB::table('quotes')->insert($quote + ['delivery_address' => 'Công trình thử']);
+        }
+
+        $this->actingAs($sales)->get('/staff')->assertOk()->assertSee('Cần lập báo giá');
+        $this->actingAs($sales)->get('/staff/work/quotes?status=actionable')->assertOk()
+            ->assertSee('BG-TEST-01')->assertSee('BG-TEST-02')->assertDontSee('BG-TEST-03');
+        $this->actingAs($sales)->get('/staff/work/quotes?q=Khách+An')->assertOk()
+            ->assertSee('BG-TEST-02')->assertDontSee('BG-TEST-01');
+        $response = $this->actingAs($sales)->get('/staff/work/quotes?sort=oldest');
+        $response->assertOk()->assertSeeInOrder(['BG-TEST-01', 'BG-TEST-02', 'BG-TEST-03']);
+    }
+
+    public function test_warehouse_inventory_separates_current_stock_from_movement_history(): void
+    {
+        $warehouse = User::factory()->create(['role' => 'warehouse', 'status' => 'active']);
+
+        $this->actingAs($warehouse)->get('/staff')->assertOk()->assertSee('warehouse-metrics');
+        $this->actingAs($warehouse)->get('/staff/work/inventory')->assertOk()
+            ->assertSee('Lập phiếu kiểm kê')->assertDontSee('Lịch sử nhập, xuất và điều chỉnh');
+        $this->actingAs($warehouse)->get('/staff/work/inventory?view=movements')->assertOk()
+            ->assertSee('Lịch sử nhập, xuất và điều chỉnh')->assertDontSee('Lập phiếu kiểm kê');
+        $this->actingAs($warehouse)->get('/staff/work/returns')->assertOk()
+            ->assertSee('Danh sách yêu cầu đổi trả')->assertSee('Không có yêu cầu đổi trả');
     }
 }

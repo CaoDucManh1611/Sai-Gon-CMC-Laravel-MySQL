@@ -66,9 +66,11 @@ class StorefrontTest extends TestCase
     {
         $product = DB::table('products')->insertGetId(['code' => 'G-SET', 'name' => 'Gạch tuynel', 'unit' => 'viên', 'price' => 1250]);
         $this->withSession(['cart' => [$product => 4]])->get('/products/'.$product)
-            ->assertOk()->assertSee('value="4"', false)->assertSee('Lưu số lượng vào giỏ');
+            ->assertOk()->assertSee('value="4"', false)->assertSee('data-product-stepper')->assertSee('Đặt hàng');
         $this->post('/cart/add', ['product_id' => $product, 'quantity' => 2, 'replace' => 1])
             ->assertRedirect()->assertSessionHas('cart_added.quantity', 2);
+        $this->post('/cart/add', ['product_id' => $product, 'quantity' => 2, 'replace' => 1, 'next' => 'cart'])
+            ->assertRedirect('/cart');
         $this->assertEquals(2, session('cart')[$product]);
         $this->get('/cart')->assertOk()->assertSee('2.500');
         $this->post('/cart/add', ['product_id' => $product, 'quantity' => 1])
@@ -82,8 +84,8 @@ class StorefrontTest extends TestCase
         $this->withSession(['cart' => [$product => 2]])->post('/cart/update', [
             'product_id' => $product, 'quantity' => 2, 'action' => 'increase',
         ])->assertRedirect('/cart');
-        $this->assertEquals(3, session('cart')[$product]);
-        $this->get('/cart')->assertOk()->assertSee('3.750');
+        $this->assertSame('3', (string) session('cart')[$product]);
+        $this->get('/cart')->assertOk()->assertSee('value="3"', false)->assertSee('3.750');
         $this->post('/cart/update', ['product_id' => $product, 'quantity' => 3, 'action' => 'decrease'])->assertRedirect('/cart');
         $this->assertEquals(2, session('cart')[$product]);
         $this->get('/cart')->assertOk()->assertSee('2.500');
@@ -92,6 +94,18 @@ class StorefrontTest extends TestCase
         $this->post('/cart/update', ['product_id' => $product, 'quantity' => 0, 'action' => 'remove'])->assertRedirect('/cart');
         $this->assertArrayNotHasKey($product, session('cart'));
         $this->get('/cart')->assertOk()->assertSee('Giỏ hàng đang trống');
+    }
+
+    public function test_cart_quantity_can_update_without_reloading_page(): void
+    {
+        $product = DB::table('products')->insertGetId(['code' => 'G-ASYNC', 'name' => 'Gạch', 'unit' => 'viên', 'price' => 1250]);
+        $other = DB::table('products')->insertGetId(['code' => 'X-ASYNC', 'name' => 'Xi măng', 'unit' => 'bao', 'price' => 92000]);
+
+        $this->withSession(['cart' => [$product => 2, $other => 1]])
+            ->postJson('/cart/update', ['product_id' => $product, 'quantity' => 2, 'action' => 'increase'])
+            ->assertOk()
+            ->assertJson(['quantity' => '3', 'lineTotal' => '3.750 ₫', 'total' => '95.750 ₫', 'canDecrease' => true]);
+        $this->assertSame('3', (string) session('cart')[$product]);
     }
 
     public function test_catalog_and_product_page_render_from_database(): void

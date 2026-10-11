@@ -2,7 +2,7 @@
 @section('title','Hợp đồng của tôi | Sài Gòn CMC')
 @section('content')
 <div class="container-fluid container-wide pb-5">
-    <div class="page-intro"><div class="eyebrow muted">Tài khoản khách hàng</div><h1 class="page-title">Hợp đồng của tôi</h1><p class="page-subtitle">Xem điều khoản sau khi Ban quản lý phê duyệt. Chỉ xác nhận khi thông tin và giá trị đã đúng.</p></div>
+    <div class="page-intro"><h1 class="page-title">Hợp đồng của tôi</h1><p class="page-subtitle">Xem điều khoản sau khi Ban quản lý phê duyệt. Chỉ xác nhận khi thông tin và giá trị đã đúng.</p></div>
     @forelse($contracts as $contract)
         <article class="order-card">
             <div class="order-head"><strong>{{ $contract->code }}</strong><span class="status">{{ $contract->status === 'approved' && !$contract->customer_confirmed_at ? 'Chờ bạn xác nhận' : \App\Support\UiFormat::status($contract->status) }}</span></div>

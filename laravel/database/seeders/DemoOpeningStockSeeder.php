@@ -26,6 +26,14 @@ class DemoOpeningStockSeeder extends Seeder
                 'created_at' => now(), 'updated_at' => now(),
             ]);
             foreach (DB::table('products')->where('active', true)->get() as $product) {
+                if ($product->code === 'NGOI-DAT') {
+                    DB::table('inventory')->insertOrIgnore([
+                        'warehouse_id' => $warehouse->id, 'product_id' => $product->id,
+                        'quantity' => 0, 'created_at' => now(), 'updated_at' => now(),
+                    ]);
+
+                    continue;
+                }
                 $existing = DB::table('inventory')->where('warehouse_id', $warehouse->id)->where('product_id', $product->id)->value('quantity') ?? 0;
                 if (bccomp((string) $existing, '0', 3) > 0) {
                     continue;

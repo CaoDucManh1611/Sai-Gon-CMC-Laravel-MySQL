@@ -17,7 +17,14 @@ class StaffController extends Controller
         return view('staff.dashboard', [
             'activeSection' => 'overview',
             'quotes' => DB::table('quotes')->join('users', 'users.id', '=', 'quotes.customer_id')
-                ->select('quotes.*', 'users.name as customer_name')->orderByDesc('quotes.id')->limit(30)->get(),
+                ->select('quotes.*', 'users.name as customer_name')
+                ->when($request->route('section') === 'quotes' && $request->filled('q'), fn ($query) => $query->where(fn ($matches) => $matches->where('quotes.code', 'like', '%'.$request->query('q').'%')->orWhere('users.name', 'like', '%'.$request->query('q').'%')))
+                ->when($request->route('section') === 'quotes' && $request->filled('status'), function ($query) use ($request) {
+                    $request->query('status') === 'actionable'
+                        ? $query->whereIn('quotes.status', ['requested', 'draft'])
+                        : $query->where('quotes.status', $request->query('status'));
+                })
+                ->orderBy('quotes.id', $request->route('section') === 'quotes' && $request->query('sort') === 'oldest' ? 'asc' : 'desc')->limit(30)->get(),
             'quoteItems' => DB::table('quote_items')->join('products', 'products.id', '=', 'quote_items.product_id')
                 ->leftJoinSub(DB::table('inventory')->select('product_id')->selectRaw('SUM(quantity) as available')->groupBy('product_id'),
                     'stock', 'stock.product_id', '=', 'quote_items.product_id')
@@ -29,6 +36,7 @@ class StaffController extends Controller
                 ->when($request->filled('contract'), fn ($query) => $query->where('contracts.code', 'like', '%'.$request->query('contract').'%'))
                 ->orderByDesc('contracts.id')->limit(30)->get(),
             'orders' => DB::table('orders')->orderByDesc('id')->limit(30)->get(),
+            'staffAccountCount' => DB::table('users')->where('role', '!=', 'customer')->count(),
             'invoices' => DB::table('invoices')->get()->keyBy('order_id'),
             'debts' => DB::table('debts')->orderByDesc('id')->limit(30)->get(),
             'customerCredits' => DB::table('customer_credits')->join('users', 'users.id', '=', 'customer_credits.customer_id')

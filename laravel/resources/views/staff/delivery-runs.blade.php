@@ -1,5 +1,7 @@
+@if($deliveryRuns->isNotEmpty() || (in_array($role, ['warehouse', 'admin']) && $shipments->where('status', 'planned')->whereNull('delivery_run_id')->whereNull('return_id')->count() >= 2))
 <section class="mb-5" aria-labelledby="delivery-runs-heading">
-    <h2 id="delivery-runs-heading">Lộ trình nhiều đơn</h2>
+    <h2 id="delivery-runs-heading">Gom đơn giao cùng chuyến</h2>
+    <p class="warehouse-section-note">Gộp ít nhất hai chuyến đã lập để cùng xe và lộ trình.</p>
     @if(in_array($role, ['warehouse', 'admin']) && $shipments->where('status', 'planned')->whereNull('delivery_run_id')->whereNull('return_id')->count() >= 2)
         <details class="order-card">
             <summary>Gom các đơn vào một chuyến xe</summary>
@@ -34,3 +36,4 @@
         </article>
     @endforeach
 </section>
+@endif

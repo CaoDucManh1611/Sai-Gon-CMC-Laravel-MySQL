@@ -44,18 +44,18 @@
         <div class="staff-sidebar-scroll">
             <nav class="staff-nav" aria-label="Điều hướng nhân viên">
                 <span class="staff-nav-label">TỔNG QUAN</span>
-                <a href="{{ route('staff.dashboard') }}" @class(['is-active' => request()->routeIs('staff.dashboard')]) @if(request()->routeIs('staff.dashboard')) aria-current="page" @endif><span class="staff-nav-icon">01</span>Tổng quan</a>
+                <a href="{{ route('staff.dashboard') }}" @class(['is-active' => request()->routeIs('staff.dashboard')]) @if(request()->routeIs('staff.dashboard')) aria-current="page" @endif>@include('staff.nav-icon', ['name' => 'overview'])Tổng quan</a>
                 <span class="staff-nav-label">NGHIỆP VỤ</span>
                 @foreach($staffSections as $key => [$label, $icon, $roles])
                     @if(in_array($staffRole, $roles, true))
-                        <a href="{{ route('staff.section', $key) }}" @class(['is-active' => request()->routeIs('staff.section') && request()->route('section') === $key]) @if(request()->routeIs('staff.section') && request()->route('section') === $key) aria-current="page" @endif><span class="staff-nav-icon">{{ $icon }}</span>{{ $label }}</a>
+                        <a href="{{ route('staff.section', $key) }}" @class(['is-active' => request()->routeIs('staff.section') && request()->route('section') === $key]) @if(request()->routeIs('staff.section') && request()->route('section') === $key) aria-current="page" @endif>@include('staff.nav-icon', ['name' => $key]){{ $label }}</a>
                     @endif
                 @endforeach
                 <span class="staff-nav-label">HỆ THỐNG</span>
                 @if(in_array($staffRole, ['sales', 'warehouse', 'manager', 'admin'], true))
-                    <a href="{{ route('management.index') }}" @class(['is-active' => request()->routeIs('management.*')]) @if(request()->routeIs('management.*')) aria-current="page" @endif><span class="staff-nav-icon">DM</span>Danh mục & quản trị</a>
+                    <a href="{{ route('management.index') }}" @class(['is-active' => request()->routeIs('management.*')]) @if(request()->routeIs('management.*')) aria-current="page" @endif>@include('staff.nav-icon', ['name' => 'management'])Danh mục & quản trị</a>
                 @endif
-                <a href="{{ route('staff.reports.index') }}" @class(['is-active' => request()->routeIs('staff.reports.*')]) @if(request()->routeIs('staff.reports.*')) aria-current="page" @endif><span class="staff-nav-icon">BC</span>Báo cáo thống kê</a>
+                <a href="{{ route('staff.reports.index') }}" @class(['is-active' => request()->routeIs('staff.reports.*')]) @if(request()->routeIs('staff.reports.*')) aria-current="page" @endif>@include('staff.nav-icon', ['name' => 'reports'])Báo cáo thống kê</a>
             </nav>
         </div>
         <div class="staff-sidebar-bottom">

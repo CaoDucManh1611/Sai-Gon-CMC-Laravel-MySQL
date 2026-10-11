@@ -21,7 +21,43 @@ if (cartScroll !== null) {
 document.querySelectorAll('[data-cart-update-form]').forEach(form => {
     const input = form.querySelector('input[name="quantity"][type="number"]');
     let submitting = false;
-    form.addEventListener('submit', () => {
+    form.addEventListener('submit', async event => {
+        if (input && window.fetch) {
+            event.preventDefault();
+            if (submitting || !input.reportValidity()) return;
+            submitting = true;
+            const data = new FormData(form);
+            if (event.submitter?.name) data.set(event.submitter.name, event.submitter.value);
+            const buttons = [...form.querySelectorAll('button')];
+            const disabledBefore = buttons.map(button => button.disabled);
+            buttons.forEach(button => { button.disabled = true; });
+            const actions = form.closest('.cart-actions');
+            let error = actions.querySelector('.cart-save-error');
+            if (error) error.remove();
+            try {
+                const response = await fetch(form.getAttribute('action'), {
+                    method: 'POST', body: data, credentials: 'same-origin',
+                    headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.errors?.quantity?.[0] || result.message || 'Không thể cập nhật số lượng.');
+                input.value = result.quantity;
+                form.closest('.cart-row').querySelector('.cart-price').textContent = result.lineTotal;
+                document.querySelector('.summary-line.total strong').textContent = result.total;
+                form.querySelector('button[value="decrease"]').disabled = !result.canDecrease;
+                form.querySelector('button[value="increase"]').disabled = Number(result.quantity) >= Number(input.max);
+            } catch (cause) {
+                error = document.createElement('span');
+                error.className = 'cart-save-error';
+                error.setAttribute('role', 'alert');
+                error.textContent = cause.message || 'Không thể cập nhật số lượng.';
+                actions.append(error);
+                buttons.forEach((button, index) => { button.disabled = disabledBefore[index]; });
+            } finally {
+                submitting = false;
+            }
+            return;
+        }
         submitting = true;
         sessionStorage.setItem('cartScrollY', String(window.scrollY));
     });
