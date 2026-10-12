@@ -14,8 +14,19 @@ class StaffController extends Controller
 {
     public function dashboard(Request $request): View
     {
+        $salesOrders = DB::table('orders')->join('users', 'users.id', '=', 'orders.customer_id')
+            ->select('orders.*', 'users.name as customer_name')
+            ->when($request->route('section') === 'sales_orders' && $request->filled('q'), fn ($query) => $query->where(fn ($matches) => $matches->where('orders.code', 'like', '%'.$request->query('q').'%')->orWhere('users.name', 'like', '%'.$request->query('q').'%')))
+            ->when($request->route('section') === 'sales_orders' && $request->filled('status'), fn ($query) => $query->where('orders.status', $request->query('status')))
+            ->orderByDesc('orders.id')->limit(100)->get();
+
         return view('staff.dashboard', [
             'activeSection' => 'overview',
+            'salesOrders' => $salesOrders,
+            'pendingSalesOrderCount' => DB::table('orders')->where('status', 'awaiting_confirmation')->count(),
+            'salesOrderItems' => DB::table('order_items')->join('products', 'products.id', '=', 'order_items.product_id')
+                ->whereIn('order_items.order_id', $salesOrders->pluck('id'))
+                ->select('order_items.*', 'products.name as product_name', 'products.unit')->get()->groupBy('order_id'),
             'quotes' => DB::table('quotes')->join('users', 'users.id', '=', 'quotes.customer_id')
                 ->select('quotes.*', 'users.name as customer_name')
                 ->when($request->route('section') === 'quotes' && $request->filled('q'), fn ($query) => $query->where(fn ($matches) => $matches->where('quotes.code', 'like', '%'.$request->query('q').'%')->orWhere('users.name', 'like', '%'.$request->query('q').'%')))
@@ -38,7 +49,8 @@ class StaffController extends Controller
             'orders' => DB::table('orders')->orderByDesc('id')->limit(30)->get(),
             'staffAccountCount' => DB::table('users')->where('role', '!=', 'customer')->count(),
             'invoices' => DB::table('invoices')->get()->keyBy('order_id'),
-            'debts' => DB::table('debts')->orderByDesc('id')->limit(30)->get(),
+            'debts' => DB::table('debts')->leftJoin('orders', 'orders.id', '=', 'debts.order_id')
+                ->select('debts.*', 'orders.status as order_status')->orderByDesc('debts.id')->limit(30)->get(),
             'customerCredits' => DB::table('customer_credits')->join('users', 'users.id', '=', 'customer_credits.customer_id')
                 ->select('customer_credits.*', 'users.name as customer_name')->orderByDesc('customer_credits.id')->limit(30)->get(),
             'creditUsed' => DB::table('customer_credit_movements')->select('customer_credit_id')
@@ -79,6 +91,7 @@ class StaffController extends Controller
     {
         $roles = [
             'quotes' => ['sales', 'manager', 'admin'], 'contracts' => ['sales', 'manager', 'admin'],
+            'sales_orders' => ['sales', 'manager', 'admin'],
             'finance' => ['accounting', 'manager', 'admin'], 'purchases' => ['warehouse', 'manager', 'admin'],
             'orders' => ['warehouse', 'delivery', 'accounting', 'manager', 'admin'],
             'returns' => ['warehouse', 'accounting', 'manager', 'admin'],
@@ -88,6 +101,14 @@ class StaffController extends Controller
         abort_unless(in_array(auth()->user()->role, $roles[$section], true), 403);
 
         return $this->dashboard($request)->with('activeSection', $section);
+    }
+
+    public function reviewPickupOrder(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
+    {
+        $data = $request->validate(['decision' => ['required', 'in:confirm,reject'], 'reason' => ['required_if:decision,reject', 'nullable', 'string', 'max:2000']]);
+        $workflow->reviewPickupOrder($id, $request->user()->id, $data['decision'] === 'confirm', $data['reason'] ?? null);
+
+        return back()->with('success', $data['decision'] === 'confirm' ? 'Đã xác nhận đơn hàng.' : 'Đã từ chối đơn hàng và gửi lý do cho khách.');
     }
 
     public function sendQuote(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse

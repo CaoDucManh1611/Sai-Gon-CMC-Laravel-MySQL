@@ -178,13 +178,33 @@ html{scroll-padding-top:78px}
 .staff-app #quotes .staff-quote-send-form .form-label{display:flex;flex-direction:column;justify-content:flex-end;gap:8px;width:100%;margin-bottom:0;line-height:1.45}
 
 /* Sales workspace: priorities, scannable records and a clear action area. */
-.sales-overview,.sales-quotes{max-width:1400px}
+.sales-overview,.sales-quotes,.sales-orders{max-width:1400px}
 .sales-section-heading{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:20px}
 .sales-section-heading h2{font-size:23px;letter-spacing:-.035em;margin:4px 0 0;font-weight:700}
 .sales-section-heading p{color:var(--staff-muted);margin:7px 0 0;font-size:13px}
 .sales-kicker{font-size:10px;font-weight:700;letter-spacing:.18em;color:#557766}
 .sales-section-note,.sales-result-count{font-size:12px;color:var(--staff-muted)}
-.sales-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.sales-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.sales-order-filters{display:grid;grid-template-columns:minmax(220px,2fr) minmax(170px,1fr) auto auto;gap:12px;align-items:end;padding:18px;margin-bottom:20px;background:#f3f7f3;border:1px solid var(--staff-line);border-radius:10px}.sales-order-filters label,.sales-order-actions label{font-size:12px;font-weight:700;color:var(--staff-ink)}.sales-order-filters :is(input,select){display:block;margin-top:7px}.sales-order-card{border:1px solid var(--staff-line);border-radius:10px;background:#fff;margin-bottom:10px;overflow:hidden}.sales-order-card[open]{border-color:#91ad98}.sales-order-card summary{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(130px,1fr) minmax(130px,.8fr) 75px;align-items:center;gap:15px;padding:18px;cursor:pointer;list-style:none}.sales-order-card summary::-webkit-details-marker{display:none}.sales-order-card summary:hover{background:#f5f8f5}.sales-order-card summary>span:first-child strong,.sales-order-card summary small{display:block}.sales-order-card summary small{color:var(--staff-muted);font-size:12px;margin-top:4px}.sales-order-total{font-size:13px}.sales-order-open{display:inline-flex;align-items:center;justify-content:flex-end;gap:5px;white-space:nowrap;font-size:12px;font-weight:700;color:#2f674d}.sales-order-open svg{display:block;width:14px;height:14px;flex:none;stroke:currentColor;stroke-width:1.7;fill:none;transition:transform .2s}.sales-order-card[open] .sales-order-open svg{transform:rotate(180deg)}.sales-order-badge{width:max-content;padding:6px 10px;border-radius:5px;font-size:11px;font-weight:700;background:#e8efea;color:#315d43}.sales-order-badge.status-awaiting_confirmation,.sales-order-badge.status-awaiting_payment{background:#fff0d6;color:#835216}.sales-order-badge.status-rejected,.sales-order-badge.status-cancelled{background:#fce9e5;color:#a34435}.sales-order-detail{padding:20px;border-top:1px solid var(--staff-line)}.sales-order-detail dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:20px}.sales-order-detail dt{font-size:11px;color:var(--staff-muted)}.sales-order-detail dd{margin:4px 0 0;font-size:13px;overflow-wrap:anywhere}.sales-order-detail .table{margin:0}.sales-order-reason{margin:16px 0 0;color:#9b3f32}
+@media(max-width:800px){.sales-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.sales-order-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.sales-order-card summary{grid-template-columns:repeat(2,minmax(0,1fr))}.sales-order-detail dl{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.sales-order-filters,.sales-order-card summary,.sales-order-detail dl{grid-template-columns:1fr}.sales-order-actions form,.sales-order-actions form:last-child,.sales-order-actions label{width:100%}}
+html[data-theme=dark] .sales-order-filters,html[data-theme=dark] .sales-order-card{background:#1c2b22;border-color:var(--staff-line);color:var(--staff-ink)}html[data-theme=dark] .sales-order-card summary:hover{background:#294134}html[data-theme=dark] .sales-order-badge{background:#1e5036;color:#d6f3df}html[data-theme=dark] .sales-order-badge.status-awaiting_confirmation,html[data-theme=dark] .sales-order-badge.status-awaiting_payment{background:#5b421e;color:#ffe7ab}html[data-theme=dark] .sales-order-badge.status-rejected,html[data-theme=dark] .sales-order-badge.status-cancelled{background:#602e2b;color:#ffe0d8}html[data-theme=dark] .sales-order-reason{color:#ffc7bb}
+.staff-app .sales-orders .table tbody tr,.staff-app .sales-orders .table tbody tr:hover{transition:none;transform:none}
+.staff-app .sales-orders .table tbody tr:hover td{background:transparent}
+.sales-order-actions{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);gap:14px;margin-top:20px;padding-top:20px;border-top:1px solid var(--staff-line)}
+.sales-order-actions form{display:flex;flex-direction:column;justify-content:space-between;min-width:0;margin:0;padding:16px 18px;border:1px solid var(--staff-line);border-radius:9px;background:#f5f8f6}
+.sales-order-actions .sales-order-reject{background:#fffafa;border-color:#eadad7}
+.sales-order-confirm p{margin:0 0 16px;font-size:12px;line-height:1.5;color:var(--staff-muted)}
+.sales-order-actions .btn{width:max-content}
+.sales-order-reject label{display:block;margin:0 0 8px;font-size:12px;font-weight:700;color:var(--staff-ink)}
+.sales-order-reject-fields{display:flex;align-items:stretch;gap:10px}
+.sales-order-reject-fields .form-control{min-width:0;flex:1;margin:0}
+.sales-order-reject-fields .btn{flex:none}
+html[data-theme=dark] .sales-order-actions .sales-order-confirm{background:#21372a}
+html[data-theme=dark] .sales-order-actions .sales-order-reject{background:#302a27;border-color:#61403b}
+html[data-theme=dark] .sales-order-open{color:#a9d9b3}
+@media(max-width:1100px){.sales-order-actions{grid-template-columns:1fr}}
+@media(max-width:600px){.sales-order-reject-fields{flex-direction:column}.sales-order-actions .btn{width:100%}}
 .sales-metric{display:grid;align-content:space-between;min-height:150px;padding:22px;border:1px solid var(--staff-line);border-radius:12px;background:#fff;color:var(--staff-ink);transition:border-color .2s,box-shadow .2s}
 .sales-metric:hover{border-color:#7ca78c;box-shadow:0 8px 20px #1d3b3020;color:var(--staff-ink)}
 .sales-metric>span{font-size:13px;font-weight:700}.sales-metric strong{font-size:36px;line-height:1.1;letter-spacing:-.05em}.sales-metric small{font-size:12px;color:#32654b;font-weight:700}

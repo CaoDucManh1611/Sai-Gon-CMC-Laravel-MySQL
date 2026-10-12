@@ -7,6 +7,7 @@ use App\Services\FulfillmentWorkflow;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -19,7 +20,7 @@ class StoreController extends Controller
         $categoryImages = ['XI-MANG' => 'mat-cement', 'GACH' => 'mat-brick', 'THEP' => 'mat-steel', 'CAT-DA' => 'mat-sand'];
 
         return view('store.home', [
-            'featured' => DB::table('products')->where('active', true)->orderBy('id')->limit(4)->get(),
+            'featured' => $this->withStorefrontStock(DB::table('products')->where('active', true)->orderBy('id')->limit(4)->get()),
             'categories' => DB::table('categories')->where('active', true)->whereIn('code', array_keys($categoryImages))
                 ->get()->sortBy(fn ($category) => array_search($category->code, array_keys($categoryImages), true)),
             'categoryImages' => $categoryImages,
@@ -47,8 +48,11 @@ class StoreController extends Controller
             default => $products->orderBy('products.id'),
         };
 
+        $page = $products->paginate(15)->withQueryString();
+        $this->withStorefrontStock($page->getCollection());
+
         return view('store.catalog', [
-            'products' => $products->paginate(15)->withQueryString(),
+            'products' => $page,
             'categories' => DB::table('categories')->where('active', true)->orderBy('name')->get(),
         ]);
     }
@@ -58,15 +62,52 @@ class StoreController extends Controller
         $product = DB::table('products')->where('active', true)->where('id', $id)->firstOrFail();
         $category = DB::table('categories')->where('id', $product->category_id)->first(['name', 'code']);
 
+        $related = $product->category_id
+            ? DB::table('products')->where('active', true)->where('category_id', $product->category_id)
+                ->where('id', '!=', $product->id)->orderBy('id')->limit(4)->get()
+            : collect();
+        $this->withStorefrontStock(collect([$product])->concat($related));
+
         return view('store.product', [
             'product' => $product,
             'categoryName' => $category?->name ?: 'Vật liệu xây dựng',
             'categoryCode' => $category?->code,
-            'related' => $product->category_id
-                ? DB::table('products')->where('active', true)->where('category_id', $product->category_id)
-                    ->where('id', '!=', $product->id)->orderBy('id')->limit(4)->get()
-                : collect(),
+            'related' => $related,
         ]);
+    }
+
+    private function withStorefrontStock(Collection $products): Collection
+    {
+        if ($products->isEmpty()) {
+            return $products;
+        }
+
+        $ids = $products->pluck('id');
+        $warehouses = DB::table('warehouses')->where('active', true)->orderBy('name')->get(['id', 'name']);
+        $stock = DB::table('inventory')->whereIn('product_id', $ids)->whereIn('warehouse_id', $warehouses->pluck('id'))
+            ->get(['product_id', 'warehouse_id', 'quantity'])->keyBy(fn ($row) => $row->product_id.'-'.$row->warehouse_id);
+        $reserved = DB::table('order_items')->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->whereIn('order_items.product_id', $ids)->whereIn('orders.pickup_warehouse_id', $warehouses->pluck('id'))
+            ->whereIn('orders.status', ['awaiting_confirmation', 'awaiting_payment', 'ready_to_issue'])
+            ->select('order_items.product_id', 'orders.pickup_warehouse_id')
+            ->selectRaw('SUM(order_items.quantity) as quantity')
+            ->groupBy('order_items.product_id', 'orders.pickup_warehouse_id')
+            ->get()->keyBy(fn ($row) => $row->product_id.'-'.$row->pickup_warehouse_id);
+
+        foreach ($products as $product) {
+            $product->stock_by_warehouse = $warehouses->map(function ($warehouse) use ($product, $stock, $reserved) {
+                $key = $product->id.'-'.$warehouse->id;
+                $available = bcsub((string) ($stock[$key]->quantity ?? 0), (string) ($reserved[$key]->quantity ?? 0), 3);
+
+                return ['name' => $warehouse->name, 'quantity' => bccomp($available, '0', 3) > 0 ? $available : '0'];
+            });
+            $product->has_stock = $product->stock_by_warehouse->contains(fn ($warehouse) => bccomp($warehouse['quantity'], '0', 3) > 0);
+            $product->available_stock = $product->stock_by_warehouse->reduce(
+                fn ($total, $warehouse) => bcadd($total, $warehouse['quantity'], 3), '0'
+            );
+        }
+
+        return $products;
     }
 
     public function cart(Request $request): View

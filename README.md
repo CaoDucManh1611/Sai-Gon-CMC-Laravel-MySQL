@@ -36,6 +36,8 @@ Xem [hướng dẫn Laravel chi tiết](laravel/README.md) để biết nghiệp
 
 ## Cấu trúc repo
 
+Xem [AI_context](AI_context/README.md) để tìm nhanh đúng luồng nghiệp vụ, file cần sửa và tình trạng kiểm thử hiện tại.
+
 | Thư mục | Nội dung |
 | --- | --- |
 | [`laravel/`](laravel/) | Ứng dụng PHP/Laravel + MySQL đang phát triển |

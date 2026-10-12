@@ -26,7 +26,7 @@ class UiFormat
             'pending_approval' => 'Chờ phê duyệt', 'approved' => 'Đã duyệt',
             'rejected' => 'Đã từ chối', 'changes_requested' => 'Yêu cầu chỉnh sửa',
             'signed' => 'Đã ký', 'cancelled' => 'Đã hủy',
-            'awaiting_payment' => 'Chờ thanh toán', 'ready_to_issue' => 'Chờ xuất kho',
+            'awaiting_confirmation' => 'Chờ xác nhận', 'awaiting_payment' => 'Chờ thanh toán', 'ready_to_issue' => 'Chờ xuất kho',
             'ready_to_ship' => 'Sẵn sàng giao', 'shipping' => 'Đang giao',
             'planned' => 'Đã lên lịch', 'picked_up' => 'Đã nhận hàng để giao',
             'delivered' => 'Đã giao', 'delivery_incident' => 'Giao hàng gặp sự cố',

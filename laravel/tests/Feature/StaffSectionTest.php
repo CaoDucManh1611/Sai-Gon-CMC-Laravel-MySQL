@@ -31,6 +31,7 @@ class StaffSectionTest extends TestCase
         $sections = [
             'quotes' => ['sales', 'manager', 'admin'],
             'contracts' => ['sales', 'manager', 'admin'],
+            'sales_orders' => ['sales', 'manager', 'admin'],
             'finance' => ['accounting', 'manager', 'admin'],
             'purchases' => ['warehouse', 'manager', 'admin'],
             'orders' => ['warehouse', 'delivery', 'accounting', 'manager', 'admin'],

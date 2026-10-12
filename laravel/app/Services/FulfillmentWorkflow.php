@@ -256,7 +256,7 @@ class FulfillmentWorkflow
             foreach ($items as $item) {
                 $reserved = DB::table('order_items')->join('orders', 'orders.id', '=', 'order_items.order_id')
                     ->where('orders.pickup_warehouse_id', $warehouseId)
-                    ->whereIn('orders.status', ['awaiting_payment', 'ready_to_issue'])
+                    ->whereIn('orders.status', ['awaiting_confirmation', 'awaiting_payment', 'ready_to_issue'])
                     ->where('orders.id', '!=', $orderId)
                     ->where('order_items.product_id', $item->product_id)->sum('order_items.quantity');
                 $available = DB::table('inventory')->where('warehouse_id', $warehouseId)

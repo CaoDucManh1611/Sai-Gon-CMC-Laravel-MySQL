@@ -48,6 +48,7 @@ Route::middleware(['auth', 'role:sales,warehouse,accounting,manager,admin,delive
     Route::get('/work/{section}', [StaffController::class, 'section'])->name('section');
 });
 Route::middleware(['auth', 'role:sales,admin'])->prefix('staff')->name('staff.')->group(function () {
+    Route::post('/orders/{id}/review', [StaffController::class, 'reviewPickupOrder'])->name('orders.review');
     Route::post('/quotes/{id}/send', [StaffController::class, 'sendQuote'])->name('quotes.send');
     Route::post('/quotes/{id}/reject', [StaffController::class, 'rejectQuote'])->name('quotes.reject');
     Route::post('/quotes/{quoteId}/contracts', [StaffController::class, 'createContract'])->name('contracts.create');

@@ -1,7 +1,19 @@
 let activeSelect = null;
 
+const dismissNotice = notice => {
+    if (notice.classList.contains('is-leaving')) return;
+    notice.classList.add('is-leaving');
+    window.setTimeout(() => notice.remove(), 300);
+};
 document.querySelectorAll('[data-notice-close]').forEach(button => {
-    button.addEventListener('click', () => button.closest('.site-notice').remove());
+    button.addEventListener('click', () => dismissNotice(button.closest('.site-notice')));
+});
+document.querySelectorAll('.site-notice').forEach(notice => {
+    window.setTimeout(() => dismissNotice(notice), 4700);
+});
+document.querySelectorAll('textarea[data-validation-message]').forEach(field => {
+    field.addEventListener('invalid', () => field.setCustomValidity(field.dataset.validationMessage));
+    field.addEventListener('input', () => field.setCustomValidity(''));
 });
 
 document.querySelectorAll('select:not([multiple]):not([size])').forEach((select, number) => {
@@ -164,6 +176,16 @@ document.querySelectorAll('[data-product-stepper]').forEach(stepper => {
         if (button.dataset.step === 'up') input.stepUp();
         else input.stepDown();
         sync();
+    });
+    input.addEventListener('input', () => {
+        input.setCustomValidity('');
+        sync();
+    });
+    input.addEventListener('invalid', () => {
+        if (input.validity.valueMissing || input.validity.badInput) input.setCustomValidity('Vui lòng nhập số lượng.');
+        else if (input.validity.rangeUnderflow) input.setCustomValidity(`Số lượng phải lớn hơn hoặc bằng ${input.min}.`);
+        else if (input.validity.rangeOverflow) input.setCustomValidity(`Số lượng không được vượt quá ${input.max}.`);
+        else if (input.validity.stepMismatch) input.setCustomValidity(input.step === '1' ? 'Số lượng phải là số nguyên.' : 'Số lượng chỉ được có tối đa 3 chữ số thập phân.');
     });
     sync();
 });

@@ -171,6 +171,7 @@ class CommerceWorkflowTest extends TestCase
     {
         $customer = User::factory()->create(['role' => 'customer', 'status' => 'active']);
         $accountant = User::factory()->create(['role' => 'accounting']);
+        $sales = User::factory()->create(['role' => 'sales', 'status' => 'active']);
         $warehouseStaff = User::factory()->create(['role' => 'warehouse', 'status' => 'active']);
         $warehouse = DB::table('warehouses')->insertGetId(['code' => 'P1', 'name' => 'Kho nhận hàng', 'address' => 'Bình Chánh']);
         $product = DB::table('products')->insertGetId(['code' => 'XM-P', 'name' => 'Xi măng', 'unit' => 'bao', 'price' => 92000, 'direct_purchase_allowed' => true]);
@@ -182,7 +183,7 @@ class CommerceWorkflowTest extends TestCase
         $order = DB::table('orders')->first();
         $this->assertSame('pickup', $order->fulfillment_method);
         $this->assertNull($order->contract_id);
-        $this->assertSame('awaiting_payment', $order->status);
+        $this->assertSame('awaiting_confirmation', $order->status);
         $this->assertEquals(184000, $order->total);
         $this->assertDatabaseHas('order_items', ['order_id' => $order->id, 'product_id' => $product, 'quantity' => 2]);
         $this->withSession(['cart' => [$product => 2]])->post('/pickup-orders', ['warehouse_id' => $warehouse])->assertSessionHasErrors('workflow');
@@ -191,6 +192,7 @@ class CommerceWorkflowTest extends TestCase
         $debt = DB::table('debts')->where('order_id', $order->id)->first();
         $commerce = app(CommerceWorkflow::class);
         $fulfillment = app(FulfillmentWorkflow::class);
+        $commerce->reviewPickupOrder($order->id, $sales->id, true);
         $commerce->recordPayment($debt->id, $accountant->id, '92000', 'cash');
         $this->assertSame('awaiting_payment', DB::table('orders')->find($order->id)->status);
         $commerce->recordPayment($debt->id, $accountant->id, '92000', 'cash');
@@ -212,7 +214,7 @@ class CommerceWorkflowTest extends TestCase
         $order = $commerce->placePickupOrder($customer->id, [$product => 2], $warehouse);
         $other = User::factory()->create(['role' => 'customer', 'status' => 'active']);
         $this->actingAs($other)->post('/my/orders/'.$order.'/cancel')->assertSessionHasErrors('workflow');
-        $this->assertDatabaseHas('orders', ['id' => $order, 'status' => 'awaiting_payment']);
+        $this->assertDatabaseHas('orders', ['id' => $order, 'status' => 'awaiting_confirmation']);
         $this->actingAs($customer)->post('/my/orders/'.$order.'/cancel')->assertRedirect();
         $this->assertDatabaseHas('orders', ['id' => $order, 'status' => 'cancelled']);
         $this->assertDatabaseHas('debts', ['order_id' => $order, 'amount' => 0, 'status' => 'settled']);

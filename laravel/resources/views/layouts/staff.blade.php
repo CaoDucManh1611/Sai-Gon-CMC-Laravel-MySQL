@@ -21,6 +21,7 @@
     $staffSections = [
         'quotes' => ['Báo giá', 'BG', ['sales', 'manager', 'admin']],
         'contracts' => ['Hợp đồng', 'HĐ', ['sales', 'manager', 'admin']],
+        'sales_orders' => ['Đơn hàng', 'DH', ['sales', 'manager', 'admin']],
         'finance' => ['Tài chính & công nợ', 'TC', ['accounting', 'manager', 'admin']],
         'purchases' => ['Nhập hàng', 'NH', ['warehouse', 'manager', 'admin']],
         'orders' => ['Xuất kho & giao nhận', 'GN', ['warehouse', 'delivery', 'accounting', 'manager', 'admin']],

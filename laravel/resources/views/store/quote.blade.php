@@ -4,8 +4,8 @@
 <div class="container-fluid container-wide pb-5">
     <div class="page-intro">
         <div class="breadcrumbs"><a href="{{ route('my.quotes') }}">Báo giá</a> / {{ $quote->code }}</div>
-        <div class="eyebrow muted">Trạng thái: {{ \App\Support\UiFormat::status($quote->status) }}</div>
-        <h1 class="page-title">Báo giá {{ $quote->code }}</h1>
+        <span class="quote-detail-status status-{{ $quote->status }}">Trạng thái: {{ \App\Support\UiFormat::status($quote->status) }}</span>
+        <h1 class="page-title quote-page-title">Báo giá {{ $quote->code }}</h1>
         <p class="page-subtitle">Địa chỉ giao: {{ $quote->delivery_address }}</p>
     </div>
     <div class="table-responsive"><table class="table align-middle">

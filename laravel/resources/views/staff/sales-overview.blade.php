@@ -12,6 +12,7 @@
         <a href="{{ route('staff.section', ['section' => 'quotes', 'status' => 'actionable']) }}" class="sales-metric"><span>Cần lập báo giá</span><strong>{{ $needsQuote->count() }}</strong><small>Xem yêu cầu <span aria-hidden="true">→</span></small></a>
         <a href="{{ route('staff.section', ['section' => 'quotes', 'status' => 'pending_discount_approval']) }}" class="sales-metric"><span>Chờ duyệt giá</span><strong>{{ $waitingApproval->count() }}</strong><small>Theo dõi báo giá <span aria-hidden="true">→</span></small></a>
         <a href="{{ route('staff.section', 'contracts') }}" class="sales-metric"><span>Hợp đồng cần theo dõi</span><strong>{{ $contractsToFollow->count() }}</strong><small>Xem hợp đồng <span aria-hidden="true">→</span></small></a>
+        <a href="{{ route('staff.section', ['section' => 'sales_orders', 'status' => 'awaiting_confirmation']) }}" class="sales-metric"><span>Đơn chờ xác nhận</span><strong>{{ $pendingSalesOrderCount }}</strong><small>Xử lý đơn hàng <span aria-hidden="true">→</span></small></a>
     </div>
     <div class="sales-overview-lower">
         <section class="sales-recent"><div class="sales-section-heading"><div><span class="sales-kicker">HỒ SƠ GẦN ĐÂY</span><h2>Báo giá mới nhất</h2></div><a href="{{ route('staff.section', 'quotes') }}">Xem tất cả →</a></div>

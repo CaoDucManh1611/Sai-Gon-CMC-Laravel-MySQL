@@ -90,13 +90,14 @@ class CommerceWorkflow
     {
         DB::transaction(function () use ($orderId, $customerId, $quantities) {
             $order = DB::table('orders')->where('id', $orderId)->where('customer_id', $customerId)->lockForUpdate()->first();
-            if (! $order || $order->fulfillment_method !== 'pickup' || $order->status !== 'awaiting_payment'
+            if (! $order || $order->fulfillment_method !== 'pickup' || ! in_array($order->status, ['awaiting_confirmation', 'awaiting_payment'], true)
                 || bccomp((string) $order->paid, '0', 2) !== 0) {
                 $this->fail('Chỉ có thể sửa đơn nhận tại kho chưa thanh toán.');
             }
             $items = DB::table('order_items')->join('products', 'products.id', '=', 'order_items.product_id')
                 ->where('order_id', $orderId)->select('order_items.*', 'products.unit')->get();
             $total = '0.00';
+            $requiresReview = false;
             foreach ($items as $item) {
                 $quantity = $quantities[$item->id] ?? null;
                 if (! preg_match('/^\d+(?:\.\d{1,3})?$/', (string) $quantity) || bccomp((string) $quantity, '0', 3) <= 0
@@ -108,7 +109,7 @@ class CommerceWorkflow
                     ->where('product_id', $item->product_id)->lockForUpdate()->first();
                 $reserved = DB::table('order_items')->join('orders', 'orders.id', '=', 'order_items.order_id')
                     ->where('orders.pickup_warehouse_id', $order->pickup_warehouse_id)
-                    ->whereIn('orders.status', ['awaiting_payment', 'ready_to_issue'])
+                    ->whereIn('orders.status', ['awaiting_confirmation', 'awaiting_payment', 'ready_to_issue'])
                     ->where('orders.id', '!=', $orderId)->where('order_items.product_id', $item->product_id)
                     ->sum('order_items.quantity');
                 if (bccomp(bcsub((string) ($stock->quantity ?? 0), (string) $reserved, 3), (string) $quantity, 3) < 0) {
@@ -116,9 +117,12 @@ class CommerceWorkflow
                 }
                 $line = bcmul((string) $item->unit_price, (string) $quantity, 2);
                 $total = bcadd($total, $line, 2);
+                $requiresReview = $requiresReview || bccomp((string) $item->quantity, (string) $quantity, 3) !== 0;
                 DB::table('order_items')->where('id', $item->id)->update(['quantity' => $quantity, 'line_total' => $line, 'updated_at' => now()]);
             }
-            DB::table('orders')->where('id', $orderId)->update(['total' => $total, 'updated_at' => now()]);
+            DB::table('orders')->where('id', $orderId)->update(['total' => $total, 'updated_at' => now()] + ($requiresReview ? [
+                'status' => 'awaiting_confirmation', 'reviewed_by' => null, 'reviewed_at' => null,
+            ] : []));
             DB::table('debts')->where('order_id', $orderId)->update(['amount' => $total, 'updated_at' => now()]);
         });
     }
@@ -144,7 +148,7 @@ class CommerceWorkflow
                     ->where('product_id', $productId)->lockForUpdate()->first();
                 $reserved = DB::table('order_items')->join('orders', 'orders.id', '=', 'order_items.order_id')
                     ->where('orders.pickup_warehouse_id', $warehouseId)
-                    ->whereIn('orders.status', ['awaiting_payment', 'ready_to_issue'])
+                    ->whereIn('orders.status', ['awaiting_confirmation', 'awaiting_payment', 'ready_to_issue'])
                     ->where('order_items.product_id', $productId)->sum('order_items.quantity');
                 if (bccomp(bcsub((string) ($stock->quantity ?? 0), (string) $reserved, 3), (string) $quantity, 3) < 0) {
                     $this->fail($product->name.' không đủ hàng tại kho đã chọn. Vui lòng chọn kho khác hoặc yêu cầu báo giá.');
@@ -155,7 +159,7 @@ class CommerceWorkflow
             }
             $id = DB::table('orders')->insertGetId([
                 'code' => 'TEMP-'.uniqid(), 'customer_id' => $customerId, 'contract_id' => null,
-                'status' => 'awaiting_payment', 'total' => $total, 'fulfillment_method' => 'pickup',
+                'status' => 'awaiting_confirmation', 'total' => $total, 'fulfillment_method' => 'pickup',
                 'pickup_warehouse_id' => $warehouseId, 'delivery_address' => $warehouse->address ?: $warehouse->name,
                 'created_at' => now(), 'updated_at' => now(),
             ]);
@@ -178,11 +182,49 @@ class CommerceWorkflow
     {
         DB::transaction(function () use ($orderId, $customerId) {
             $order = DB::table('orders')->where('id', $orderId)->where('customer_id', $customerId)->lockForUpdate()->first();
-            if (! $order || $order->fulfillment_method !== 'pickup' || $order->status !== 'awaiting_payment' || bccomp((string) $order->paid, '0', 2) !== 0) {
+            if (! $order || $order->fulfillment_method !== 'pickup' || ! in_array($order->status, ['awaiting_confirmation', 'awaiting_payment'], true) || bccomp((string) $order->paid, '0', 2) !== 0) {
                 $this->fail('Chỉ có thể hủy đơn nhận tại kho khi chưa thanh toán.');
             }
             DB::table('orders')->where('id', $orderId)->update(['status' => 'cancelled', 'updated_at' => now()]);
             DB::table('debts')->where('order_id', $orderId)->update(['amount' => 0, 'status' => 'settled', 'updated_at' => now()]);
+        });
+    }
+
+    public function reviewPickupOrder(int $orderId, int $salespersonId, bool $confirmed, ?string $reason = null): void
+    {
+        DB::transaction(function () use ($orderId, $salespersonId, $confirmed, $reason) {
+            $order = DB::table('orders')->where('id', $orderId)->lockForUpdate()->first();
+            if (! $order || $order->fulfillment_method !== 'pickup' || $order->status !== 'awaiting_confirmation') {
+                $this->fail('Chỉ có thể xử lý đơn nhận tại kho đang chờ xác nhận.');
+            }
+            if (! $confirmed && trim((string) $reason) === '') {
+                $this->fail('Cần ghi lý do từ chối đơn hàng.');
+            }
+            if ($confirmed) {
+                foreach (DB::table('order_items')->join('products', 'products.id', '=', 'order_items.product_id')
+                    ->where('order_items.order_id', $orderId)->select('order_items.*', 'products.name as product_name')->get() as $item) {
+                    $stock = DB::table('inventory')->where('warehouse_id', $order->pickup_warehouse_id)
+                        ->where('product_id', $item->product_id)->lockForUpdate()->first();
+                    $reserved = DB::table('order_items')->join('orders', 'orders.id', '=', 'order_items.order_id')
+                        ->where('orders.pickup_warehouse_id', $order->pickup_warehouse_id)
+                        ->whereIn('orders.status', ['awaiting_confirmation', 'awaiting_payment', 'ready_to_issue'])
+                        ->where('orders.id', '!=', $orderId)->where('order_items.product_id', $item->product_id)
+                        ->sum('order_items.quantity');
+                    if (bccomp(bcsub((string) ($stock->quantity ?? 0), (string) $reserved, 3), (string) $item->quantity, 3) < 0) {
+                        $this->fail($item->product_name.' không đủ tồn tại kho nhận hàng.');
+                    }
+                }
+            }
+            DB::table('orders')->where('id', $orderId)->update([
+                'status' => $confirmed ? 'awaiting_payment' : 'rejected',
+                'reviewed_by' => $salespersonId, 'reviewed_at' => now(),
+                'rejection_reason' => $confirmed ? null : trim($reason), 'updated_at' => now(),
+            ]);
+            if (! $confirmed) {
+                DB::table('debts')->where('order_id', $orderId)->update([
+                    'amount' => 0, 'status' => 'settled', 'updated_at' => now(),
+                ]);
+            }
         });
     }
 
@@ -372,6 +414,12 @@ class CommerceWorkflow
             if (! in_array($method, ['cash', 'bank_transfer'], true)) {
                 $this->fail('Phương thức thanh toán không hợp lệ.');
             }
+            if ($debt->order_id) {
+                $order = DB::table('orders')->where('id', $debt->order_id)->lockForUpdate()->first();
+                if (! $order || in_array($order->status, ['awaiting_confirmation', 'rejected', 'cancelled'], true)) {
+                    $this->fail('Đơn hàng chưa được xác nhận hoặc đã kết thúc.');
+                }
+            }
             $id = DB::table('payments')->insertGetId([
                 'code' => 'TEMP-'.uniqid(), 'debt_id' => $debtId, 'recorded_by' => $accountantId,
                 'amount' => $amount, 'method' => $method, 'reference' => $reference,
@@ -420,6 +468,12 @@ class CommerceWorkflow
                 if (! $debt || $debt->direction !== 'receivable' || $debt->customer_id !== $credit->customer_id
                     || bccomp($amount, bcsub((string) $debt->amount, (string) $debt->paid, 2), 2) > 0) {
                     $this->fail('Chỉ được cấn trừ vào công nợ còn phải thu của cùng khách hàng.');
+                }
+                if ($debt->order_id) {
+                    $order = DB::table('orders')->where('id', $debt->order_id)->lockForUpdate()->first();
+                    if (! $order || in_array($order->status, ['awaiting_confirmation', 'rejected', 'cancelled'], true)) {
+                        $this->fail('Đơn hàng chưa được xác nhận hoặc đã kết thúc.');
+                    }
                 }
                 $paid = bcadd((string) $debt->paid, $amount, 2);
                 DB::table('debts')->where('id', $debtId)->update([

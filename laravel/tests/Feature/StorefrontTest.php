@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Services\CommerceWorkflow;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -111,8 +112,27 @@ class StorefrontTest extends TestCase
     public function test_catalog_and_product_page_render_from_database(): void
     {
         $product = DB::table('products')->insertGetId(['code' => 'XM1', 'name' => 'Xi măng thử', 'unit' => 'bao', 'price' => 100]);
-        $this->get('/products')->assertOk()->assertSee('Xi măng thử');
-        $this->get('/products/'.$product)->assertOk()->assertSee('Xi măng thử');
+        $this->get('/products')->assertOk()->assertSee('Xi măng thử')->assertSee('Hết hàng')->assertDontSee('Tồn kho: 0 bao');
+        $this->get('/products/'.$product)->assertOk()->assertSee('Xi măng thử')->assertSee('Tồn kho tham khảo');
+    }
+
+    public function test_storefront_stock_excludes_pickup_reservations_and_stays_warehouse_specific(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer', 'status' => 'active']);
+        $firstWarehouse = DB::table('warehouses')->insertGetId(['code' => 'K1', 'name' => 'Kho A']);
+        $secondWarehouse = DB::table('warehouses')->insertGetId(['code' => 'K2', 'name' => 'Kho B']);
+        $product = DB::table('products')->insertGetId(['code' => 'XM-STOCK', 'name' => 'Xi măng tồn kho', 'unit' => 'bao', 'price' => 100, 'direct_purchase_allowed' => true]);
+        DB::table('inventory')->insert([
+            ['warehouse_id' => $firstWarehouse, 'product_id' => $product, 'quantity' => 5],
+            ['warehouse_id' => $secondWarehouse, 'product_id' => $product, 'quantity' => 2],
+        ]);
+        app(CommerceWorkflow::class)->placePickupOrder($customer->id, [$product => 5], $firstWarehouse);
+
+        $this->get('/products')->assertOk()->assertSee('Tồn kho: 2 bao');
+        $this->get('/products/'.$product)->assertOk()
+            ->assertSee('Kho A</span><strong class="is-unavailable">Hết hàng', false)
+            ->assertSee('>2 bao</strong>', false)
+            ->assertDontSee('Số lượng có thể thay đổi');
     }
 
     public function test_counted_materials_use_whole_quantities_and_bulk_materials_allow_fractions(): void

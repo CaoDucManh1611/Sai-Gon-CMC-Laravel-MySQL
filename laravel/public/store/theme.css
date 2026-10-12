@@ -37,11 +37,14 @@ html[data-theme=dark] .product-visual .material-image{background-color:#28332b}
 html[data-theme=dark] .auth-error{background:#462823;color:#ffccc2}
 html[data-theme=dark] .site-notice-icon{background:#315441;color:#d7f1d9}
 html[data-theme=dark] .site-notice-error .site-notice-icon{background:#50332d;color:#ffc7bb}
+html[data-theme=dark] .site-notice.site-notice-error{border-left-color:#ed896c}
 html[data-theme=dark] .site-footer{background:#0b1511}
 html[data-theme=dark] .chat-message.user{background:#315540;color:#fff}
 html[data-theme=dark] .chat-note{background:#18251e}
 html[data-theme=dark] .chat-form{background:#26372c;border-color:var(--line)}
 html[data-theme=dark] .product-badge{background:#294436;color:#e9efdf}
+html[data-theme=dark] .product-stock{color:#9ef0b7}html[data-theme=dark] .product-stock.is-unavailable{color:#ffc38f}
+html[data-theme=dark] .product-stock-row .is-unavailable{color:#ffc38f}
 html[data-theme=dark] .status.wait{background:#4b3927;color:#f4d9aa}
 html[data-theme=dark] .cart-remove{color:#f0b18d}
 html[data-theme=dark] .btn-outline-dark{color:var(--ink);border-color:#718a75}
@@ -88,9 +91,12 @@ html[data-theme=dark] .staff-app .staff-record-list,html[data-theme=dark] .staff
 
 html[data-theme=dark] .cmc-select-error{color:#ffb6a8}html[data-theme=dark] .btn-outline-danger{color:#ffb6a8;border-color:#bc7b70}html[data-theme=dark] .btn-outline-danger:hover{background:#5d302b;color:#fff}
 html[data-theme=dark] .quote-card .status,html[data-theme=dark] .order-list .status{border-color:#5b7562}
-html[data-theme=dark] :is(.quote-card .status-requested,.quote-card .status-draft,.quote-card .status-pending_discount_approval,.order-list .status-awaiting_payment){background:#5b421e;color:#ffe7ab;border-color:#aa8542}
+html[data-theme=dark] :is(.quote-card .status-requested,.quote-card .status-draft,.quote-card .status-pending_discount_approval,.order-list .status-awaiting_confirmation,.order-list .status-awaiting_payment){background:#5b421e;color:#ffe7ab;border-color:#aa8542}
 html[data-theme=dark] :is(.quote-card .status-sent,.quote-card .status-accepted,.order-list .status-ready_to_issue,.order-list .status-ready_to_ship,.order-list .status-delivered){background:#1e5036;color:#d6f3df;border-color:#5c9c72}
-html[data-theme=dark] :is(.quote-card .status-rejected,.quote-card .status-cancelled,.order-list .status-cancelled,.order-list .status-delivery_incident){background:#602e2b;color:#ffe0d8;border-color:#b07168}
+html[data-theme=dark] :is(.quote-card .status-rejected,.quote-card .status-cancelled,.order-list .status-rejected,.order-list .status-cancelled,.order-list .status-delivery_incident){background:#602e2b;color:#ffe0d8;border-color:#b07168}
+html[data-theme=dark] .quote-detail-status{background:#5b421e;color:#ffe7ab;border-color:#aa8542}
+html[data-theme=dark] .quote-detail-status:is(.status-sent,.status-accepted,.status-approved){background:#1e5036;color:#d6f3df;border-color:#5c9c72}
+html[data-theme=dark] .quote-detail-status:is(.status-rejected,.status-cancelled){background:#602e2b;color:#ffe0d8;border-color:#b07168}
 html[data-theme=dark] .quote-actions .btn-outline-dark,html[data-theme=dark] .order-manage summary,html[data-theme=dark] .order-manage .btn-editorial.dark{background:#3b7956;color:#fff;border-color:#83bd92}
 html[data-theme=dark] .quote-actions .btn-outline-dark:hover,html[data-theme=dark] .order-manage summary:hover,html[data-theme=dark] .order-manage .btn-editorial.dark:hover{background:#4d936c;color:#fff;border-color:#a9d9ad}
 html[data-theme=dark] .quote-actions .btn-outline-danger,html[data-theme=dark] .order-manage .btn-outline-danger{background:#4e2926;color:#ffe1d9;border-color:#bd8177}
