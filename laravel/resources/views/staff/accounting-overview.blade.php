@@ -1,5 +1,5 @@
 @php
-    $openReceivables = $debts->filter(fn ($debt) => $debt->direction === 'receivable' && $debt->status === 'open' && $debt->paid < $debt->amount);
+    $openReceivables = $debts->filter(fn ($debt) => $debt->direction === 'receivable' && $debt->status === 'open' && $debt->paid < $debt->amount && !in_array($debt->order_status, ['rejected', 'cancelled'], true) && (!$debt->requires_contract || $debt->contract_status === 'signed'));
     $openPayables = $debts->filter(fn ($debt) => $debt->direction === 'payable' && $debt->status === 'open' && $debt->paid < $debt->amount);
     $pendingInvoices = $orders->filter(fn ($order) => $order->status === 'ready_to_issue' && !isset($invoices[$order->id]));
     $openCredits = $customerCredits->filter(fn ($credit) => $credit->status === 'open' && (float) $credit->amount > (float) ($creditUsed[$credit->id] ?? 0));

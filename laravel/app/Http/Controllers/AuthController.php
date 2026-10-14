@@ -76,17 +76,19 @@ class AuthController extends Controller
                 ? 'Khách hàng đăng nhập bằng số điện thoại đã dùng khi đăng ký, không dùng họ tên.'
                 : 'Số điện thoại/tên đăng nhập hoặc mật khẩu không đúng.'])->onlyInput('login');
         }
-        if ($user->locked_until && $user->locked_until->isFuture()) {
-            return back()->withErrors(['login' => 'Tài khoản tạm khóa. Vui lòng thử lại sau.'])->onlyInput('login');
+        if ($user->locked_until !== null) {
+            return back()->withErrors(['login' => 'Tài khoản tạm khóa. Vui lòng liên hệ quản trị viên để mở khóa.'])->onlyInput('login');
         }
         if (! Hash::check($credentials['password'], $user->password)) {
             $attempts = $user->failed_logins + 1;
             $user->forceFill([
-                'failed_logins' => $attempts >= 5 ? 0 : $attempts,
-                'locked_until' => $attempts >= 5 ? now()->addMinutes(15) : null,
+                'failed_logins' => $attempts,
+                'locked_until' => $attempts > 5 ? now() : null,
             ])->save();
 
-            return back()->withErrors(['login' => 'Thông tin đăng nhập không đúng.'])->onlyInput('login');
+            return back()->withErrors(['login' => $attempts > 5
+                ? 'Tài khoản tạm khóa. Vui lòng liên hệ quản trị viên để mở khóa.'
+                : 'Thông tin đăng nhập không đúng.'])->onlyInput('login');
         }
         $user->forceFill(['failed_logins' => 0, 'locked_until' => null])->save();
         Auth::login($user, $request->boolean('remember'));

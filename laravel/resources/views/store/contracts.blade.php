@@ -4,10 +4,11 @@
 <div class="container-fluid container-wide pb-5">
     <div class="page-intro"><h1 class="page-title">Hợp đồng của tôi</h1><p class="page-subtitle">Xem điều khoản sau khi Ban quản lý phê duyệt. Chỉ xác nhận khi thông tin và giá trị đã đúng.</p></div>
     @forelse($contracts as $contract)
-        <article class="order-card">
-            <div class="order-head"><strong>{{ $contract->code }}</strong><span class="status">{{ $contract->status === 'approved' && !$contract->customer_confirmed_at ? 'Chờ bạn xác nhận' : \App\Support\UiFormat::status($contract->status) }}</span></div>
+        <article class="order-card customer-contract-card">
+            <div class="order-head"><strong>{{ $contract->code }}</strong><span class="status status-{{ $contract->status }}">{{ $contract->status === 'approved' && !$contract->customer_confirmed_at ? 'Chờ bạn xác nhận' : \App\Support\UiFormat::status($contract->status) }}</span></div>
             <div class="row g-3"><div class="col-md-4"><span class="muted">Giá trị</span><strong class="d-block">{{ number_format($contract->total,0,',','.') }} ₫</strong></div><div class="col-md-4"><span class="muted">Đặt cọc yêu cầu</span><strong class="d-block">{{ number_format($contract->deposit_required,0,',','.') }} ₫</strong></div><div class="col-md-4"><span class="muted">Ngày lập</span><strong class="d-block">{{ $contract->created_at }}</strong></div></div>
-            <div class="mt-3"><strong>Điều khoản thanh toán</strong><p>{{ $contract->payment_terms }}</p><strong>Điều khoản giao hàng</strong><p>{{ $contract->delivery_terms }}</p></div>
+            <div class="mt-3">@if($contract->order_code)<p><strong>Đơn hàng:</strong> {{ $contract->order_code }}</p>@endif<strong>Điều khoản thanh toán</strong><p>{{ $contract->payment_terms }}</p><strong>Điều khoản giao hàng</strong><p>{{ $contract->delivery_terms }}</p></div>
+            @if($contract->order_id)<div class="table-responsive"><table class="table"><thead><tr><th>Vật liệu</th><th>Quy cách</th><th>Số lượng</th><th>Đơn giá</th></tr></thead><tbody>@foreach($contractItems[$contract->order_id] ?? [] as $item)<tr><td>{{ $item->product_name }}</td><td>{{ $item->specification }}</td><td>{{ \App\Support\UiFormat::quantity($item->quantity) }} {{ $item->unit }}</td><td>{{ number_format($item->unit_price,0,',','.') }} ₫</td></tr>@endforeach</tbody></table></div>@endif
             @if($contract->customer_note)<p class="muted">Ý kiến của bạn: {{ $contract->customer_note }}</p>@endif
             @if($contract->cancellation_note)<p class="muted">Lý do hủy: {{ $contract->cancellation_note }}</p>@endif
             @if($contract->status === 'approved' && !$contract->customer_confirmed_at)
@@ -17,6 +18,6 @@
                 </div>
             @elseif($contract->customer_confirmed_at && $contract->status === 'approved')<p class="muted">Bạn đã xác nhận nội dung. Nhân viên sẽ hoàn tất bản ký và chuyển sang thanh toán.</p>@endif
         </article>
-    @empty<div class="empty-state"><h2>Chưa có hợp đồng</h2><p>Hợp đồng sẽ xuất hiện sau khi bạn chấp nhận báo giá.</p><a class="btn-editorial dark" href="{{ route('my.quotes') }}">Xem báo giá</a></div>@endforelse
+    @empty<div class="empty-state"><h2>Chưa có hợp đồng</h2><p>Hợp đồng sẽ xuất hiện sau khi nhân viên Kinh doanh xác nhận đơn hàng.</p><a class="btn-editorial dark" href="{{ route('my.orders') }}">Xem đơn hàng</a></div>@endforelse
 </div>
 @endsection

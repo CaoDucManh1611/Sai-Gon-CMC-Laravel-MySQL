@@ -185,7 +185,7 @@ html{scroll-padding-top:78px}
 .sales-kicker{font-size:10px;font-weight:700;letter-spacing:.18em;color:#557766}
 .sales-section-note,.sales-result-count{font-size:12px;color:var(--staff-muted)}
 .sales-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
-.sales-order-filters{display:grid;grid-template-columns:minmax(220px,2fr) minmax(170px,1fr) auto auto;gap:12px;align-items:end;padding:18px;margin-bottom:20px;background:#f3f7f3;border:1px solid var(--staff-line);border-radius:10px}.sales-order-filters label,.sales-order-actions label{font-size:12px;font-weight:700;color:var(--staff-ink)}.sales-order-filters :is(input,select){display:block;margin-top:7px}.sales-order-card{border:1px solid var(--staff-line);border-radius:10px;background:#fff;margin-bottom:10px;overflow:hidden}.sales-order-card[open]{border-color:#91ad98}.sales-order-card summary{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(130px,1fr) minmax(130px,.8fr) 75px;align-items:center;gap:15px;padding:18px;cursor:pointer;list-style:none}.sales-order-card summary::-webkit-details-marker{display:none}.sales-order-card summary:hover{background:#f5f8f5}.sales-order-card summary>span:first-child strong,.sales-order-card summary small{display:block}.sales-order-card summary small{color:var(--staff-muted);font-size:12px;margin-top:4px}.sales-order-total{font-size:13px}.sales-order-open{display:inline-flex;align-items:center;justify-content:flex-end;gap:5px;white-space:nowrap;font-size:12px;font-weight:700;color:#2f674d}.sales-order-open svg{display:block;width:14px;height:14px;flex:none;stroke:currentColor;stroke-width:1.7;fill:none;transition:transform .2s}.sales-order-card[open] .sales-order-open svg{transform:rotate(180deg)}.sales-order-badge{width:max-content;padding:6px 10px;border-radius:5px;font-size:11px;font-weight:700;background:#e8efea;color:#315d43}.sales-order-badge.status-awaiting_confirmation,.sales-order-badge.status-awaiting_payment{background:#fff0d6;color:#835216}.sales-order-badge.status-rejected,.sales-order-badge.status-cancelled{background:#fce9e5;color:#a34435}.sales-order-detail{padding:20px;border-top:1px solid var(--staff-line)}.sales-order-detail dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:20px}.sales-order-detail dt{font-size:11px;color:var(--staff-muted)}.sales-order-detail dd{margin:4px 0 0;font-size:13px;overflow-wrap:anywhere}.sales-order-detail .table{margin:0}.sales-order-reason{margin:16px 0 0;color:#9b3f32}
+.sales-order-filters{display:grid;grid-template-columns:minmax(220px,2fr) minmax(170px,1fr) auto auto;gap:12px;align-items:end;padding:18px;margin-bottom:20px;background:#f3f7f3;border:1px solid var(--staff-line);border-radius:10px}.sales-order-filters label,.sales-order-actions label{font-size:12px;font-weight:700;color:var(--staff-ink)}.sales-order-filters :is(input,select){display:block;margin-top:7px}.sales-order-card{border:1px solid var(--staff-line);border-radius:10px;background:#fff;margin-bottom:10px;overflow:hidden}.sales-order-card[open]{border-color:#91ad98}.sales-order-card summary{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(130px,1fr) minmax(130px,.8fr) 75px;align-items:center;gap:15px;padding:18px;cursor:pointer;list-style:none}.sales-order-card summary::-webkit-details-marker{display:none}.sales-order-card summary:hover{background:#f5f8f5}.sales-order-card summary>span:first-child strong,.sales-order-card summary small{display:block}.sales-order-card summary small{color:var(--staff-muted);font-size:12px;margin-top:4px}.sales-order-total{font-size:13px}.sales-order-open{display:inline-flex;align-items:center;justify-content:flex-end;gap:5px;white-space:nowrap;font-size:12px;font-weight:700;color:#2f674d}.sales-order-open svg{display:block;width:14px;height:14px;flex:none;stroke:currentColor;stroke-width:1.7;fill:none;transition:transform .2s}.sales-order-card[open] .sales-order-open svg{transform:rotate(180deg)}.sales-order-badge{width:max-content;padding:6px 10px;border-radius:5px;font-size:11px;font-weight:700;background:#e8efea;color:#315d43}.sales-order-badge.status-awaiting_confirmation,.sales-order-badge.status-awaiting_contract,.sales-order-badge.status-awaiting_payment{background:#fff0d6;color:#835216}.sales-order-badge.status-rejected,.sales-order-badge.status-cancelled{background:#fce9e5;color:#a34435}.sales-order-detail{padding:20px;border-top:1px solid var(--staff-line)}.sales-order-detail dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:20px}.sales-order-detail dt{font-size:11px;color:var(--staff-muted)}.sales-order-detail dd{margin:4px 0 0;font-size:13px;overflow-wrap:anywhere}.sales-order-detail .table{margin:0}.sales-order-reason{margin:16px 0 0;color:#9b3f32}
 @media(max-width:800px){.sales-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.sales-order-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.sales-order-card summary{grid-template-columns:repeat(2,minmax(0,1fr))}.sales-order-detail dl{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.sales-order-filters,.sales-order-card summary,.sales-order-detail dl{grid-template-columns:1fr}.sales-order-actions form,.sales-order-actions form:last-child,.sales-order-actions label{width:100%}}
 html[data-theme=dark] .sales-order-filters,html[data-theme=dark] .sales-order-card{background:#1c2b22;border-color:var(--staff-line);color:var(--staff-ink)}html[data-theme=dark] .sales-order-card summary:hover{background:#294134}html[data-theme=dark] .sales-order-badge{background:#1e5036;color:#d6f3df}html[data-theme=dark] .sales-order-badge.status-awaiting_confirmation,html[data-theme=dark] .sales-order-badge.status-awaiting_payment{background:#5b421e;color:#ffe7ab}html[data-theme=dark] .sales-order-badge.status-rejected,html[data-theme=dark] .sales-order-badge.status-cancelled{background:#602e2b;color:#ffe0d8}html[data-theme=dark] .sales-order-reason{color:#ffc7bb}
@@ -306,3 +306,224 @@ html[data-theme=dark] :is(.admin-metric,.admin-card){background:#1c2b22;border-c
 .staff-app .staff-management-section .management-picker>.cmc-select{margin-top:0}
 .staff-app #management-customers form.order-card .form-control{width:160px;min-height:44px}
 .staff-app #management-customers form.order-card .btn{min-height:44px}
+
+/* Review workspaces: independent task groups and a shared local filter toolbar. */
+.staff-app :is(.warehouse-workspace-panel,.finance-workspace-panel){padding:0;border:0;background:transparent;box-shadow:none}
+.staff-app :is(.warehouse-workspace-panel,.finance-workspace-panel)>.staff-workspace-scroll{display:grid;gap:18px;max-height:none;overflow:visible;padding:0}
+.staff-app :is(.warehouse-workspace-panel,.finance-workspace-panel)>.staff-workspace-scroll>section{min-width:0;margin:0!important;padding:24px;background:var(--staff-card,#fff);border:1px solid var(--staff-line);border-radius:14px;box-shadow:0 5px 20px rgba(20,52,41,.045)}
+.staff-app .staff-subpanel h3{font-size:18px;margin:0 0 15px}
+.staff-app #orders:before{content:'Đơn cần xuất kho và giao nhận';display:block;font-size:19px;font-weight:700;letter-spacing:-.025em;margin-bottom:16px;color:var(--staff-ink)}
+.staff-app #purchases:before{content:'Đề xuất và phiếu nhập';display:block;font-size:19px;font-weight:700;letter-spacing:-.025em;margin-bottom:16px;color:var(--staff-ink)}
+.staff-app .staff-filterbar{display:grid;grid-template-columns:minmax(180px,2fr) minmax(145px,1fr) minmax(145px,1fr) auto auto;align-items:end;gap:12px;padding:15px;margin:0 0 18px;background:#edf3ef;border:1px solid var(--staff-line);border-radius:10px}
+.staff-app .staff-filterbar label{display:block;min-width:0;margin:0;font-size:12px;font-weight:700;color:var(--staff-ink)}
+.staff-app .staff-filterbar :is(.form-control,.form-select){display:block;width:100%;min-height:42px;margin-top:6px;border-radius:7px!important}
+.staff-app .staff-filter-clear{min-height:42px;padding:9px 16px;background:#fff;color:#28513b;border:1px solid #7d9d87;border-radius:7px;font-size:13px;font-weight:700;white-space:nowrap}
+.staff-app .staff-filter-clear:hover{background:#dfeee3;border-color:#416d50;color:#173f2b}
+.staff-app .staff-filter-count{font-size:12px;color:var(--staff-muted);white-space:nowrap;padding-bottom:12px}
+.staff-app .staff-filter-empty{padding:20px;border:1px dashed var(--staff-line);border-radius:9px;color:var(--staff-muted);text-align:center}
+.staff-app .staff-workspace-expanded{max-height:none;overflow:visible;padding-right:0}
+.staff-app [hidden]{display:none!important}
+.staff-app #contracts>form{display:flex!important;align-items:end;flex-wrap:wrap;padding:16px;margin-bottom:18px!important;background:#edf3ef;border:1px solid var(--staff-line);border-radius:10px}
+.staff-app #contracts>form .form-control{max-width:none!important;width:min(360px,68vw)}
+.staff-app #contracts>form .btn{min-height:42px}
+.staff-app #contracts details.order-card,.staff-app #contracts details.order-card:hover,.staff-app #contracts details.order-card[open]{transform:none;animation:none;box-shadow:none}
+.staff-app #contracts details.order-card>summary{display:grid;grid-template-columns:minmax(135px,1fr) minmax(170px,1.35fr) auto auto;gap:10px 18px;align-items:center;min-height:67px;transition:none;font-size:13px}
+.staff-app #contracts details.order-card>summary:before{display:none}
+.staff-app #contracts details.order-card>summary:hover{background:#edf3ef}
+.staff-app #contracts details.order-card[open]>div{animation:none}
+.staff-app .contract-context{color:var(--staff-muted)}
+.staff-app .contract-amount{font-size:14px;white-space:nowrap;color:var(--staff-ink);text-align:right}
+.staff-app .staff-state-badge{display:inline-flex;justify-content:center;align-items:center;width:max-content;max-width:100%;padding:6px 10px;border-radius:6px;background:#fff0d5;color:#7b5018;font-size:11px;font-weight:700;line-height:1.3;text-align:center;white-space:nowrap}
+.staff-app #contracts details.order-card>div>p{margin:0 0 9px;color:var(--staff-ink);line-height:1.6}
+.staff-app #contracts details.order-card .table-responsive{margin:18px 0;border:1px solid var(--staff-line);border-radius:8px}
+.staff-app #contracts details.order-card .table tbody tr,.staff-app #contracts details.order-card .table tbody tr:hover{transform:none!important;transition:none!important}
+.staff-app #contracts details.order-card form{display:flex;align-items:end;gap:10px;flex-wrap:wrap;margin-top:16px!important}
+.staff-app #contracts details.order-card form .form-label{margin:0;min-width:180px;flex:1}
+.staff-app #contracts details.order-card form .btn{margin:0!important;min-height:42px}
+.staff-app #finance>.table-responsive{border:1px solid var(--staff-line);border-radius:10px;overflow:auto}
+.staff-app #finance .table{margin:0;min-width:1190px}
+.staff-app #finance .table th,.staff-app #finance .table td{padding:13px 14px;vertical-align:middle}
+.staff-app #finance .table :is(th,td):nth-child(-n+2){white-space:nowrap}
+.staff-app .finance-type-badge{display:inline-flex;padding:5px 8px;border-radius:5px;font-size:11px;font-weight:700;white-space:nowrap}
+.staff-app .finance-type-badge{align-items:center;justify-content:center;text-align:center;min-width:82px}
+.staff-app .finance-type-badge.is-receivable{background:#e3f1e7;color:#245f3e}
+.staff-app .finance-type-badge.is-payable{background:#e6edf7;color:#315778}
+.staff-app .finance-type-badge.is-pending{background:#fff0d5;color:#7b5018}
+.staff-app #finance .table tbody tr:hover{transform:none!important}
+.staff-app #finance td:last-child form{min-width:295px;padding:8px;background:#e5f2e9;border:1px solid #add0b6;border-radius:8px;gap:7px!important}
+.staff-app #finance td:last-child form .btn{background:#17624c;border-color:#17624c;color:#fff;font-weight:700;min-height:36px}
+.staff-app #finance td:last-child form .btn:hover{background:#104a39}
+.staff-app .finance-workspace-panel .order-card{box-shadow:none}
+.staff-app :is(#management-customers,#management-approvals){max-height:none}
+.staff-app #management-approvals article.order-card{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(260px,340px);align-items:start;gap:20px}
+.staff-app #management-approvals article.order-card{animation:none!important;transform:none!important}
+.staff-app #management-approvals article.order-card>div{min-width:0}
+.staff-app #management-approvals article.order-card>form{display:grid;grid-template-columns:1fr 1fr;gap:9px;align-items:end;padding:15px;background:#edf3ef;border:1px solid var(--staff-line);border-radius:9px}
+.staff-app #management-approvals article.order-card>form label{grid-column:1/-1;margin:0}
+.staff-app #management-approvals article.order-card>form .btn{width:100%;min-height:42px;margin:0!important}
+.staff-app #management-customers form.order-card{display:grid!important;grid-template-columns:minmax(240px,1fr) minmax(140px,200px) 100px;gap:14px;align-items:center}
+.staff-app #management-customers form.order-card strong{min-width:0;overflow-wrap:anywhere}
+.staff-app #management-customers form.order-card .form-control{width:100%}
+.staff-app #management-customers form.order-card .btn{width:100%}
+.staff-app .staff-report-list details.order-card>summary{display:grid;grid-template-columns:130px minmax(0,1fr) auto;gap:12px;align-items:center}
+.staff-app .staff-report-list details.order-card>summary:before{display:none}
+.staff-app .staff-report-list .report-context{color:var(--staff-muted);overflow-wrap:anywhere}
+.staff-app .staff-state-badge.is-done{background:#e2f1e7;color:#245f3e}
+.staff-app .staff-state-badge.is-alert{background:#fbe7e3;color:#9b4136}
+.staff-app :is(.staff-report-list,#contracts) .staff-state-badge{white-space:normal}
+.staff-app .sales-order-filters .sales-clear-filter{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:9px 17px;border:1px solid #779b87;border-radius:7px;background:#fff;color:#29533a;font-size:13px;font-weight:700;text-decoration:none;align-self:end}
+.staff-app .sales-order-filters .sales-clear-filter:hover{background:#e2efe5;color:#173e29}
+html[data-theme=dark] .staff-app :is(.warehouse-workspace-panel,.finance-workspace-panel)>.staff-workspace-scroll>section{background:#1c2b22;border-color:var(--staff-line);box-shadow:none}
+html[data-theme=dark] .staff-app :is(.staff-filterbar,#contracts>form,#management-approvals article.order-card>form){background:#203729;border-color:var(--staff-line)}
+html[data-theme=dark] .staff-app :is(.staff-filter-clear,.sales-order-filters .sales-clear-filter){background:#223d2d;color:#d4f1db;border-color:#577d60}
+html[data-theme=dark] .staff-app :is(.staff-filter-clear:hover,.sales-order-filters .sales-clear-filter:hover){background:#31543b;color:#fff}
+html[data-theme=dark] .staff-app #contracts details.order-card>summary:hover{background:#294134}
+html[data-theme=dark] .staff-app #finance td:last-child form{background:#203f2d;border-color:#4b805d}
+html[data-theme=dark] .staff-app #finance td:last-child form .btn{background:#b9dfb8;border-color:#b9dfb8;color:#10261e}
+html[data-theme=dark] .staff-app .finance-type-badge.is-receivable{background:#21563a;color:#dcf6e3}
+html[data-theme=dark] .staff-app .finance-type-badge.is-payable{background:#294462;color:#d9ebff}
+html[data-theme=dark] .staff-app .finance-type-badge.is-pending{background:#624a25;color:#ffe8b5}
+html[data-theme=dark] .staff-app .staff-state-badge{background:#624a25;color:#ffe8b5}
+html[data-theme=dark] .staff-app .staff-state-badge.is-done{background:#21563a;color:#dcf6e3}
+html[data-theme=dark] .staff-app .staff-state-badge.is-alert{background:#65312d;color:#ffe0d8}
+@media(max-width:980px){.staff-app .staff-filterbar{grid-template-columns:repeat(2,minmax(0,1fr))}.staff-app .staff-filter-count{padding-bottom:0}.staff-app #management-approvals article.order-card{grid-template-columns:1fr}}
+@media(max-width:650px){.staff-app .staff-filterbar{grid-template-columns:1fr}.staff-app #contracts details.order-card>summary{grid-template-columns:1fr auto}.staff-app .contract-context{grid-column:1}.staff-app .contract-amount{grid-column:2;grid-row:1/3}.staff-app #management-customers form.order-card{grid-template-columns:1fr}.staff-app .staff-report-list details.order-card>summary{grid-template-columns:1fr auto}.staff-app .staff-report-list .report-context{grid-column:1/-1;grid-row:2}.staff-app :is(.warehouse-workspace-panel,.finance-workspace-panel)>.staff-workspace-scroll>section{padding:17px}}
+.staff-app .contract-workspace-panel { animation: none !important; }
+.staff-app :is(.warehouse-workspace-panel,.finance-workspace-panel),
+.staff-app :is(#orders,#returns,#purchases,#supplier-incidents) .order-card{animation:none!important}
+
+/* Compact document rows keep status and the primary approval action in view. */
+.staff-app .purchase-entry{display:flex;align-items:center;gap:14px;min-width:0;margin-bottom:10px;padding-right:14px;border:1px solid var(--staff-line);border-radius:11px;background:#fff}
+.staff-app .purchase-entry>details.order-card{flex:1;min-width:0;margin:0;border:0;box-shadow:none;background:transparent}
+.staff-app .purchase-entry>details.order-card>summary{display:flex;align-items:center;gap:12px;min-height:65px;padding:12px 16px;color:var(--staff-ink)}
+.staff-app .purchase-entry>details.order-card>summary:before{display:none}
+.staff-app .purchase-entry>details.order-card>summary:hover{background:transparent}
+.staff-app .purchase-entry .purchase-amount{margin-left:auto;white-space:nowrap;font-size:13px;color:var(--staff-ink)}
+.staff-app .purchase-entry .purchase-approve-action{flex:none;margin:0}
+.staff-app .purchase-entry .purchase-approve-action .btn{min-height:40px;margin:0;white-space:nowrap}
+.staff-app .staff-record-heading{display:flex;align-items:center;gap:10px 14px;min-width:0;color:var(--staff-ink)}
+.staff-app .staff-record-heading>strong{flex:none;color:var(--staff-ink)}
+.staff-app .staff-record-heading>span:not(.staff-state-badge){min-width:0;color:var(--staff-muted)}
+.staff-app .staff-record-heading>.staff-record-description{flex:1}
+.staff-app .staff-record-heading>.staff-state-badge{margin-left:auto;flex:none}
+.staff-app #orders .staff-record-heading{display:flex;margin-bottom:5px}
+.staff-app #supplier-incidents .staff-record-heading{margin-bottom:7px}
+.staff-app #returns .staff-record-heading{margin-bottom:6px;flex-wrap:wrap}
+.staff-app .warehouse-stocktake-row>div{min-width:0;flex:1}
+.staff-app .warehouse-stocktake-row .staff-record-heading{flex-wrap:wrap}
+.staff-app #management-approvals article.order-card{grid-template-columns:1fr}
+.staff-app #management-approvals article.order-card>form{grid-template-columns:minmax(200px,1fr) auto auto;max-width:100%;align-items:end}
+.staff-app #management-approvals article.order-card>form label{grid-column:auto}
+.staff-app #management-approvals article.order-card>form .btn{min-width:120px}
+html[data-theme=dark] .staff-app .purchase-entry{background:#1c2b22;border-color:var(--staff-line)}
+html[data-theme=dark] .staff-app .purchase-entry>details.order-card>summary{color:var(--staff-ink)}
+html[data-theme=dark] .staff-app .purchase-entry>details.order-card>summary:hover{background:#243a2c}
+html[data-theme=dark] .staff-app :is(.staff-record-heading,.staff-record-heading>strong,.purchase-entry .purchase-amount){color:var(--staff-ink)}
+html[data-theme=dark] .staff-app .staff-record-heading>span:not(.staff-state-badge){color:var(--staff-muted)}
+html[data-theme=dark] .staff-app .purchase-entry .purchase-approve-action .btn{background:#b9dfb8;border-color:#b9dfb8;color:#10261e}
+html[data-theme=dark] .staff-app .purchase-entry .purchase-approve-action .btn:hover{background:#d1efcc;border-color:#d1efcc}
+html[data-theme=dark] .staff-app #management-approvals :is(.badge.bg-warning,.badge.bg-success){border:1px solid transparent}
+html[data-theme=dark] .staff-app #management-approvals .badge.bg-warning{background:#624a25!important;border-color:#8b6b35!important;color:#ffe8b5!important}
+html[data-theme=dark] .staff-app #management-approvals .badge.bg-success{background:#21563a!important;border-color:#337750!important;color:#dcf6e3!important}
+@media(max-width:700px){.staff-app .purchase-entry{align-items:stretch;flex-direction:column;padding:0 12px 12px}.staff-app .purchase-entry>details.order-card{width:100%}.staff-app .purchase-entry .purchase-approve-action .btn{width:100%}.staff-app #management-approvals article.order-card>form{grid-template-columns:1fr 1fr}.staff-app #management-approvals article.order-card>form label{grid-column:1/-1}}
+
+/* Shared aligned list columns. */
+.staff-app :is(.purchase-columns,.orders-columns){display:grid;align-items:center;gap:16px;padding:10px 16px;margin:0 0 8px;border-bottom:1px solid var(--staff-line);color:var(--staff-muted);font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+.staff-app .purchase-columns,.staff-app .purchase-entry{grid-template-columns:190px 160px minmax(0,1fr) 190px}
+.staff-app .purchase-entry{display:grid;gap:16px;padding:0 16px}
+.staff-app .purchase-entry>details.order-card{grid-column:1/4;width:100%}
+.staff-app .purchase-entry>details.order-card>summary{display:grid;grid-template-columns:190px 160px minmax(0,1fr);gap:16px;padding:12px 0}
+.staff-app .purchase-entry .purchase-amount{margin:0;justify-self:end}
+.staff-app .purchase-entry .purchase-approve-action{grid-column:4;justify-self:stretch}
+.staff-app .purchase-entry .purchase-approve-action .btn{width:100%}
+.staff-app .purchase-columns>span:nth-child(3){text-align:right}
+.staff-app .purchase-columns>span:last-child{text-align:center}
+.staff-app .orders-columns,.staff-app #orders>.order-card{grid-template-columns:180px 160px minmax(0,1fr) 210px}
+.staff-app #orders>.order-card{display:grid!important;align-items:center;gap:16px;min-height:70px}
+.staff-app #orders>.order-card>:not(.order-record-code):not(.order-record-state):not(.order-record-destination){grid-column:4;justify-self:end}
+.staff-app #orders .order-record-code{font-weight:700;white-space:nowrap}
+.staff-app #orders .order-record-state{margin:0}
+.staff-app #orders .order-record-destination{min-width:0;color:var(--staff-muted)}
+.staff-app #orders .order-record-destination small{display:block;font-size:12px;line-height:1.45}
+.staff-app .orders-columns>span:last-child{text-align:right}
+/* Financial state and amount are distinct from ordinary table text. */
+.staff-app .finance-balance,.staff-app .finance-note-badge{display:inline-flex;align-items:center;width:max-content;max-width:100%;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:700;line-height:1.35;white-space:normal}
+.staff-app .finance-balance.is-open{background:#fff0d5;color:#7b5018}
+.staff-app .finance-balance.is-settled,.staff-app .finance-note-badge.is-done{background:#e2f1e7;color:#245f3e}
+.staff-app .finance-note-badge.is-pending{background:#fff0d5;color:#7b5018}
+.staff-app [aria-labelledby="debt-schedule-heading"] details.order-card>summary{display:grid;grid-template-columns:150px 120px minmax(130px,1fr) auto;align-items:center;gap:12px}
+.staff-app [aria-labelledby="debt-schedule-heading"] details.order-card>summary:before{display:none}
+.staff-app .debt-schedule-amount{justify-self:end;color:#975318;font-size:13px;white-space:nowrap}
+.staff-app [aria-labelledby="debt-schedule-heading"] details.order-card>summary small{color:var(--staff-muted)}
+/* The report list filter follows the width of the form and the results below it. */
+.staff-app .staff-report-list~.staff-filterbar,.staff-app .staff-filterbar:has(+ .staff-report-list){max-width:1100px}
+.staff-app :is(.sales-order-filters,.sales-filters)>.btn,.staff-app .staff-report-create>.btn{min-height:42px;background:#17624c;border:1px solid #17624c;color:#fff;font-weight:800;box-shadow:0 2px 6px #164d3426}
+.staff-app :is(.sales-order-filters,.sales-filters)>.btn:hover,.staff-app .staff-report-create>.btn:hover{background:#104a39;border-color:#104a39;color:#fff}
+.staff-app :is(.staff-filter-clear,.sales-order-filters .sales-clear-filter,.sales-filters .sales-clear-filter){background:#fff0d5;border:1px solid #ba8541;color:#704515;font-weight:800}
+.staff-app :is(.staff-filter-clear,.sales-order-filters .sales-clear-filter,.sales-filters .sales-clear-filter):hover{background:#ffe3ae;border-color:#945f24;color:#57330f}
+html[data-theme=dark] .staff-app :is(.purchase-columns,.orders-columns){color:#b7cdbb;border-bottom-color:#4b6652}
+html[data-theme=dark] .staff-app .finance-balance.is-open,html[data-theme=dark] .staff-app .finance-note-badge.is-pending{background:#624a25;color:#ffe8b5}
+html[data-theme=dark] .staff-app :is(.finance-balance.is-settled,.finance-note-badge.is-done){background:#21563a;color:#dcf6e3}
+html[data-theme=dark] .staff-app .debt-schedule-amount{color:#ffcf80}
+html[data-theme=dark] .staff-app :is(.sales-order-filters,.sales-filters)>.btn,html[data-theme=dark] .staff-app .staff-report-create>.btn{background:#c5e8ba;border-color:#c5e8ba;color:#10261e;box-shadow:0 2px 8px #0004}
+html[data-theme=dark] .staff-app :is(.sales-order-filters,.sales-filters)>.btn:hover,html[data-theme=dark] .staff-app .staff-report-create>.btn:hover{background:#daf2cd;border-color:#daf2cd;color:#10261e}
+html[data-theme=dark] .staff-app :is(.staff-filter-clear,.sales-order-filters .sales-clear-filter,.sales-filters .sales-clear-filter){background:#59442b;border-color:#a77d46;color:#ffe8b5}
+html[data-theme=dark] .staff-app :is(.staff-filter-clear,.sales-order-filters .sales-clear-filter,.sales-filters .sales-clear-filter):hover{background:#705435;border-color:#c69757;color:#fff0cf}
+@media(max-width:1100px){.staff-app .purchase-columns,.staff-app .orders-columns{display:none}.staff-app .purchase-entry{display:flex;padding:0 14px}.staff-app .purchase-entry>details.order-card>summary{display:flex;padding:12px 0}.staff-app .purchase-entry .purchase-amount{margin-left:auto}.staff-app #orders>.order-card{grid-template-columns:minmax(0,1fr) auto}.staff-app #orders .order-record-destination{grid-column:1/-1;grid-row:2}.staff-app #orders>.order-card>:not(.order-record-code):not(.order-record-state):not(.order-record-destination){grid-column:2;grid-row:2}.staff-app [aria-labelledby="debt-schedule-heading"] details.order-card>summary{grid-template-columns:1fr auto}}
+@media(max-width:700px){.staff-app .purchase-entry{flex-direction:column;padding:0 12px 12px}.staff-app .purchase-entry .purchase-approve-action{width:100%}.staff-app .purchase-entry .purchase-approve-action .btn{width:100%}.staff-app #orders>.order-card{grid-template-columns:1fr auto}.staff-app #orders .order-record-destination{grid-column:1/-1}.staff-app #orders>.order-card>:not(.order-record-code):not(.order-record-state):not(.order-record-destination){grid-column:1/-1;justify-self:start}.staff-app [aria-labelledby="debt-schedule-heading"] details.order-card>summary{grid-template-columns:1fr auto}.staff-app [aria-labelledby="debt-schedule-heading"] .finance-type-badge{grid-column:2}.staff-app .debt-schedule-amount{grid-column:1/-1;justify-self:start}}
+
+/* Reports use the available workspace width as one aligned unit. */
+.staff-app form.staff-report-create,.staff-app .staff-report-list,.staff-app .staff-filterbar:has(+ .staff-report-list){width:100%;max-width:none}
+.staff-app form.staff-report-create{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;gap:16px}
+.staff-app form.staff-report-create label{display:block;min-width:0;width:100%;font-size:12px;font-weight:700}
+.staff-app form.staff-report-create label :is(.form-control,.form-select){display:block;width:100%;min-height:42px;margin-top:7px}
+.staff-app form.staff-report-create>label:nth-of-type(8){grid-column:3/5}
+.staff-app form.staff-report-create>.btn{grid-column:5;width:100%}
+@media(max-width:1120px){.staff-app form.staff-report-create{grid-template-columns:repeat(3,minmax(0,1fr))}.staff-app form.staff-report-create>label:nth-of-type(8){grid-column:auto}.staff-app form.staff-report-create>.btn{grid-column:3}}
+@media(max-width:680px){.staff-app form.staff-report-create{grid-template-columns:repeat(2,minmax(0,1fr))}.staff-app form.staff-report-create>.btn{grid-column:1/-1}}
+@media(max-width:470px){.staff-app form.staff-report-create{grid-template-columns:1fr}}
+
+/* Contract list uses the same column rhythm as its heading. */
+.staff-app .contract-columns,.staff-app #contracts details.order-card>summary{display:grid;grid-template-columns:minmax(165px,1.2fr) minmax(220px,1.8fr) 170px 140px;align-items:center;gap:16px}
+.staff-app .contract-columns{padding:10px 20px;margin:0 0 8px;border-bottom:1px solid var(--staff-line);color:var(--staff-muted);font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+.staff-app .contract-columns>span:last-child{text-align:right}
+.staff-app #contracts details.order-card>summary{min-height:66px;padding:13px 20px}
+.staff-app #contracts details.order-card>summary .staff-state-badge{justify-self:start}
+.staff-app #contracts details.order-card>summary .contract-amount{justify-self:end;margin:0;text-align:right}
+html[data-theme=dark] .staff-app .contract-columns{color:#b7cdbb;border-bottom-color:#4b6652}
+@media(max-width:1200px){.staff-app .contract-columns{display:none}.staff-app #contracts details.order-card>summary{grid-template-columns:minmax(0,1fr) auto;gap:6px 12px}.staff-app #contracts details.order-card>summary>strong{grid-column:1;grid-row:1}.staff-app #contracts .contract-context{grid-column:1;grid-row:2}.staff-app #contracts .staff-state-badge{grid-column:1;grid-row:3}.staff-app #contracts .contract-amount{grid-column:2;grid-row:1/4}}
+.staff-app .staff-work-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:6px;border:1px solid var(--staff-line);border-radius:11px;background:#eaf1eb}
+.staff-app .staff-work-tab{min-height:42px;padding:9px 16px;border:1px solid transparent;border-radius:7px;background:transparent;color:var(--staff-ink);font-size:13px;font-weight:700;text-align:center}
+.staff-app .staff-work-tab:hover{background:#d9e8dc}
+.staff-app .staff-work-tab[aria-selected=true]{background:#204d35;border-color:#204d35;color:#fff;box-shadow:0 2px 8px #18392426}
+.staff-app [role=tabpanel][hidden],.staff-app .finance-payment-row[hidden]{display:none!important}
+.staff-app #finance tbody tr:has(.finance-row-toggle){cursor:pointer}
+.staff-app #finance tbody tr.is-payment-open{background:#f3f8f3}
+.staff-app .finance-row-toggle{padding:4px 0;border:0;background:transparent;color:var(--staff-ink);font-weight:800;text-align:left;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:3px}
+.staff-app .finance-row-toggle:hover,.staff-app .finance-row-toggle:focus-visible{text-decoration-color:currentColor}
+.staff-app .finance-payment-row>td{padding:14px 18px!important;background:#edf5ee}
+.staff-app .finance-payment-panel{width:100%;padding:0}
+.staff-app .finance-payment-panel form{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.staff-app .finance-payment-panel :is(input,select){min-height:40px}
+html[data-theme=dark] .staff-app .staff-work-tabs{background:#1d3125;border-color:var(--staff-line)}
+html[data-theme=dark] .staff-app .staff-work-tab:hover{background:#294a34}
+html[data-theme=dark] .staff-app .staff-work-tab[aria-selected=true]{background:#b9dfb8;border-color:#b9dfb8;color:#10261e}
+html[data-theme=dark] .staff-app #finance tbody tr.is-payment-open{background:#243b2d}
+html[data-theme=dark] .staff-app .finance-payment-row>td{background:#243b2d}
+@media(max-width:650px){.staff-app .staff-work-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.staff-app .staff-work-tab{padding:9px 8px;font-size:12px}}
+.staff-app .finance-note-badge.is-unsettled{display:inline-flex;align-items:center;justify-content:center;background:#fbe2df;color:#a33129;border:1px solid #e9ada7;font-weight:800}
+.staff-app .return-columns,.staff-app #returns .return-record-heading{display:grid;grid-template-columns:175px minmax(0,1fr) 95px 120px;align-items:center;gap:16px}
+.staff-app .return-columns{margin:0 0 8px;padding:0 16px 9px;border-bottom:1px solid var(--staff-line);color:var(--staff-muted);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.staff-app #returns .return-record-heading{margin-bottom:8px;flex-wrap:nowrap}
+.staff-app #returns .return-record-heading>.staff-record-description{min-width:0;line-height:1.45}
+.staff-app #returns .return-record-heading>.return-record-quantity{color:var(--staff-ink);font-weight:700}
+.staff-app #returns .return-record-heading>.staff-state-badge{justify-self:end;margin:0}
+.staff-app #returns .supplier-return-form{display:grid;grid-template-columns:minmax(220px,1fr) minmax(220px,1fr) auto;align-items:end;gap:12px}
+.staff-app #returns .supplier-return-field{display:flex;flex-direction:column;min-width:0;margin:0;font-size:12px;font-weight:700;color:var(--staff-ink)}
+.staff-app #returns .supplier-return-field :is(.form-control,.form-select,.cmc-select-button){width:100%;height:42px;min-height:42px;margin-top:7px}
+.staff-app #returns .supplier-return-field .cmc-select{display:block;width:100%;margin-top:7px}
+.staff-app #returns .supplier-return-field .cmc-select-button{margin-top:0}
+.staff-app #returns .supplier-return-form>.btn{min-height:42px;white-space:nowrap}
+html[data-theme=dark] .staff-app .finance-note-badge.is-unsettled{background:#60332e;border-color:#a7645c;color:#ffdcd6}
+@media(max-width:1000px){.staff-app #returns .supplier-return-form{grid-template-columns:repeat(2,minmax(0,1fr))}.staff-app #returns .supplier-return-form>.btn{grid-column:1/-1}.staff-app .return-columns,.staff-app #returns .return-record-heading{grid-template-columns:145px minmax(0,1fr) 80px 105px;gap:10px}}
+@media(max-width:700px){.staff-app .return-columns{display:none}.staff-app #returns .return-record-heading{grid-template-columns:1fr auto;gap:7px 10px}.staff-app #returns .return-record-heading>.staff-record-description{grid-column:1/-1;grid-row:2}.staff-app #returns .return-record-heading>.return-record-quantity{grid-column:1;grid-row:3}.staff-app #returns .return-record-heading>.staff-state-badge{grid-column:2;grid-row:1}.staff-app #returns .supplier-return-form{grid-template-columns:1fr}.staff-app #returns .supplier-return-form>.btn{grid-column:1}}

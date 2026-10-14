@@ -1,18 +1,19 @@
 <section id="inventory" class="warehouse-inventory mb-5">
     <nav class="warehouse-tabs" aria-label="Chế độ xem tồn kho">
-        <a href="{{ route('staff.section', 'inventory') }}" @class(['is-active' => request('view') !== 'movements']) @if(request('view') !== 'movements') aria-current="page" @endif>Tồn kho thực tế</a>
+        <a href="{{ route('staff.section', 'inventory') }}" @class(['is-active' => !in_array(request('view'), ['movements', 'stocktakes'], true)]) @if(!in_array(request('view'), ['movements', 'stocktakes'], true)) aria-current="page" @endif>Tồn kho thực tế</a>
         <a href="{{ route('staff.section', ['section' => 'inventory', 'view' => 'movements']) }}" @class(['is-active' => request('view') === 'movements']) @if(request('view') === 'movements') aria-current="page" @endif>Lịch sử nhập, xuất</a>
+        <a href="{{ route('staff.section', ['section' => 'inventory', 'view' => 'stocktakes']) }}" @class(['is-active' => request('view') === 'stocktakes']) @if(request('view') === 'stocktakes') aria-current="page" @endif>Kiểm kê</a>
     </nav>
     @if(request('view') === 'movements')
         <section class="warehouse-stock-panel" aria-labelledby="stock-movements-heading">
             <h2 id="stock-movements-heading">Lịch sử nhập, xuất và điều chỉnh</h2>
             <div class="table-responsive"><table class="table"><thead><tr><th>Thời điểm</th><th>Chứng từ</th><th>Kho</th><th>Vật liệu</th><th>Thay đổi</th><th>Tồn sau</th></tr></thead><tbody>
                 @forelse($stockMovements as $movement)
-                    <tr><td>{{ $movement->created_at }}</td><td>{{ $movement->document_code }} · {{ ['opening'=>'Tồn đầu kỳ','receipt'=>'Nhập kho','issue'=>'Xuất kho','return_receipt'=>'Nhập hàng trả','exchange_issue'=>'Xuất hàng thay thế','adjustment'=>'Điều chỉnh kiểm kê'][$movement->document_type] ?? 'Giao dịch kho' }}</td><td>{{ $movement->warehouse_name }}</td><td>{{ $movement->product_name }}</td><td>{{ \App\Support\UiFormat::quantity($movement->change) }}</td><td>{{ \App\Support\UiFormat::quantity($movement->balance_after) }}</td></tr>
+                    <tr><td>{{ $movement->created_at }}</td><td>{{ $movement->document_code }} · {{ ['opening'=>'Tồn đầu kỳ','receipt'=>'Nhập kho','issue'=>'Xuất kho','return'=>'Nhập hàng trả','return_receipt'=>'Nhập hàng trả','exchange_issue'=>'Xuất hàng thay thế','adjustment'=>'Điều chỉnh kiểm kê'][$movement->document_type] ?? 'Giao dịch kho' }}</td><td>{{ $movement->warehouse_name }}</td><td>{{ $movement->product_name }}</td><td>{{ \App\Support\UiFormat::quantity($movement->change) }}</td><td>{{ \App\Support\UiFormat::quantity($movement->balance_after) }}</td></tr>
                 @empty<tr><td colspan="6" class="text-center">Chưa có giao dịch kho.</td></tr>@endforelse
             </tbody></table></div>
         </section>
-    @else
+    @elseif(request('view') !== 'stocktakes')
         <section class="warehouse-stock-panel" aria-labelledby="current-stock-heading">
             <h2 id="current-stock-heading">Tồn kho thực tế</h2>
             <div class="table-responsive"><table class="table"><thead><tr><th>Kho</th><th>Vật liệu</th><th>Số lượng</th><th>Tồn tối thiểu</th></tr></thead><tbody>
@@ -21,6 +22,7 @@
                 @empty<tr><td colspan="4" class="text-center">Chưa có số liệu tồn kho.</td></tr>@endforelse
             </tbody></table></div>
         </section>
+    @else
         @if(in_array($role, ['warehouse', 'admin']))
             <section class="warehouse-stock-panel" aria-labelledby="stocktake-heading"><h2 id="stocktake-heading">Lập phiếu kiểm kê</h2>
                 <form method="post" action="{{ route('staff.stocktakes.create') }}" class="warehouse-stocktake-form">@csrf

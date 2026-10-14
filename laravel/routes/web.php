@@ -48,10 +48,10 @@ Route::middleware(['auth', 'role:sales,warehouse,accounting,manager,admin,delive
     Route::get('/work/{section}', [StaffController::class, 'section'])->name('section');
 });
 Route::middleware(['auth', 'role:sales,admin'])->prefix('staff')->name('staff.')->group(function () {
-    Route::post('/orders/{id}/review', [StaffController::class, 'reviewPickupOrder'])->name('orders.review');
+    Route::post('/orders/{id}/review', [StaffController::class, 'reviewOrder'])->name('orders.review');
     Route::post('/quotes/{id}/send', [StaffController::class, 'sendQuote'])->name('quotes.send');
     Route::post('/quotes/{id}/reject', [StaffController::class, 'rejectQuote'])->name('quotes.reject');
-    Route::post('/quotes/{quoteId}/contracts', [StaffController::class, 'createContract'])->name('contracts.create');
+    Route::post('/orders/{orderId}/contracts', [StaffController::class, 'createContract'])->name('contracts.create');
     Route::put('/contracts/{id}', [StaffController::class, 'updateContract'])->name('contracts.update');
     Route::post('/contracts/{id}/submit', [StaffController::class, 'submitContract'])->name('contracts.submit');
     Route::post('/contracts/{id}/sign', [StaffController::class, 'signContract'])->name('contracts.sign');
@@ -84,11 +84,15 @@ Route::middleware(['auth', 'role:warehouse,admin'])->prefix('staff')->name('staf
     Route::post('/returns/{id}/inspect', [StaffController::class, 'inspectReturn'])->name('returns.inspect');
     Route::post('/returns/{id}/supplier-return', [StaffController::class, 'sendDamagedReturnToSupplier'])->name('returns.supplier-return');
     Route::post('/returns/{id}/exchange', [StaffController::class, 'issueExchange'])->name('returns.exchange');
+    Route::post('/returns/{id}/restock', [StaffController::class, 'requestExchangeRestock'])->name('returns.restock');
 });
 Route::middleware(['auth', 'role:warehouse,delivery,admin'])->prefix('staff')->name('staff.')->group(function () {
     Route::post('/shipments/{id}/pickup', [StaffController::class, 'pickupShipment'])->name('shipments.pickup');
     Route::post('/shipments/{id}/reschedule', [StaffController::class, 'rescheduleShipment'])->name('shipments.reschedule');
     Route::post('/shipments/{id}/handover', [StaffController::class, 'handover'])->name('shipments.handover');
+});
+Route::middleware(['auth', 'role:delivery,admin'])->prefix('staff')->name('staff.')->group(function () {
+    Route::post('/returns/{id}/collect', [StaffController::class, 'collectReturn'])->name('returns.collect');
 });
 
 Route::middleware(['auth', 'role:sales,warehouse,manager,admin'])->prefix('management')->name('management.')->group(function () {
@@ -110,11 +114,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('management')->name('managemen
     Route::post('/users', [ManagementController::class, 'createUser'])->name('users.create');
     Route::put('/users/{id}', [ManagementController::class, 'updateUser'])->name('users.update');
     Route::post('/users/{id}/reset-password', [ManagementController::class, 'resetPassword'])->name('users.reset');
+    Route::post('/users/{id}/unlock', [ManagementController::class, 'unlockUser'])->name('users.unlock');
 });
 
 Route::middleware(['auth', 'role:sales,warehouse,accounting,manager,admin,delivery'])->prefix('staff/reports')->name('staff.reports.')->group(function () {
     Route::get('/', [ReportController::class, 'index'])->name('index');
     Route::get('/{id}/export', [ReportController::class, 'export'])->name('export');
+    Route::get('/{id}/pdf', [ReportController::class, 'downloadPdf'])->name('pdf');
     Route::get('/{id}/print', [ReportController::class, 'print'])->name('print');
 });
 Route::post('/staff/reports', [ReportController::class, 'create'])->middleware(['auth', 'role:sales,warehouse,accounting,manager,admin,delivery'])->name('staff.reports.create');

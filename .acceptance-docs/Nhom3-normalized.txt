@@ -1,0 +1,1687 @@
+
+
+BỘ CÔNG THƯƠNG
+TRƯỜNG ĐẠI HỌC CÔNG THƯƠNG TP.HCM
+KHOA CÔNG NGHỆ THÔNG TIN
+((((
+
+
+
+
+
+
+
+
+ĐỒ ÁN CÔNG NGHỆ JAVA
+
+
+	
+ĐỀ TÀI: HỆ THỐNG QUẢN LÝ CỬA HÀNG VẬT LIỆU XÂY DỰNG
+
+	
+
+
+
+	Giảng viên hướng dẫn	: TH.S Nguyễn Thế Hữu
+	Sinh viên thực hiện	: 
+		1. 2001230508 – Cao Đức Mạnh
+		2. 2001230832 – Nguyễn Nhật Toàn
+		3. 2001230920 – Ngô Long Thiên
+		4. 2001230706 – Đinh Tấn Phương
+	        		
+	
+
+	TP. HỒ CHÍ MINH – 2026
+
+MỤC LỤC
+BẢNG PHÂN CÔNG CÔNG VIỆC	5
+DANH MỤC CÁC KÝ HIỆU VÀ CHỮ VIẾT TẮT	7
+DANH MỤC CÁC HÌNH VẼ VÀ ĐỒ THỊ	8
+MỞ ĐẦU	10
+CHƯƠNG 1: TỔNG QUAN	11
+1.1. GIỚI THIỆU	11
+1.2. MỤC TIÊU VÀ PHẠM VI ĐỀ TÀI	13
+1.2.1. MỤC TIÊU ĐỀ TÀI	13
+1.2.2. PHẠM VI ĐỀ TÀI	13
+1.3. KHẢO SÁT HỆ THỐNG	14
+1.3.1. GIỚI THIỆU SƠ LƯỢC VÀ CƠ CẤU TỔ CHỨC	14
+1.3.2. QUY TRÌNH NGHIỆP VỤ CHI TIẾT	15
+1.3.3. BIỂU MẪU THU THẬP ĐƯỢC TRONG QUÁ TRÌNH KHẢO SÁT	18
+1.4. KẾT CHƯƠNG	20
+CHƯƠNG 2: PHÂN TÍCH HỆ THỐNG	21
+2.1. GIỚI THIỆU	21
+2.2.  MÔ HÌNH HÓA NGHIỆP VỤ	22
+2.2.1. SƠ ĐỒ USE-CASE NGHIỆP VỤ	22
+2.2.2. MÔ HÌNH HÓA QUY TRÌNH NGHIỆP VỤ	23
+2.2.2.1. Mô hình hóa quy trình nghiệp vụ tư vấn và lập báo giá	23
+2.2.2.2. Mô hình hóa quy trình nghiệp vụ ký hợp đồng đặt hàng	26
+2.2.2.3. Mô hình hóa quy trình nghiệp vụ thanh toán	29
+2.2.2.4. Mô hình hóa quy trình nghiệp vụ quản lý công nợ	33
+2.2.2.5. Mô hình hóa quy trình nghiệp vụ kiểm tra và bàn giao hàng	37
+2.2.2.6. Mô hình hóa quy trình nghiệp xử lý đổi trả hàng lỗi	40
+2.2.2.7. Mô hình hóa quy trình nghiệp vụ tổ chức giao hàng và vận chuyển	43
+2.2.2.8. Mô hình hóa quy trình nghiệp vụ quản lý kho	47
+2.2.2.9. Mô hình hóa quy trình nghiệp vụ quản lý danh mục	52
+2.2.2.10. Mô hình hóa quy trình nghiệp vụ báo cáo thống kê	56
+2.3. MÔ HÌNH HÓA CHỨC NĂNG	60
+2.3.1. Sơ đồ Use Case hệ thống	60
+2.3.2. Đặc tả Use Case hệ thống	60
+2.4. SƠ ĐỒ LỚP MỨC PHÂN TÍCH	79
+2.5. KẾT CHƯƠNG	79
+CHƯƠNG 3: THIẾT KẾ HỆ THỐNG	81
+3.1. GIỚI THIỆU	81
+3.2. THIẾT KẾ CSDL	81
+3.3. THIẾT KẾ GIAO DIỆN HỆ THỐNG	82
+3.3.1. Giao diện đăng nhập	82
+3.3.2. Giao diện đăng ký	83
+3.3.3. Giao diện quản lý đơn hàng	83
+3.3.4. Giao diện quản lý hợp đồng	85
+3.3.5. Giao diện quản lý thông tin cá nhân	85
+3.3.6. Giao diện quản lý danh mục	86
+3.3.7. Giao diện quản lý tài khoản	88
+3.3.8. Giao diện quản lý giao nhận và bàn giao	88
+3.3.9. Giao diện quản lý đổi trả hàng	88
+3.3.10. Giao diện quản lý tài chính	88
+3.3.11. Giao diện quản lý kho	90
+3.3.12. Giao diện quản lý hàng hóa	91
+3.3.13. Giao diện quản lý báo cáo thống kê	92
+3.4. SƠ ĐỒ LỚP Ở MỨC THIẾT KẾ	92
+3.5. THIẾT KẾ CHỨC NĂNG HỆ THỐNG	93
+3.5.1. Sơ đồ 3 lớp chức năng quản lí đơn hàng	93
+3.5.2. Chức năng mua hàng của Quản lý đơn hàng	94
+3.5.3. Chức năng tra cứu đơn của Quản lý đơn hàng	94
+3.5.4. Chức năng hủy đơn của Quản lý đơn hàng	95
+3.5.5. Chức năng sửa đơn hàng của Quản lý đơn hàng	96
+3.5.6. Chức năng thêm đơn hàng của Quản lý đơn hàng	97
+3.5.7. Chức năng xóa đơn hàng của Quản lý đơn hàng	98
+3.5.8. Sơ đồ 3 lớp Quản lý hợp đồng	99
+3.5.9. Chức năng hủy hợp đồng trong Quản lý hợp đồng	100
+3.5.10. Chức năng sửa hợp đồng trong Quản lý hợp đồng	101
+3.5.11. Chức năng tìm kiếm hợp đồng trong Quản lý hợp đồng	102
+3.5.12. Chức năng thêm hợp đồng trong Quản lý hợp đồng	103
+3.5.13. Sơ đồ 3 lớp trong Quản lý thông tin cá nhân	105
+3.5.14. Chức năng cập nhật thông tin trong Quản lý thông tin cá nhân	106
+3.5.15. Chức năng thêm thông tin trong Quản lý thông tin cá nhân	107
+3.5.16. Chức năng tra cứu thông tin trong Quản lý thông tin cá nhân	108
+3.5.17. Chức năng cập nhật danh mục trong Quản lý danh mục	109
+3.5.18. Chức năng thêm danh mục trong Quản lý danh mục	111
+3.5.19. Chức năng xóa danh mục trong Quản lý danh mục	113
+3.5.20. Chức năng cập nhật tài khoản trong Quản lý tài khoản	115
+3.5.21. Chức năng đặt lại mật khẩu trong Quản lý tài khoản	117
+3.5.22. Chức năng thêm tài khoản trong Quản lý tài khoản	119
+3.5.23. Chức năng phân quyền tài khoản trong Quản lý tài khoản	121
+3.5.24. Chức năng xóa/khóa tài khoản trong Quản lý tài khoản	123
+3.5.25. Chức năng Báo cáo thống kê trong Quản lý báo cáo	124
+3.5.26. Chức năng lập báo cáo tài chính trong Quản lý báo cáo	125
+3.5.27. Chức năng lập báo cáo tồn kho trong Quản lý báo cáo	126
+3.5.28. Chức năng Phê duyệt báo cáo trong Quản lý báo cáo	127
+3.5.29. Chức năng Kiểm kê kho trong Quản lý kho	129
+3.5.30. Chức năng Tính tồn kho trong Quản lý kho	131
+3.5.31. Chức năng Xuất kho trong Quản lý kho	133
+3.5.32. Chức năng Nhập kho trong Quản lý kho	135
+3.5.33. Chức năng Liên kết nhà cung cấp trong Quản lý nhập hàng	137
+3.5.34. Chức năng Theo dõi đơn hàng trong Quản lý nhập hàng	139
+3.5.35. Chức năng Lập phiếu nhập kho trong Quản lý nhập hàng	141
+3.5.36. Chức năng Cập nhật tồn kho trong Quản lý nhập hàng	143
+3.5.37. Chức năng Quản lý giao nhận và bàn giao	145
+3.5.38. Chức năng Đổi trả hàng	146
+3.5.39. Chức năng ghi nhận công nợ trong Quản lý tài chính	147
+3.5.40. Chức năng thanh toán công nợ trong Quản lý tài chính	148
+3.5.41. Chức năng theo dõi đơn hàng thanh toán trong Quản lý tài chính	150
+CHƯƠNG 4: KẾT LUẬN	153
+4.1. Tổng kết đề tài	153
+4.2. Những kết quả đạt được	153
+4.3. Hạn chế và hướng phát triển	154
+4.4. Lời kết	154
+TÀI LIỆU THAM KHẢO	155
+
+
+\nBẢNG PHÂN CÔNG CÔNG VIỆC
+SỐ THỨ TỰ
+ | HỌ VÀ TÊN
+ | NHIỆM VỤ
+ | HOÀN THÀNH
+ | 
+ | 1
+ | Cao Đức Mạnh
+ | + Khảo sát và tìm hiểu về quy trình hoạt động của cửa hàng vật liệu xây dựng
++ Xây dựng sơ đồ UC nghiệp vụ, UC hệ thống 
++ Sơ đồ class mức phân tích và thiết kế
++ Sơ đồ 3 lớp, chức năng hệ thống
++ Sơ đồ hoạt động, tuần tự, cộng tác cho chức năng tư vấn lập báo giá, ký hợp đồng đặt hàng, thanh toán.
++ Xây dựng csdl, thiết kế giao diện
++ Word, ppt, lập  trình web
+ | 25%
+ | 
+ | 2
+ | Nguyễn Nhật Toàn
+ | + Khảo sát và tìm hiểu về quy trình hoạt động của cửa hàng vật liệu xây dựng
++ Xây dựng sơ đồ UC nghiệp vụ, UC hệ thống 
++ Sơ đồ class mức phân tích và thiết kế
++ Sơ đồ 3 lớp, chức năng hệ thống
++ Sơ đồ hoạt động, tuần tự, cộng tác cho chức năng quản lý công nợ, kiểm tra và bàn giao hàng, xử lý đổi trả hàng lỗi.
++ Xây dựng csdl, thiết kế giao diện
++ Word, ppt, lập  trình web
+ | 25%
+ | 
+ | 3
+ | Ngô Long Thiên
+ | + Khảo sát và tìm hiểu về quy trình hoạt động của cửa hàng vật liệu xây dựng
++ Xây dựng sơ đồ UC nghiệp vụ, UC hệ thống 
++ Sơ đồ class mức phân tích và thiết kế
++ Sơ đồ 3 lớp, chức năng hệ thống
++ Sơ đồ hoạt động, tuần tự, cộng tác cho chức năng tổ chức uc giao hàng và vận chuyển, quản lý kho.
++ Xây dựng csdl, thiết kế giao diện
++ Word, ppt, lập  trình web
+ | 25%
+ | 
+ | 4
+ | Đinh Tấn Phương
+ | + Khảo sát và tìm hiểu về quy trình hoạt động của cửa hàng vật liệu xây dựng
++ Xây dựng sơ đồ UC nghiệp vụ, UC hệ thống 
++ Sơ đồ class mức phân tích và thiết kế
++ Sơ đồ 3 lớp, chức năng hệ thống
++ Sơ đồ hoạt động, tuần tự, cộng tác cho chức năng quản lý danh mục, báo cáo thống kê.
++ Xây dựng csdl, thiết kế giao diện
++ Word, ppt, lập  trình web
+ | 25%
+ | 
+ | 
+\nDANH MỤC CÁC KÝ HIỆU VÀ CHỮ VIẾT TẮT
+
+Viết tắt
+ | Tiếng Anh
+ | Tiếng Việt
+ | 
+ | API
+ | Application Programming Interface
+ | Giao diện lập trình ứng dụng
+ | 
+ | BFD
+ | Business Function Diagram
+ | Sơ đồ phân rã chức năng
+ | 
+ | BPMN
+ | Business Process Model and Notation
+ | Ký hiệu và mô hình hóa quy trình nghiệp vụ
+ | 
+ | CSDL
+ | —
+ | Cơ sở dữ liệu
+ | 
+ | DBMS
+ | Database Management System
+ | Hệ quản trị cơ sở dữ liệu
+ | 
+ | DFD
+ | Data Flow Diagram
+ | Sơ đồ luồng dữ liệu
+ | 
+ | ERD
+ | Entity Relationship Diagram
+ | Sơ đồ quan hệ thực thể
+ | 
+ | TNHH
+ | —
+ | Trách nhiệm hữu hạn
+ | 
+ | TTV
+ | —
+ | Thành viên (quản trị nội bộ)
+ | 
+ | UC
+ | Use Case
+ | Biểu đồ trường hợp sử dụng
+ | 
+ | UML
+ | Unified Modeling Language
+ | Ngôn ngữ mô hình hóa thống nhất
+ | 
+ | VAT
+ | Value Added Tax
+ | Thuế giá trị gia tăng
+ | 
+ | VLXD
+ | —
+ | Vật liệu xây dựng
+ | 
+ | 
+
+\n
+DANH MỤC CÁC HÌNH VẼ VÀ ĐỒ THỊ
+
+Hình 1. 1: Hóa đơn giấy vật liệu xây dựng	11
+Hình 1. 2: Bảng báo giá Sài Gòn CMC	19
+
+Hình 2. 1: UC Quản lý cửa hàng vật liệu xây dựng	21
+Hình 2. 2: Sơ đồ hoạt động vụ tư vấn và lập báo giá	23
+Hình 2. 3: Sơ đồ tuần tự vụ tư vấn và lập báo giá	24
+Hình 2. 4: Sơ đồ công tác vụ tư vấn và lập báo giá	24
+Hình 2. 5: Sơ đồ hoạt động ký hợp đồng đặt hàng	26
+Hình 2. 6: Sơ đồ tuần tự ký hợp đồng đặt hàng	27
+Hình 2. 7: Sơ đồ cộng tác ký hợp đồng đặt hàng	27
+Hình 2. 8:Sơ đồ hoạt động thanh toán	29
+Hình 2. 9:Sơ đồ tuân tự thanh toán	30
+Hình 2. 10: Sơ đồ cộng tác thanh toán	31
+Hình 2. 11: Sơ đồ hoạt động quản lý công nợ	33
+Hình 2. 12: Sơ đồ tuần tự quản lý công nợ	34
+Hình 2. 13: Sơ đồ cộng tác quản lý công nợ	35
+Hình 2. 14: Sơ đồ hoạt động kiểm tra và bàn giao hàng	37
+Hình 2. 15: Sơ đồ tuần tự kiểm tra và bàn giao hàng	38
+Hình 2. 16: Sơ đồ cộng tác kiểm tra và bàn giao hàng	38
+Hình 2. 17:Sơ đồ hoạt động xử lý đổi trả hàng lỗi	40
+Hình 2. 18: Sơ đồ tuần tự xử lý đổi trả hàng lỗi	41
+Hình 2. 19: Sơ đồ cộng tác xử lý đổi trả hàng lỗi	41
+Hình 2. 20: Sơ đồ hoạt dộng tổ chức giao hàng và vận chuyển	43
+Hình 2. 21:Sơ đồ tuần tự tổ chức giao hàng và vận chuyển	44
+Hình 2. 22: Sơ đồ cộng tác tổ chức giao hàng và vận chuyển	45
+Hình 2. 23: Sơ đồ hoạt động quản lý kho	48
+Hình 2. 24: Sơ đồ tuần tự quản lý kho	49
+Hình 2. 25: Sơ đồ cộng tác quản lý kho	50
+Hình 2. 26: Sơ đồ hoạt động quản lý danh mục	52
+Hình 2. 27: Sơ đồ tuần tự quản lý danh mục	53
+Hình 2. 28: Sơ đồ cộng tác quản lý danh mục	54
+Hình 2. 29: Sơ đồ hoạt động báo cáo thống kê	56
+Hình 2. 30: Sơ đồ tuần tự báo cáo thống kê	57
+Hình 2. 31: Sơ đồ cộng tác báo cáo thống kê	58
+
+		
+
+\nMỞ ĐẦU
+Trong quản trị doanh nghiệp hiện nay, hệ thống thông tin đóng vai trò là xương sống giúp cung cấp dữ liệu chính xác và kịp thời cho các quyết định kinh doanh. Đặc biệt đối với lĩnh vực vật liệu xây dựng (VLXD), việc ứng dụng công nghệ số không chỉ giúp tự động hóa quá trình xử lý đơn hàng, kho bãi mà còn tối ưu hóa việc theo dõi công nợ và tương tác trực tiếp với khách hàng trên cùng một nền tảng.
+Qua khảo sát thực tế, đa số các đơn vị kinh doanh VLXD vẫn đang duy trì phương thức quản lý thủ công hoặc sử dụng các công cụ rời rạc. Điều này dẫn đến tình trạng dữ liệu giữa các bộ phận như Kho, Bán hàng và Tài chính thiếu tính đồng bộ. Đặc thù hàng hóa có đơn vị tính phức tạp kết hợp với việc công nợ khách hàng kéo dài theo tiến độ công trình khiến công tác kiểm soát trở nên rất khó khăn, dễ xảy ra sai sót và thất thoát thông tin.
+Vận dụng các kiến thức từ môn học "Phân tích thiết kế hệ thống thông tin", nhóm thực hiện đề tài bằng cách tiếp cận và số hóa toàn bộ quy trình nghiệp vụ thực tiễn. Hệ thống được xây dựng không chỉ phục vụ các thành viên quản trị nội bộ (TTV) trong việc vận hành bộ máy, mà còn mở rộng không gian tương tác cho Khách hàng – tác nhân trực tiếp tham gia vào hệ thống để tra cứu và đặt hàng. Nhóm tập trung vào việc chuẩn hóa cơ sở dữ liệu và thiết lập luồng thông tin nhất quán giữa các thực thể trong doanh nghiệp.
+Khi hoàn thành, đề tài kỳ vọng sẽ giải quyết triệt để bài toán đồng bộ dữ liệu giữa các phòng ban chức năng, giúp chủ doanh nghiệp giám sát toàn diện tình hình kinh doanh. Đồng thời, việc cho phép khách hàng chủ động theo dõi đơn hàng và công nợ sẽ nâng cao tính minh bạch, chuyên nghiệp và giảm thiểu tối đa các sai sót do yếu tố con người trong quá trình tính toán tồn kho hay doanh thu.
+Với sự nỗ lực và tâm huyết, nhóm thực hiện hy vọng đồ án "Quản lý cửa hàng vật liệu xây dựng" sẽ mang lại giải pháp thực tiễn hiệu quả, đồng thời là tài liệu tham khảo hữu ích cho các ứng dụng hệ thống thông tin sau này.
+
+
+
+\nCHƯƠNG 1: TỔNG QUAN
+1.1. GIỚI THIỆU 
+Trong bối cảnh ngành xây dựng đang phát triển mạnh mẽ, nhu cầu cung ứng vật liệu từ các cửa hàng bán lẻ đến người tiêu dùng và các nhà thầu ngày càng lớn. Tuy nhiên, qua khảo sát thực tế tại các đơn vị kinh doanh vật liệu xây dựng (VLXD), công tác quản lý hiện nay vẫn mang nặng tính thủ công, chủ yếu dựa vào các loại hóa đơn bán lẻ viết tay và sổ sách ghi chép rời rạc.
+
+Hình 1. 1: Hóa đơn giấy vật liệu xây dựng
+
+Hình 1.1 Là minh chứng cụ thể của việc quy trình bán hàng hiện nay vẫn phụ thuộc hoàn toàn vào các tờ hóa đơn giấy. Việc ghi chép thủ công các thông tin từ tên khách hàng, địa chỉ, cho đến danh mục hàng hóa với các đơn vị tính phức tạp như khối, bao, cây hay viên thường xuyên xảy ra sai sót. Đặc biệt, đối với các đơn hàng có giá trị lớn hoặc khách hàng thân thiết, việc ghi chú nợ cũ và nợ mới ngay trên hóa đơn giấy không chỉ thiếu tính thẩm mỹ mà còn gây khó khăn cực lớn cho công tác đối soát, tổng hợp dữ liệu cuối tháng. Khi khối lượng hóa đơn tích tụ theo thời gian, việc tra cứu lại lịch sử giao dịch của một khách hàng cụ thể trở nên chậm chạp và dễ dẫn đến tình trạng thất thoát tài chính do thông tin bị mờ, rách hoặc thất lạc.
+Bên cạnh đó, vì đơn giá vật liệu xây dựng thường xuyên biến động theo thị trường, việc quản lý bằng hóa đơn giấy khiến nhân viên bán hàng khó nắm bắt được mức giá cập nhật nhất, dẫn đến sự thiếu nhất quán trong kinh doanh. Sự rời rạc này còn tạo ra rào cản thông tin giữa bộ phận bán hàng và kho bãi, khiến chủ cửa hàng không thể kiểm soát được lượng tồn kho thực tế để kịp thời nhập hàng hay báo giá chính xác cho khách.
+Xuất phát từ những bất cập nêu trên, nhóm thực hiện quyết định lựa chọn đề tài "Phân tích thiết kế hệ thống thông tin quản lý doanh nghiệp vật liệu xây dựng". Lý do chọn đề tài này không chỉ nhằm mục đích thay thế những tờ hóa đơn giấy bằng một hệ thống quản lý số hóa chuyên nghiệp, mà còn hướng tới việc xây dựng một nền tảng dữ liệu tập trung. Hệ thống sẽ giúp tối ưu hóa quy trình từ khâu lập hóa đơn, quản lý kho cho đến theo dõi công nợ chi tiết, từ đó nâng cao hiệu quả quản trị và tăng cường khả năng tương tác, giữ chân khách hàng trong kỷ nguyên số.
+\n
+1.2. MỤC TIÊU VÀ PHẠM VI ĐỀ TÀI
+1.2.1. MỤC TIÊU ĐỀ TÀI
+Mục tiêu cốt lõi của đề tài là xây dựng một hệ thống thông tin nhất quán nhằm thay thế hoàn toàn phương thức quản lý dựa trên hóa đơn giấy và sổ sách thủ công. Hệ thống hướng đến việc tin học hóa toàn diện quy trình nghiệp vụ, giúp dữ liệu được luân chuyển thông suốt và tức thời giữa khách hàng với bộ phận nhân viên của cửa hàng. Qua đó, chủ doanh nghiệp có thể giám sát chặt chẽ tình hình kinh doanh, tồn kho và dòng tiền mà không còn phụ thuộc vào việc cộng dồn các chứng từ rời rạc.
+Bên cạnh việc phục vụ công tác quản trị nội bộ của cửa hàng, một mục tiêu quan trọng khác của hệ thống là mở rộng không gian tương tác cho khách hàng. Thay vì phải liên hệ trực tiếp để hỏi giá hay đối soát nợ, khách hàng có thể chủ động truy cập hệ thống để tra cứu thông tin, đặt hàng và theo dõi lịch sử công nợ của mình. Việc này không chỉ nâng cao tính minh bạch, chuyên nghiệp mà còn giảm bớt áp lực xử lý thông tin cho nhân viên cửa hàng, hạn chế tối đa các sai sót phát sinh do yếu tố con người.
+1.2.2. PHẠM VI ĐỀ TÀI
+Để đảm bảo tính khả thi và tập trung vào các nghiệp vụ cốt lõi, đề tài giới hạn phạm vi nghiên cứu trong hoạt động vận hành nội bộ của Công ty TNHH Kinh doanh Vật liệu xây dựng Sài Gòn (Tòa nhà CMC – 42A Cống Lỡ, P. 15, Q. Tân Bình, TP. HCM). Cụ thể, hệ thống tập trung giải quyết các bài toán quản trị sau:
+Về nghiệp vụ hệ thống: Nghiên cứu và xây dựng quy trình tự động hóa từ khâu tiếp nhận nhu cầu đến khi hoàn tất bàn giao hàng hóa. Trọng tâm là quản lý danh mục vật liệu xây dựng với đặc thù đơn giá biến động theo thời điểm, hỗ trợ lập báo giá linh hoạt, quản lý hợp đồng cung ứng và theo dõi luồng hàng hóa nhập - xuất - tồn thực tế tại kho. Hệ thống cũng đảm nhiệm việc kiểm soát dòng tiền thông qua quản lý đặt cọc, thanh toán và đối soát công nợ chi tiết cho từng nhà thầu hoặc nhà cung cấp.
+Về đối tượng tác nghiệp: Hệ thống được thiết kế đồng bộ để phục vụ các nhóm người dùng chuyên trách tại công ty. Ban Quản lý sử dụng dữ liệu để điều hành và xem báo cáo chiến lược. Phòng Kinh doanh thực hiện các giao dịch với khách hàng. Phòng Kho vận trực tiếp vận hành kho và điều phối giao nhận. Phòng Tài chính – Kế toán kiểm soát hóa đơn, chứng từ và công nợ. Phòng Hành chính quản trị danh mục nhân sự và phân quyền truy cập hệ thống.
+Giới hạn nghiên cứu: Đề tài tập trung vào quy trình quản lý kinh doanh và kho vận đặc thù của ngành vật liệu xây dựng, không đi sâu vào các nghiệp vụ kế toán thuế chuyên sâu, quản lý tiền lương chi tiết hay các hoạt động sản xuất gia công cơ khí.
+Về giải pháp công nghệ và số hóa quy trình (Technology Stack):
+Để hiện thực hóa và số hóa toàn diện các quy trình nghiệp vụ nêu trên, hệ thống được xây dựng dưới dạng ứng dụng web doanh nghiệp với các giải pháp công nghệ sau:
+Ngôn ngữ lập trình: Java (phiên bản JDK 26) cho logic xử lý backend và Javascript (ES6+) kết hợp HTML5/CSS3 cho phần giao diện (Thymeleaf templates).
+Backend Framework: Spring Boot 4.0.6 (sử dụng các module Spring WebMVC, Spring Security).
+Giao diện & Web MVC: Spring Web MVC để xây dựng các API RESTful phục vụ giao tiếp client-server và điều hướng các trang view.
+Quản lý dữ liệu & ORM: Spring Data JPA kết hợp thư viện Hibernate giúp tự động ánh xạ cấu trúc bảng CSDL thành các đối tượng Java (Entities), giúp truy vấn dữ liệu an toàn và tối ưu thời gian phát triển.
+Quản lý bảo mật: Spring Security điều phối xác thực đăng nhập, mã hóa mật khẩu bằng thuật toán BCrypt và phân quyền truy cập chi tiết theo vai trò người dùng (Roles).
+Cơ sở dữ liệu: Hệ quản trị cơ sở dữ liệu quan hệ MySQL (phiên bản 8.0+) lưu trữ toàn bộ dữ liệu vật lý của hệ thống.
+Công cụ quản lý dự án: Apache Maven phụ trách quản lý các thư viện phụ thuộc (dependencies) và đóng gói dự án.
+1.3. KHẢO SÁT HỆ THỐNG
+1.3.1. GIỚI THIỆU SƠ LƯỢC VÀ CƠ CẤU TỔ CHỨC
+Công ty TNHH Kinh doanh Vật liệu xây dựng Sài Gòn (thương hiệu Thế Giới Vật Liệu Xây Dựng) có trụ sở chính tại Tòa nhà CMC – 42A Cống Lỡ, P. 15, Q. Tân Bình, TP. HCM. Doanh nghiệp tập trung vào phân phối các dòng sắt thép xây dựng (thép hình, thép hộp, tôn, xà gồ...) và vật liệu dân dụng. Đặc thù hoạt động tại đây là danh mục hàng hóa có quy cách kỹ thuật phức tạp, đơn giá biến động mạnh theo thị trường quốc tế, đòi hỏi quy trình vận chuyển hàng cồng kềnh và quản trị kho bãi nghiêm ngặt để đảm bảo khả năng cung ứng cho các công trình.
+Dựa trên kết quả khảo sát thực tế tại văn phòng điều hành và hệ thống kho bãi, bộ máy vận hành được thiết lập theo mô hình trực tuyến chức năng nhằm tối ưu hóa luồng công việc từ khâu báo giá đến giao nhận. Cấu trúc tổ chức cụ thể như sau:
+Ban Quản lý: Giữ vai trò điều hành cao nhất, chịu trách nhiệm hoạch định chiến lược kinh doanh, phê duyệt các hạn mức chiết khấu, phê duyệt đề xuất nhập hàng và giám sát tổng thể báo cáo từ các phòng ban. 
+Phòng Kinh doanh: Là bộ phận trực tiếp tạo doanh thu, thực hiện tiếp nhận nhu cầu khách hàng, lập báo giá linh hoạt theo thời điểm, soạn thảo hợp đồng cung ứng và quản trị tiến độ thực hiện hợp đồng. 
+Phòng Kho vận: Quản trị luồng hàng hóa vật chất, chịu trách nhiệm kiểm soát nghiệp vụ nhập – xuất – tồn thực tế, bảo quản sản phẩm, cập nhật danh mục hàng hóa và điều phối đội xe giao nhận đến công trình. 
+Phòng Tài chính – Kế toán: Kiểm soát dòng tiền và hồ sơ chứng từ, thực hiện xác minh thanh toán, lập hóa đơn, phát hành lệnh xuất hàng, quản lý chặt chẽ công nợ phải thu/phải trả với khách hàng và nhà cung cấp, đồng thời tổng hợp và trình báo cáo tài chính định kỳ lên Ban Quản lý. 
+Phòng Hành chính: Phụ trách quản trị nội bộ và nhân sự, đảm nhiệm lưu trữ hồ sơ lao động, quản lý chấm công và cấp phát tài nguyên hệ thống hỗ trợ công tác hậu cần chung. 
+Đơn vị Vận chuyển (đối tác bên ngoài): Là các đơn vị vận tải được cửa hàng hợp tác để thực hiện bốc xếp và vận chuyển hàng hóa từ kho đến địa điểm công trình của khách hàng. Đơn vị vận chuyển chủ động liên hệ nhận hàng theo lịch giao và phối hợp trực tiếp với Phòng Kho vận trong suốt quá trình giao nhận.
+1.3.2. QUY TRÌNH NGHIỆP VỤ CHI TIẾT
+Quy trình tư vấn và lập báo giá: Khởi đầu khi khách hàng có nhu cầu mua vật liệu xây dựng và liên hệ với cửa hàng. Nhân viên kinh doanh tiếp nhận yêu cầu về chủng loại, số lượng và quy cách vật liệu, sau đó tư vấn các loại sản phẩm phù hợp (thép hình, thép hộp, tôn, xà gồ...) dựa trên yêu cầu công trình. Nhân viên kinh doanh kiểm tra tình trạng hàng hiện có từ bộ phận kho, tiến hành lập báo giá và trình bày cho khách hàng xem xét. Trong trường hợp hàng không đủ tồn kho, nhân viên kinh doanh thông báo thời gian dự kiến có hàng hoặc đề xuất phương án thay thế cho khách hàng.
+Quy trình ký hợp đồng đặt hàng: Bắt đầu sau khi khách hàng đồng ý với báo giá đã được tư vấn. Nhân viên kinh doanh soạn thảo hợp đồng ghi rõ chủng loại, quy cách, số lượng, đơn giá, điều khoản giao hàng và thanh toán, sau đó trình lên Ban Quản lý để phê duyệt mức chiết khấu (nếu có). Sau khi Ban Quản lý xem xét và phê duyệt, hợp đồng được chuyển cho khách hàng đọc và xác nhận trước khi hai bên ký kết chính thức. Trong trường hợp khách hàng yêu cầu điều chỉnh điều khoản, nhân viên kinh doanh ghi nhận và trình lại Ban Quản lý xem xét trước khi ký.
+Quy trình thanh toán: Phát sinh khi có nghĩa vụ thanh toán theo hợp đồng đã ký kết. Nhân viên kế toán thông báo số tiền cần thanh toán cho khách hàng theo điều khoản hợp đồng, sau khi xác nhận đã nhận đủ tiền sẽ lập hóa đơn và phát hành lệnh xuất hàng thông báo cho bộ phận kho. Nhân viên kế toán đồng thời thực hiện thanh toán tiền hàng cho nhà cung cấp và ghi nhận xác nhận từ phía nhà cung cấp. Trong trường hợp khách hàng chỉ thanh toán một phần (đặt cọc), nhân viên kế toán ghi nhận số tiền đã nhận và thống nhất lịch thanh toán phần còn lại với khách hàng trước khi phát hành lệnh xuất hàng.
+Quy trình quản lý công nợ: Bắt đầu sau khi phát sinh giao dịch mua bán hoặc nhập hàng có liên quan đến công nợ. Nhân viên kế toán tổng hợp các khoản phát sinh công nợ theo từng đối tác, đối chiếu số liệu giao nhận thực tế với chứng từ thanh toán đã nhận, sau đó thông báo số dư công nợ đến từng khách hàng và nhà cung cấp để xác nhận. Căn cứ trên phản hồi của các bên, nhân viên kế toán thống nhất lịch quyết toán. Trong trường hợp có chênh lệch số liệu, nhân viên kế toán phối hợp với nhân viên kinh doanh để xác minh lại chứng từ gốc trước khi xác nhận số dư chính thức.
+Quy trình kiểm tra và bàn giao hàng: Bắt đầu khi hàng hóa được vận chuyển đến địa điểm công trình của khách hàng. Nhân viên giao nhận và khách hàng cùng kiểm đếm số lượng thực tế, kiểm tra quy cách kỹ thuật (mã thép, độ dày, chủng loại...). Sau khi hai bên xác nhận hàng đúng số lượng và đạt yêu cầu kỹ thuật, nhân viên giao hàng lập biên bản bàn giao để khách hàng ký xác nhận, sau đó mang biên bản về bàn cho nhân viên kế toán tiến hành quyết toán. Trong trường hợp phát hiện hàng sai quy cách hoặc không đủ số lượng, nhân viên giao hàng lập biên bản sự vụ, ký xác nhận cùng khách hàng và xử lý đổi trả hàng.
+Quy trình xử lý đổi trả hàng lỗi: Được kích hoạt khi phát sinh hàng lỗi, sai quy cách tại công trình hoặc hàng nhập từ nhà máy không đạt yêu cầu kỹ thuật. Nhân viên giao nhận cùng khách hàng lập biên bản sự vụ ghi rõ lý do, số lượng hàng lỗi và tiến hành thu hồi hàng về kho. Nhân viên kho kiểm tra, phân loại hàng thu hồi: hàng còn dùng được nhập lại kho, hàng hỏng hoàn toàn trả về nhà cung cấp. Sau đó nhân viên kho bàn giao chứng từ cho nhân viên kế toán để điều chỉnh giảm trừ công nợ tương ứng trên sổ của khách hàng. Trong trường hợp khách hàng yêu cầu đổi hàng ngay, nhân viên kho phối hợp với bộ phận kinh doanh kiểm tra tồn kho để sắp xếp giao hàng thay thế sớm nhất, hoặc khởi tạo quy trình nhập hàng nếu không còn tồn kho.
+Quy trình tổ chức giao hàng và vận chuyển: Bắt đầu sau khi đơn hàng được xác nhận đã đặt cọc hoặc thanh toán đủ. Nhân viên giao nhận chủ động liên hệ cửa hàng để xác nhận lịch nhận hàng; nhân viên kho vận cung cấp thông tin chi tiết về đơn hàng, địa chỉ công trình và thời gian giao dự kiến. Nhân viên giao nhận bố trí phương tiện phù hợp, đến kho kiểm đếm và đối chiếu hàng hóa với lệnh xuất, ký nhận hồ sơ vận chuyển rồi tiến hành vận chuyển và bàn giao hàng tại công trình. Sau khi khách hàng xác nhận đã nhận hàng, đơn vị vận chuyển thông báo lại cho nhân viên kho vận hoàn tất chuyến. Nếu phát hiện hàng bị hư hỏng hoặc sai số lượng trước khi xuất phát, Nhân viên giao nhận yêu cầu nhân viên kho vận kiểm tra lại và lập biên bản xác nhận.
+Quy trình nhập kho và kiểm soát nguồn cung: Bắt đầu khi nhà cung cấp chủ động liên hệ chào hàng hoặc khi phát sinh nhu cầu nhập hàng từ cửa hàng. Nhân viên kho tiếp nhận thông tin, đối chiếu với tình trạng tồn kho thực tế và nhu cầu từ bộ phận kinh doanh, sau đó lập đề xuất nhập hàng nêu rõ chủng loại, số lượng và trình Ban Quản lý phê duyệt. Sau khi được phê duyệt, nhân viên kho thông báo lại cho nhà cung cấp; khi hàng về, nhân viên kho kiểm đếm số lượng, kiểm tra quy cách kỹ thuật, ký xác nhận biên bản nhập hàng và chuyển chứng từ cho nhân viên kế toán để ghi nhận công nợ nhà cung cấp. Trong trường hợp hàng không đúng quy cách hoặc thiếu số lượng, nhân viên kho lập biên bản sự vụ và yêu cầu nhà cung cấp bổ sung hoặc đổi hàng.
+Quy trình quản lý danh mục hàng hóa: Được thực hiện khi cần cập nhật danh mục hàng hóa (thêm mặt hàng mới, điều chỉnh quy cách, cập nhật giá). Ban Quản lý yêu cầu cập nhật danh mục theo biến động thị trường hoặc từ đề xuất của nhân viên; nhân viên kinh doanh hoặc nhân viên kho lập phiếu đề xuất điều chỉnh ghi rõ mã hàng, tên, quy cách kỹ thuật và đơn giá đề xuất rồi trình lên Ban Quản lý phê duyệt. Sau khi Ban Quản lý xem xét, điều chỉnh (nếu cần) và phê duyệt, nhân viên thông báo danh mục đã cập nhật đến các bộ phận liên quan. Trong trường hợp Ban Quản lý chưa đồng ý với mức giá đề xuất, hai bên thảo luận và thống nhất trước khi áp dụng chính thức.
+Quy trình báo cáo thống kê: Được thực hiện theo định kỳ (ngày/tuần/tháng/quý) hoặc khi Ban Quản lý yêu cầu báo cáo đột xuất. Ban Quản lý thông báo yêu cầu báo cáo đến các trưởng bộ phận; nhân viên kinh doanh tổng hợp số liệu doanh thu, đơn hàng và tình trạng hợp đồng trong kỳ; nhân viên kho tổng hợp số liệu nhập – xuất – tồn kho và kết quả kiểm kê trong kỳ; nhân viên kế toán tổng hợp số liệu thu chi, công nợ phải thu/phải trả và dòng tiền trong kỳ. Các bộ phận nộp báo cáo cho Ban Quản lý theo thời hạn quy định để Ban Quản lý xem xét, đặt câu hỏi làm rõ (nếu có) và phê duyệt. Trong trường hợp số liệu giữa các bộ phận có mâu thuẫn, Ban Quản lý yêu cầu nhân viên kế toán chủ trì đối soát lại với bộ phận liên quan trước khi xác nhận báo cáo chính thức.
+1.3.3. BIỂU MẪU THU THẬP ĐƯỢC TRONG QUÁ TRÌNH KHẢO SÁT
+Trong giai đoạn khảo sát thực tế tại Công ty Cổ phần SX-TM VLXD Sài Gòn (Sài Gòn CMC), nhóm đã thu thập được các chứng từ quan trọng làm cơ sở dữ liệu đầu vào cho hệ thống. Điển hình là Bảng báo giá vật liệu xây dựng, đây là biểu mẫu cốt lõi cung cấp danh mục hàng hóa và đơn giá niêm yết chính thức của đơn vị.
+Về mặt thông tin, biểu mẫu này liệt kê chi tiết các loại vật liệu như cát bê tông, cát xây tô và các loại đá xây dựng (1x2, 4x6, Mi sàng...) kèm theo đơn giá chuẩn tính trên đơn vị mét khối Ngoài các thông tin định danh doanh nghiệp và kho bãi, biểu mẫu còn xác lập các quy tắc nghiệp vụ quan trọng như đơn giá đã bao gồm chi phí vận chuyển, mức thuế VAT mặc định 10% và các hình thức thanh toán được chấp nhận bao gồm tiền mặt hoặc chuyển khoản ngân hàng.
+Việc phân tích biểu mẫu này có ý nghĩa quyết định trong khâu thiết kế hệ thống, giúp xác định chính xác các trường dữ liệu cho thực thể Vật liệu (Tên, đơn vị tính, giá) và thực thể Hóa đơn (Thuế, hình thức thanh toán). Đồng thời, các thông tin về vận chuyển và ngân hàng trên mẫu chứng từ là tiền đề để nhóm thiết lập các luồng xử lý cho bộ phận kho và kế toán, đảm bảo phần mềm khi hoàn thiện sẽ hoàn toàn tương thích với quy trình vận hành thực tế tại cửa hàng.
+
+
+
+Hình 1. 2: Bảng báo giá Sài Gòn CMC
+1.4. KẾT CHƯƠNG
+Khép lại Chương 1, nhóm thực hiện đã hoàn thành công tác khảo sát thực trạng quản trị tại Công ty TNHH Kinh doanh Vật liệu xây dựng Sài Gòn. Thông qua việc tiếp cận trực tiếp các biểu mẫu hóa đơn giấy, bảng báo giá niêm yết tại số 42A Cống Lỡ và phân tích quy trình vận hành liên phòng ban, nhóm đã nhận diện rõ nét những "điểm nghẽn" trong mô hình quản lý thủ công hiện tại. Đó là sự thiếu đồng bộ giữa dữ liệu kinh doanh và kho bãi, khó khăn trong việc theo dõi đơn giá biến động và những rủi ro thất thoát tài chính từ việc quản lý công nợ rời rạc trên sổ sách.
+Việc xác lập rõ ràng mục tiêu tin học hóa quy trình và khoanh vùng phạm vi nghiên cứu vào các nghiệp vụ trọng tâm như: Báo giá linh hoạt, điều phối giao nhận công trình và đối soát công nợ chi tiết là tiền đề quan trọng để xây dựng một hệ thống thông tin thực thụ. Những dữ liệu khảo sát và biểu mẫu thực tế thu thập được trong chương này không chỉ là bằng chứng về nhu cầu cấp thiết của việc chuyển đổi số, mà còn là nguồn nguyên liệu đầu vào quý giá để nhóm tiến hành các bước mô hình hóa chuyên sâu.
+Trên cơ sở những hiểu biết về nghiệp vụ thực tiễn đã nêu, nhóm sẽ tiến hành chuyển đổi các quy trình thủ công này thành ngôn ngữ của hệ thống thông tin. Tại Chương 2: Phân tích hệ thống, nhóm sẽ đi sâu vào việc xây dựng biểu đồ phân cấp chức năng, mô hình hóa luồng dữ liệu và thiết lập các sơ đồ thực thể mối quan hệ. Đây là bước đi quyết định để hình thành nên khung xương kỹ thuật vững chắc, biến những quy trình nghiệp vụ phức tạp của ngành vật liệu xây dựng thành một giải pháp phần mềm nhất quán và hiệu quả.
+
+\nCHƯƠNG 2: PHÂN TÍCH HỆ THỐNG
+
+2.1. GIỚI THIỆU
+Sau khi đã xác lập được nền tảng nghiệp vụ thực tế ở Chương 1, giai đoạn Phân tích hệ thống đóng vai trò chuyển hóa những quy trình thủ công thành các mô hình kỹ thuật chuẩn hóa. Mục tiêu trọng tâm của chương này là mô hình hóa toàn diện cấu trúc và hành vi của hệ thống quản lý vật liệu xây dựng thông qua ngôn ngữ UML (Unified Modeling Language), giúp định hình rõ nét cách thức vận hành của phần mềm trước khi đi vào giai đoạn thiết kế chi tiết.
+Quá trình phân tích được thực hiện xuyên suốt qua bốn loại sơ đồ then chốt nhằm bóc tách mọi khía cạnh của hệ thống:
+Sơ đồ Use Case: Xác định ranh giới hệ thống, liệt kê đầy đủ các chức năng và mối quan hệ giữa các Tác nhân với các dịch vụ mà hệ thống cung cấp.
+Sơ đồ Hoạt động (Activity Diagram): Mô tả chi tiết luồng xử lý nghiệp vụ, các bước rẽ nhánh và điều kiện trong các quy trình trọng tâm như báo giá sắt thép, xuất kho và đối soát công nợ.
+Sơ đồ Tuần tự (Sequence Diagram): Đi sâu vào sự tương tác theo thời gian giữa các đối tượng trong hệ thống, làm rõ cách thức dữ liệu được truyền tải để hoàn thành một chức năng cụ thể.
+Sơ đồ Cộng tác (Collaboration Diagram): Tập trung vào mối quan hệ tổ chức giữa các đối tượng, giúp cái nhìn về cấu trúc hệ thống trở nên trực quan và gắn kết hơn.
+
+\n
+2.2.  MÔ HÌNH HÓA NGHIỆP VỤ
+2.2.1. SƠ ĐỒ USE-CASE NGHIỆP VỤ 
+
+Hình 2. 1: UC Quản lý cửa hàng vật liệu xây dựng
+
+
+
+
+
+\n2.2.2. MÔ HÌNH HÓA QUY TRÌNH NGHIỆP VỤ 
+2.2.2.1. Mô hình hóa quy trình nghiệp vụ tư vấn và lập báo giá
+a. Bằng văn bản
+Tên Use Case
+ | Tư vấn và lập báo giá
+ | 
+ | Mô tả
+ | - UC bắt đầu khi khách hàng có nhu cầu mua vật liệu xây dựng và liên hệ với cửa hàng.
+- UC mô tả quá trình nhân viên kinh doanh tiếp nhận yêu cầu, tư vấn chủng loại/quy cách và lập báo giá cho khách hàng.
+ | 
+ | Tác nhân
+ | Khách Hàng, Nhân viên Kinh doanh (Cửa Hàng)
+ | 
+ | Use case liên quan
+ | Ký hợp đồng đặt hàng
+ | 
+ | Dòng cơ bản
+ | 1. Khách hàng trình bày nhu cầu về chủng loại, số lượng, quy cách vật liệu với nhân viên kinh doanh.
+2. Nhân viên kinh doanh tư vấn các loại vật liệu phù hợp (thép hình, thép hộp, tôn, xà gồ...) dựa trên yêu cầu công trình.
+3. Nhân viên kinh doanh hỏi bộ phận kho về tình trạng hàng hiện có.
+4. Nhân viên kho phản hồi về số lượng và quy cách hàng sẵn có.
+5. Nhân viên kinh doanh lập báo giá và trình bày cho khách hàng.
+6. Khách hàng xem xét và phản hồi về báo giá.
+
+ | 
+ | Dòng thay thế
+ | Tại bước 3, nếu hàng không đủ tồn kho, nhân viên kinh doanh thông báo thời gian dự kiến có hàng hoặc đề xuất phương án thay thế cho khách hàng.
+ | 
+ | 
+
+
+
+
+
+b.  Bằng sơ đồ hoạt động 
+
+
+Hình 2. 2: Sơ đồ hoạt động vụ tư vấn và lập báo giá
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+c. Bằng sơ đồ tương tác (gồm sơ đồ tuần tự và sơ đồ cộng tác)
+
+Hình 2. 3: Sơ đồ tuần tự vụ tư vấn và lập báo giá
+
+
+Hình 2. 4: Sơ đồ công tác vụ tư vấn và lập báo giá
+
+
+
+
+
+
+
+
+
+
+2.2.2.2. Mô hình hóa quy trình nghiệp vụ ký hợp đồng đặt hàng
+a. Bằng văn bản
+Tên Use Case
+ | Ký hợp đồng đặt hàng
+ | 
+ | Mô tả
+ | - UC bắt đầu sau khi khách hàng đồng ý với báo giá đã được tư vấn.
+- UC mô tả quá trình hai bên thỏa thuận, thống nhất điều khoản và ký kết hợp đồng cung ứng vật liệu.
+ | 
+ | Tác nhân
+ | Khách Hàng, Nhân viên Kinh doanh (Cửa Hàng), Ban Quản lý (Cửa Hàng)
+ | 
+ | Use case liên quan
+ | Tư vấn và lập báo giá
+ | 
+ | Dòng cơ bản
+ | 1. Khách hàng xác nhận đồng ý với báo giá và đề nghị ký hợp đồng.
+2. Nhân viên kinh doanh soạn thảo hợp đồng ghi rõ chủng loại, quy cách, số lượng, đơn giá, điều khoản giao hàng và thanh toán.
+3. Nhân viên kinh doanh trình hợp đồng lên Ban Quản lý để phê duyệt mức chiết khấu (nếu có).
+4. Ban Quản lý xem xét và phê duyệt hợp đồng.
+5. Nhân viên kinh doanh chuyển hợp đồng cho khách hàng đọc và xác nhận.
+6. Hai bên ký kết hợp đồng.
+ | 
+ | Dòng thay thế
+ | Tại bước 5, nếu khách hàng yêu cầu điều chỉnh điều khoản, nhân viên kinh doanh ghi nhận và trình lại Ban Quản lý xem xét trước khi ký.
+ | 
+ | 
+
+
+
+
+
+
+
+
+
+
+
+b. Bằng sơ đồ hoạt động
+
+Hình 2. 5: Sơ đồ hoạt động ký hợp đồng đặt hàng
+
+
+
+\nc. Bằng sơ đồ tương tác (gồm sơ đồ tuần tự và sơ đồ cộng tác)
+
+Hình 2. 6: Sơ đồ tuần tự ký hợp đồng đặt hàng
+
+Hình 2. 7: Sơ đồ cộng tác ký hợp đồng đặt hàng
+
+\n2.2.2.3. Mô hình hóa quy trình nghiệp vụ thanh toán
+a. Bằng văn bản
+
+Tên Use Case
+ | Thanh toán
+ | 
+ | Mô tả
+ | - UC bắt đầu khi phát sinh nghĩa vụ thanh toán theo hợp đồng đã ký kết giữa các bên.
+- UC mô tả quá trình xác nhận, thực hiện và ghi nhận thanh toán giữa khách hàng, cửa hàng và nhà cung cấp.
+ | 
+ | Tác nhân
+ | Khách Hàng, Nhân viên Kế toán (Cửa Hàng), Nhà Cung Cấp, Nhân viên kho
+ | 
+ | Use case liên quan
+ | ký hợp đồng đặt hàng
+ | 
+ | Dòng cơ bản
+ | 1. Nhân viên kế toán thông báo số tiền cần thanh toán cho khách hàng theo điều khoản hợp đồng.
+2. Khách hàng thực hiện thanh toán cho cửa hàng.
+3. Nhân viên kế toán xác nhận đã nhận đủ tiền và lập hóa đơn
+4. phát hành lệnh xuất hàng thông báo cho bộ phận kho.
+5. Nhân viên kế toán thực hiện thanh toán tiền hàng cho nhà cung cấp.
+6. Nhà cung cấp xác nhận đã nhận được thanh toán và thông báo lại cho nhân viên kế toán.
+ | 
+ | Dòng thay thế
+ | Tại bước 2, nếu khách hàng chỉ thanh toán một phần (đặt cọc), nhân viên kế toán ghi nhận số tiền đã nhận và thống nhất lịch thanh toán phần còn lại với khách hàng trước khi thực hiện bước 4.
+ | 
+ | 
+
+
+
+
+b.  Bằng sơ đồ hoạt động 
+
+Hình 2. 8:Sơ đồ hoạt động thanh toán
+
+
+
+\nc. Bằng sơ đồ tương tác (gồm sơ đồ tuần tự và sơ đồ cộng tác)
+
+
+Hình 2. 9:Sơ đồ tuân tự thanh toán
+
+
+
+
+Hình 2. 10: Sơ đồ cộng tác thanh toán
+\n2.2.2.4. Mô hình hóa quy trình nghiệp vụ quản lý công nợ
+a. Bằng văn bản
+Tên Use Case
+ | Quản lý công nợ
+ | 
+ | Mô tả
+ | - UC bắt đầu sau khi phát sinh giao dịch mua bán hoặc nhập hàng có liên quan đến công nợ. 
+- UC mô tả quá trình nhân viên kế toán theo dõi, đối soát công nợ với khách hàng và nhà cung cấp
+ | 
+ | Tác nhân
+ | Nhân viên Kế toán, Nhân viên Kinh doanh
+ | 
+ | Use case liên quan
+ | Thanh toán
+ | 
+ | Dòng cơ bản
+ | 1. Nhân viên kế toán tiếp nhận yêu cầu quản lý công nợ
+2. Nhân viên kế toán tổng hợp các khoản phát sinh công nợ theo từng đối tác (khách hàng và nhà cung cấp). 
+3. Nhân viên kế toán đối chiếu số liệu giao nhận thực tế với chứng từ thanh toán đã nhận. 4. Nhân viên kế toán thông báo số dư công nợ đến từng khách hàng và nhà cung cấp để xác nhận. 
+5. Khách hàng và nhà cung cấp xác nhận số dư công nợ. 
+6. Nhân viên kế toán cung cấp lịch quyết toán.
+ | 
+ | Dòng thay thế
+ | Tại bước 3, nếu nhân viên kế toán đối chiếu số liệu có chênh lệch, nhân viên kế toán phối hợp với nhân viên kinh doanh để xác minh lại chứng từ gốc.
+Tại bước 4, nếu khách hàng hoặc nhà cung cấp phản hồi có chênh lệch số liệu, nhân viên kế toán phối hợp với nhân viên kinh doanh để xác minh lại chứng từ gốc trước khi xác nhận số dư chính thức.
+ | 
+ | 
+
+
+
+
+
+
+
+b.  Bằng sơ đồ hoạt động 
+
+Hình 2. 11: Sơ đồ hoạt động quản lý công nợ
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+c. Bằng sơ đồ tương tác (gồm sơ đồ tuần tự và sơ đồ cộng tác)
+
+Hình 2. 12: Sơ đồ tuần tự quản lý công nợ
+
+
+Hình 2. 13: Sơ đồ cộng tác quản lý công nợ
+
+
+
+
+\n2.2.2.5. Mô hình hóa quy trình nghiệp vụ kiểm tra và bàn giao hàng
+a. Bằng văn bản
+Tên Use Case
+ | Kiểm tra và bàn giao hàng
+ | 
+ | Mô tả
+ | - UC bắt đầu khi hàng hóa được vận chuyển đến địa điểm công trình của khách hàng.
+- UC mô tả quá trình nhân viên giao nhận và khách hàng kiểm tra chất lượng, số lượng hàng và ký biên bản bàn giao.
+ | 
+ | Tác nhân
+ | Nhân viên Giao nhận 
+ | 
+ | Use case liên quan
+ | Xử lý đổi trả hàng, Tổ chức giao hàng và vận chuyển
+ | 
+ | Dòng cơ bản
+ | 1. Nhân viên giao nhận tiếp nhận yêu cầu giao hàng.
+2. Nhân viên giao nhận vận chuyển hàng đến công trình.
+3. Nhân viên giao nhận kiểm đếm số lượng thực tế.
+4. Nhân viên giao nhận yêu cầu khách hàng kiểm tra số lượng và quy cách kỹ thuật (mã thép, độ dày, chủng loại...).
+5. Nhân viên giao hàng lập biên bản bàn giao.
+6. Nhân viên giao nhận yêu cầu khách hàng ký xác nhận vào biên bản bàn giao.
+7. Nhân viên giao nhận mang biên bản về bàn cho nhân viên kế toán để tiến hành quyết toán.
+ | 
+ | Dòng thay thế
+ | Tại bước 3 và 4, nếu phát hiện hàng sai quy cách hoặc không đủ số lượng, nhân viên giao hàng lập biên bản sư vụ, ký xác nhận, tiếp theo gửi cho khách hàng ký xác nhận biên bản sư vụ và sau đó xử lý đổi trả hàng cho khách.
+ | 
+ | \nb.  Bằng sơ đồ hoạt động 
+
+
+Hình 2. 14: Sơ đồ hoạt động kiểm tra và bàn giao hàng\nc. Bằng sơ đồ tương tác (gồm sơ đồ tuần tự và sơ đồ cộng tác)
+
+Hình 2. 15: Sơ đồ tuần tự kiểm tra và bàn giao hàng
+
+
+
+Hình 2. 16: Sơ đồ cộng tác kiểm tra và bàn giao hàng
+
+
+
+
+\n2.2.2.6. Mô hình hóa quy trình nghiệp xử lý đổi trả hàng lỗi
+a. Bằng văn bản
+Tên Use Case
+ | Xử lý đổi trả hàng lỗi
+ | 
+ | Mô tả
+ | - UC bắt đầu khi phát sinh hàng lỗi, sai quy cách tại công trình hoặc hàng nhập từ nhà máy không đạt yêu cầu kỹ thuật. UC mô tả quá trình lập biên bản, thu hồi hàng về kho và điều chỉnh công nợ liên quan.
+ | 
+ | Tác nhân
+ | Khách Hàng, Nhân viên Giao nhận (Cửa hàng), Nhân viên Kho (Cửa hàng), Nhân viên Kế toán (Cửa hàng)
+ | 
+ | Use case liên quan
+ | Tổ chức giao hàng và vận chuyển.
+ | 
+ | Dòng cơ bản
+ | 1. Nhân viên giao nhận tiếp nhận yêu cầu đổi trả hàng lỗi
+2. Nhân viên giao nhận đến hiện trường phối hợp lập biên bản sự vụ ghi rõ lý do, số lượng hàng lỗi 
+3. Nhân viên giao nhận tiến hành thu hồi hàng về kho. \n4. Nhân viên kho tiếp nhận, kiểm tra và phân loại hàng thu hồi\n5. Nhân viên kho bàn giao biên bản và chứng từ thu hồi cho nhân viên kế toán. \n6. Nhân viên kế toán điều chỉnh giảm trừ công nợ tương ứng trên sổ của khách hàng và thông báo hoàn tất cho các bên liên quan.
+ | 
+ | Dòng thay thế
+ | Tại bước 4, nếu khách hàng yêu cầu đổi hàng ngay: \n- Nhân viên kho kiểm tra tồn kho. \n- Nếu còn hàng: thực hiện usecase tổ chức giao hàng và vận chuyển.\n- Nếu không còn hàng: Nhân viên kho tiến hành nhập hàng bổ sung, sau đó thực hiện usecase tổ chức giao hàng và vận chuyển.
+ | 
+ | 
+b.  Bằng sơ đồ hoạt động 
+
+Hình 2. 17:Sơ đồ hoạt động xử lý đổi trả hàng lỗi
+\nc. Bằng sơ đồ tương tác (gồm sơ đồ tuần tự và sơ đồ cộng tác)
+
+Hình 2. 18: Sơ đồ tuần tự xử lý đổi trả hàng lỗi
+
+Hình 2. 19: Sơ đồ cộng tác xử lý đổi trả hàng lỗi
+
+\n2.2.2.7. Mô hình hóa quy trình nghiệp vụ tổ chức giao hàng và vận chuyển
+a. Bằng văn bản
+Tên Use Case
+ | tổ chức giao hàng và vận chuyển
+ | 
+ | Mô tả
+ | - UC bắt đầu sau khi đơn hàng được xác nhận đã đặt cọc hoặc thanh toán đủ.
+- UC mô tả quá trình đơn vị vận chuyển chủ động liên hệ nhận hàng, phối hợp với bộ phận kho vận bốc xếp và vận chuyển hàng đến công trình cho khách hàng.
+ | 
+ | Tác nhân
+ | Nhân viên Kho vận (Cửa Hàng), Đơn Vị Vận Chuyển, Khách Hàng
+ | 
+ | Use case liên quan
+ | Kiểm tra và bàn giao hàng, thanh toán
+ | 
+ | Dòng cơ bản
+ | 1. Đơn vị vận chuyển chủ động liên hệ cửa hàng để xác nhận lịch và yêu cầu nhận hàng.
+2. Nhân viên kho vận cung cấp thông tin chi tiết về đơn hàng, địa chỉ công trình và thời gian giao dự kiến cho đơn vị vận chuyển.
+3. Đơn vị vận chuyển bố trí phương tiện phù hợp và đến kho nhận hàng.
+4. Đơn vị vận chuyển kiểm đếm hàng hóa, đối chiếu với lệnh xuất về chủng loại và số lượng.
+5. Đơn vị vận chuyển xác nhận đã nhận đủ hàng và ký nhận hồ sơ vận chuyển.
+6. Đơn vị vận chuyển tiến hành vận chuyển và bàn giao hàng tại công trình cho khách hàng.
+7. Khách hàng xác nhận đã nhận hàng, đơn vị vận chuyển thông báo lại cho nhân viên kho vận hoàn tất chuyến.
+ | 
+ | Dòng thay thế
+ | Tại bước 4, nếu phát hiện hàng bị hư hỏng hoặc sai số lượng, đơn vị vận chuyển yêu cầu nhân viên kho vận kiểm tra lại và lập biên bản xác nhận trước khi xuất phát.
+ | 
+ | 
+
+b.  Bằng sơ đồ hoạt động
+
+Hình 2. 20: Sơ đồ hoạt dộng tổ chức giao hàng và vận chuyển
+
+\nc. Bằng sơ đồ tương tác (gồm sơ đồ tuần tự và sơ đồ cộng tác)
+
+Hình 2. 21:Sơ đồ tuần tự tổ chức giao hàng và vận chuyển
+
+Hình 2. 22: Sơ đồ cộng tác tổ chức giao hàng và vận chuyển
+
+\n2.2.2.8. Mô hình hóa quy trình nghiệp vụ quản lý kho
+a. Bằng văn bản
+Tên Use Case
+ | Nhập kho và kiểm soát nguồn cung
+ | 
+ | Mô tả
+ | - UC bắt đầu khi nhà cung cấp chủ động liên hệ chào hàng hoặc khi phát sinh nhu cầu nhập hàng từ cửa hàng.
+- UC mô tả quá trình nhân viên kho phối hợp với các bộ phận liên quan để nhập hàng, kiểm kê và đảm bảo tồn kho đáp ứng nhu cầu kinh doanh.
+ | 
+ | Tác nhân
+ | Nhà Cung Cấp, Nhân viên Kho (Cửa Hàng), Ban Quản lý (Cửa Hàng), Nhân viên Kế toán (Cửa Hàng)
+ | 
+ | Use case liên quan
+ | Xử lý hàng lỗi, báo cáo thống kê
+ | 
+ | Dòng cơ bản
+ | 1. Nhà cung cấp chủ động liên hệ cửa hàng để chào hàng, cung cấp thông tin chủng loại, quy cách và báo giá.
+2. Nhân viên kho tiếp nhận thông tin, đối chiếu với tình trạng tồn kho thực tế và nhu cầu từ bộ phận kinh doanh.
+3. Nhân viên kho lập đề xuất nhập hàng nêu rõ chủng loại, số lượng và trình Ban Quản lý phê duyệt.
+4. Ban Quản lý xem xét và phê duyệt đề xuất nhập hàng.
+5. Nhân viên kho thông báo lại cho nhà cung cấp về số lượng và quy cách hàng cần nhập.
+6. Khi hàng về, nhân viên kho kiểm đếm số lượng và kiểm tra quy cách kỹ thuật.
+7. Nhân viên kho ký xác nhận biên bản nhập hàng với nhà cung cấp.
+8. Nhân viên kho chuyển chứng từ nhập hàng cho nhân viên kế toán để ghi nhận công nợ nhà cung cấp.
+ | 
+ | Dòng thay thế
+ | Tại bước 6, nếu hàng nhận về không đúng quy cách hoặc thiếu số lượng, nhân viên kho lập biên bản sự vụ và yêu cầu nhà cung cấp bổ sung hoặc đổi hàng.
+ | 
+ | 
+b.  Bằng sơ đồ hoạt động 
+
+Hình 2. 23: Sơ đồ hoạt động quản lý kho
+\nc. Bằng sơ đồ tương tác (gồm sơ đồ tuần tự và sơ đồ cộng tác)
+
+Hình 2. 24: Sơ đồ tuần tự quản lý kho
+
+Hình 2. 25: Sơ đồ cộng tác quản lý kho
+
+\n2.2.2.9. Mô hình hóa quy trình nghiệp vụ quản lý danh mục
+a. Bằng văn bản
+Tên Use Case
+ | Quản lý danh mục
+ | 
+ | Mô tả
+ | - UC bắt đầu khi cần cập nhật danh mục hàng hóa (thêm mặt hàng mới, điều chỉnh quy cách, cập nhật giá).
+- UC mô tả quá trình nhân viên kinh doanh/kho phối hợp với Ban Quản lý để duy trì danh mục hàng hóa chính xác và đầy đủ.
+ | 
+ | Tác nhân
+ | Nhân viên Kinh doanh / Nhân viên Kho (Cửa Hàng), Ban Quản lý (Cửa Hàng)
+ | 
+ | Use case liên quan
+ | Quản lý kho, tư vấn và lập báo giá
+ | 
+ | Dòng cơ bản
+ | 1. Ban quản lý yêu cầu cập nhật danh mục (mặt hàng mới từ nhà cung cấp, điều chỉnh đơn giá theo thị trường).
+2. Nhân viên lập phiếu đề xuất điều chỉnh danh mục ghi rõ mã hàng, tên, quy cách kỹ thuật và đơn giá đề xuất.
+3. Nhân viên trình phiếu đề xuất lên Ban Quản lý để phê duyệt.
+4. Ban Quản lý xem xét, điều chỉnh (nếu cần) và phê duyệt thay đổi danh mục.
+5. Nhân viên thông báo danh mục đã cập nhật cho các bộ phận liên quan (kinh doanh, kho).
+ | 
+ | Dòng thay thế
+ | Tại bước 4, nếu Ban Quản lý chưa đồng ý với mức giá đề xuất, hai bên thảo luận và thống nhất trước khi áp dụng chính thức.
+ | 
+ | 
+b.  Bằng sơ đồ hoạt động 
+
+Hình 2. 26: Sơ đồ hoạt động quản lý danh mục
+
+\nc. Bằng sơ đồ tương tác (gồm sơ đồ tuần tự và sơ đồ cộng tác)
+
+Hình 2. 27: Sơ đồ tuần tự quản lý danh mục
+
+
+
+Hình 2. 28: Sơ đồ cộng tác quản lý danh mục\n2.2.2.10. Mô hình hóa quy trình nghiệp vụ báo cáo thống kê
+a. Bằng văn bản
+Tên Use Case
+ | Báo cáo thống kê
+ | 
+ | Mô tả
+ | - UC bắt đầu theo định kỳ (ngày/tuần/tháng/quý) hoặc khi Ban Quản lý yêu cầu báo cáo đột xuất.
+- UC mô tả quá trình các bộ phận tổng hợp số liệu và trình báo cáo lên Ban Quản lý để phục vụ ra quyết định kinh doanh.
+ | 
+ | Tác nhân
+ | Nhân viên Kế toán, Nhân viên Kinh doanh, Nhân viên Kho (Cửa Hàng), Ban Quản lý (Cửa Hàng)
+ | 
+ | Use case liên quan
+ | Thanh toán, quản lý công nợ, quản lý kho
+ | 
+ | Dòng cơ bản
+ | 1. Ban Quản lý thông báo yêu cầu báo cáo định kỳ đến các trưởng bộ phận.
+2. Nhân viên kinh doanh tổng hợp số liệu doanh thu, đơn hàng, tình trạng hợp đồng trong kỳ.
+3. Nhân viên kho tổng hợp số liệu nhập – xuất – tồn kho, kết quả kiểm kê trong kỳ.
+4. Nhân viên kế toán tổng hợp số liệu thu chi, công nợ phải thu/phải trả và dòng tiền trong kỳ.
+5. Các bộ phận nộp báo cáo cho Ban Quản lý theo thời hạn quy định.
+6. Ban Quản lý xem xét, đặt câu hỏi làm rõ (nếu có) và phê duyệt báo cáo.
+ | 
+ | Dòng thay thế
+ | Tại bước 5, nếu số liệu giữa các bộ phận có mâu thuẫn, Ban Quản lý yêu cầu nhân viên kế toán chủ trì đối soát lại với bộ phận liên quan trước khi xác nhận báo cáo chính thức.
+ | 
+ | 
+
+
+b.  Bằng sơ đồ hoạt động 
+
+Hình 2. 29: Sơ đồ hoạt động báo cáo thống kê
+c. Bằng sơ đồ tương tác (gồm sơ đồ tuần tự và sơ đồ cộng tác)
+
+Hình 2. 30: Sơ đồ tuần tự báo cáo thống kê
+
+Hình 2. 31: Sơ đồ cộng tác báo cáo thống kê
+
+
+
+
+
+
+
+
+
+
+
+2.3. MÔ HÌNH HÓA CHỨC NĂNG
+2.3.1. Sơ đồ Use Case hệ thống
+
+2.3.2. Đặc tả Use Case hệ thống
+Đặc tả cho UC hệ thống cho chức năng đăng ký
+Tên use case
+ | Đăng Ký
+ | 
+ | Tóm tắt
+ | UC cho phép Khách hàng tự tạo tài khoản trên hệ thống để có thể tra cứu thông tin, đặt hàng và theo dõi công nợ mà không cần liên hệ trực tiếp cửa hàng.
+ | 
+ | Tác nhân
+ | Khách hàng
+ | 
+ | Use case liên quan
+ | Đăng nhập
+ | 
+ | Dòng sự kiện chính
+ | 1. Khách hàng truy cập giao diện và chọn "Đăng ký tài khoản". 
+2. Hệ thống hiển thị form nhập thông tin: họ tên, số điện thoại, địa chỉ, mật khẩu. 
+3. Khách hàng nhập đầy đủ thông tin và xác nhận đăng ký. 
+4. Hệ thống kiểm tra tính hợp lệ của dữ liệu (số điện thoại chưa tồn tại). 
+5. Hệ thống tạo tài khoản, sinh mã khách hàng và thông báo đăng ký thành công.
+ | 
+ | Dòng sự kiện phụ
+ | Tại bước 4: Nếu số điện thoại đã tồn tại trong hệ thống, hệ thống thông báo lỗi và yêu cầu nhập số khác hoặc đăng nhập vào tài khoản có sẵn. Nếu thông tin nhập thiếu hoặc không hợp lệ, hệ thống hiển thị thông báo lỗi tương ứng từng trường.
+ | 
+ | Điều kiện tiên quyết
+ | Khách hàng chưa có tài khoản trong hệ thống.
+ | 
+ | Hậu điều kiện
+ | Tài khoản khách hàng được tạo thành công, lưu vào CSDL với mã khách hàng duy nhất. Khách hàng có thể đăng nhập ngay sau khi đăng ký.
+ | 
+ | 
+Đặc tả cho UC hệ thống cho chức năng  Đăng Nhập
+Tên use case
+ | Đăng Nhập
+ | 
+ | Tóm tắt
+ | UC cho phép tất cả người dùng (Khách hàng, NV Kinh doanh, NV Kế toán, NV Kho, Quản lý, Quản trị viên) xác thực danh tính và truy cập hệ thống với quyền hạn tương ứng vai trò.
+ | 
+ | Tác nhân
+ | Khách hàng, NV kinh doanh, NV kế toán, NV kho, Ban quản lý, Quản trị viên
+ | 
+ | Use case liên quan
+ | Đăng ký
+ | 
+ | Dòng sự kiện chính
+ | 1. Người dùng truy cập giao diện đăng nhập của hệ thống. 
+2. Hệ thống hiển thị form nhập tên đăng nhập và mật khẩu. 
+3. Người dùng nhập thông tin đăng nhập và xác nhận. 
+4. Hệ thống xác thực thông tin với CSDL. 5. Hệ thống xác định vai trò và phân quyền tương ứng. 
+6. Hệ thống chuyển hướng người dùng đến giao diện phù hợp với vai trò.
+ | 
+ | Dòng sự kiện phụ
+ | Tại bước 4: Nếu tên đăng nhập hoặc mật khẩu sai, hệ thống thông báo lỗi và cho phép thử lại. Nếu nhập sai quá 5 lần liên tiếp, hệ thống tạm khóa tài khoản và yêu cầu liên hệ Quản trị viên để mở khóa.
+ | 
+ | Điều kiện tiên quyết
+ | Tài khoản người dùng đã tồn tại và đang hoạt động trong hệ thống.
+ | 
+ | Hậu điều kiện
+ | Phiên làm việc được khởi tạo thành công. Giao diện và các chức năng hiển thị đúng theo vai trò của người dùng.
+ | 
+ | 
+Đặc tả cho UC hệ thống cho chức năng  tra cứu thông tin cá nhân
+Tên use case
+ | Tra cứu thông tin cá nhân
+ | 
+ | Tóm tắt
+ | - UC cho phép Khách hàng xem lại thông tin tài khoản cá nhân, lịch sử đơn hàng, trạng thái hợp đồng và số dư công nợ của mình trên hệ thống một cách chủ động, minh bạch.
+ | 
+ | Tác nhân
+ | Khách hàng
+ | 
+ | Use case liên quan
+ | Đăng nhập
+ | 
+ | Dòng sự kiện chính
+ | 1. Khách hàng đăng nhập và chọn chức năng "Thông tin cá nhân". 
+2. Hệ thống hiển thị thông tin tài khoản: họ tên, số điện thoại, địa chỉ công trình. 
+3. Khách hàng chọn mục "Lịch sử đơn hàng" để xem các đơn hàng đã đặt. 
+4. Hệ thống hiển thị danh sách đơn hàng kèm trạng thái (Chờ xử lý / Đang giao / Đã giao). 
+5. Khách hàng chọn mục "Công nợ của tôi" để xem số dư công nợ hiện tại. 
+6. Hệ thống hiển thị số tiền đã thanh toán, số còn nợ và lịch thanh toán theo hợp đồng.
+ | 
+ | Dòng sự kiện phụ
+ | - Tại bước 2: Khách hàng có thể chỉnh sửa thông tin cá nhân (số điện thoại, địa chỉ) và lưu lại; hệ thống cập nhật vào CSDL. Tại bước 3: Khách hàng có thể lọc đơn hàng theo khoảng thời gian hoặc trạng thái.
+ | 
+ | Điều kiện tiên quyết
+ | - Khách hàng đã đăng nhập thành công vào hệ thống.
+ | 
+ | Hậu điều kiện
+ | -  Thông tin cá nhân, lịch sử đơn hàng và công nợ được hiển thị chính xác theo dữ liệu thực tế trong hệ thống.
+ | 
+ | 
+Đặc tả cho UC hệ thống cho chức năng  quản lý đơn hàng
+Tên use case
+ | Quản lý đơn hàng
+ | 
+ | Tóm tắt
+ | - UC cho phép Khách hàng đặt đơn hàng vật liệu xây dựng trực tiếp trên hệ thống và cho phép NV Kinh doanh tiếp nhận, xác nhận, theo dõi và cập nhật trạng thái từng đơn hàng.
+ | 
+ | Tác nhân
+ | Khách hàng, NV Kinh doanh
+ | 
+ | Usecase liên quan
+ | Usecase đăng nhập, Usecase quản lý hợp đồng
+ | 
+ | Dòng sự kiện chính
+ | 1. Khách hàng đăng nhập và chọn chức năng "Đặt đơn hàng". 
+2. Hệ thống hiển thị danh mục vật liệu xây dựng hiện có. 
+3. Khách hàng chọn mặt hàng, nhập số lượng và quy cách yêu cầu.
+4. Hệ thống hiển thị đơn giá hiện hành, tính tổng tiền và kiểm tra tồn kho. 
+5. Khách hàng xác nhận đặt hàng. 
+6. Hệ thống lưu đơn hàng, sinh mã đơn tự động và thông báo đến NV Kinh doanh. 
+7. NV Kinh doanh xem xét và xác nhận đơn hàng trên hệ thống.
+ | 
+ | Dòng sự kiện phụ
+ | - Tại bước 4: Nếu hàng không đủ tồn kho, hệ thống cảnh báo và hiển thị số lượng tồn thực tế, đề xuất ngày dự kiến có hàng. 
+- Tại bước 7: NV Kinh doanh có thể từ chối đơn và ghi rõ lý do; hệ thống thông báo lại cho khách hàng.
+ | 
+ | Điều kiện tiên quyết
+ | - Khách hàng đã đăng nhập. Danh mục hàng hóa và đơn giá đã được cập nhật trong hệ thống.
+ | 
+ | Hậu điều kiện
+ | - Đơn hàng được lưu vào hệ thống với mã số duy nhất và trạng thái "Chờ xác nhận". NV Kinh doanh nhận được thông báo để xử lý tiếp theo.
+ | 
+ | 
+Đặc tả cho UC hệ thống cho chức năng  quản lý Hợp Đồng
+Tên use case
+ | Quản lý Hợp Đồng
+ | 
+ | Tóm tắt
+ | - UC cho phép NV kinh doanh tạo hợp đồng cung ứng VLXD dựa trên đơn hàng đã được xác nhận, bao gồm điều khoản thanh toán, tiến độ giao hàng và tỷ lệ đặt cọc; trình Ban quản lý phê duyệt.
+ | 
+ | Tác nhân	
+ | NV Kinh doanh, Khách hàng, Ban Quản lý
+ | 
+ | Use case liên quan
+ | Quản lý đơn hàng
+ | 
+ | Dòng sự kiện chính
+ | 1. NV Kinh doanh chọn đơn hàng đã xác nhận và chọn "Lập hợp đồng". 
+2. Hệ thống tự động điền thông tin từ đơn hàng vào mẫu hợp đồng. 
+3. NV Kinh doanh bổ sung điều khoản: tỷ lệ đặt cọc, phương thức thanh toán, tiến độ giao hàng. 
+4. NV Kinh doanh xác nhận và gửi hợp đồng lên Ban Quản lý phê duyệt. 
+5. Ban Quản lý kiểm tra và phê duyệt hợp đồng trên hệ thống. 
+6. Hệ thống sinh mã hợp đồng, cập nhật trạng thái "Đã duyệt" và thông báo cho NV Kinh doanh.
+ | 
+ | Dòng sự kiện phụ
+ | - Tại bước 5: Nếu Ban Quản lý yêu cầu chỉnh sửa, hệ thống trả hợp đồng về trạng thái "Cần chỉnh sửa" kèm ghi chú. Sau khi ký kết thực tế, NV Kinh doanh cập nhật trạng thái thành "Đã ký" và đính kèm file scan.
+ | 
+ | Điều kiện tiên quyết
+ | - Đơn hàng đã được NV Kinh doanh xác nhận. NV Kinh doanh đã đăng nhập.
+ | 
+ | Hậu điều kiện
+ | - Hợp đồng được lưu vào hệ thống với mã số duy nhất, trạng thái "Đã ký". Hệ thống sẵn sàng tiếp nhận thanh toán và điều phối xuất kho.
+ | 
+ | 
+Đặc tả cho UC hệ thống cho chức năng  Quản lý tài chính và công nợ
+Tên use case
+ | Quản lý tài chính và công nợ
+ | 
+ | Tóm tắt
+ | - UC cho phép NV Kế toán ghi nhận thanh toán từ khách hàng và đến nhà cung cấp, lập hóa đơn, phát hành lệnh xuất hàng và theo dõi số dư công nợ phải thu/phải trả theo thời gian thực.
+ | 
+ | Tác nhân
+ | NV Kế toán, Khách hàng, Nhà cung cấp, Ban Quản lý
+ | 
+ | Use case liên quan
+ | Quản lý hợp đồng, quản lý đơn hàng
+ | 
+ | Dòng sự kiện chính
+ | 1. NV Kế toán chọn hợp đồng có phát sinh thanh toán. 
+2. Hệ thống hiển thị thông tin hợp đồng: tổng giá trị, số đã thu, số còn lại theo điều khoản. 
+3. NV Kế toán ghi nhận số tiền khách hàng thanh toán và phương thức (tiền mặt/chuyển khoản). 
+4. Hệ thống cập nhật số tiền đã thu, tính số dư công nợ còn lại. 
+5. NV Kế toán xác nhận và lập hóa đơn. 
+6. Hệ thống lưu hóa đơn và tự động phát hành lệnh xuất hàng gửi NV Kho. 
+7. Hệ thống cập nhật sổ công nợ và gửi thông báo số dư đến khách hàng.
+ | 
+ | Dòng sự kiện phụ
+ | - Tại bước 3: Nếu khách hàng chỉ đặt cọc một phần, hệ thống ghi nhận số tiền đặt cọc và thiết lập lịch thanh toán phần còn lại. Lệnh xuất hàng chỉ được phát hành khi đáp ứng điều kiện thanh toán theo hợp đồng.
+ | 
+ | Điều kiện tiên quyết
+ | - Hợp đồng đã được ký kết và lưu trong hệ thống. NV Kế toán đã đăng nhập.
+ | 
+ | Hậu điều kiện
+ | - Khoản thanh toán được ghi nhận, hóa đơn lưu vào hệ thống. Lệnh xuất hàng tự động phát hành đến kho. Sổ công nợ được cập nhật chính xác.
+ | 
+ | 
+Đặc tả cho UC hệ thống cho chức năng  Quản Lý Lô Trình
+Tên use case
+ | Quản Lý Lô Trình
+ | 
+ | Tóm tắt
+ | - UC cho phép NV Kho phối hợp với Đơn vị vận chuyển lập kế hoạch lộ trình giao hàng cho từng chuyến xe, tối ưu hóa tuyến đường giao đến nhiều công trình và theo dõi tiến trình vận chuyển thực tế.
+ | 
+ | Tác nhân
+ | NV Kho, Đơn vị vận chuyển, Ban Quản lý
+ | 
+ | Use case liên quan
+ | Quản lý nhập hàng, quản lý giao nhận và bàn giao
+ | 
+ | Dòng sự kiện chính
+ | 1. NV Kho chọn chức năng "Quản lý lô trình". 
+2. Hệ thống hiển thị danh sách các lệnh xuất hàng đã sẵn sàng cần giao. 
+3. NV Kho nhóm các lệnh xuất theo khu vực địa lý và bố trí thành từng chuyến xe. 4. NV Kho chọn đơn vị vận chuyển và phương tiện phù hợp cho từng lô trình. 
+5. Hệ thống lưu kế hoạch lô trình và thông báo lịch giao cho đơn vị vận chuyển. 
+6. NV Kho cập nhật trạng thái lô trình theo thực tế (Đang vận chuyển / Đã giao xong).
+ | 
+ | Dòng sự kiện phụ
+ | - Tại bước 3: Nếu hàng hóa của một lệnh xuất quá cồng kềnh (thép dài, số lượng lớn), hệ thống cảnh báo để NV Kho bố trí phương tiện trọng tải phù hợp. 
+- Tại bước 6: Nếu có sự cố trên đường giao, NV Kho ghi nhận sự cố và thông báo cho khách hàng về thời gian giao dự kiến mới.
+ | 
+ | Điều kiện tiên quyết
+ | - Lệnh xuất hàng đã có trạng thái "Đã xuất kho". NV Kho đã đăng nhập.
+ | 
+ | Hậu điều kiện
+ | - Kế hoạch lô trình được lưu vào hệ thống. Đơn vị vận chuyển nhận được lịch giao hàng chi tiết. Trạng thái vận chuyển được theo dõi liên tục.
+ | 
+ | 
+Đặc tả cho UC hệ thống cho chức năng Quản lý nhập hàng
+Tên use case
+ | Quản lý nhập hàng
+ | 
+ | Tóm tắt
+ | - UC cho phép NV Kho ghi nhận hàng hóa nhập từ nhà cung cấp, kiểm đếm thực tế, đối chiếu với phiếu đặt hàng và cập nhật số lượng tồn kho trong hệ thống.
+ | 
+ | Tác nhân
+ | NV Kho, Nhà cung cấp, Ban Quản lý
+ | 
+ | Use case liên quan
+ | Quản lý kho, Quản lý danh mục hàng hóa
+ | 
+ | Dòng sự kiện chính
+ | 1. NV Kho chọn chức năng "Nhập hàng" và chọn phiếu đặt hàng tương ứng từ nhà cung cấp. 
+2. Hệ thống hiển thị danh sách hàng hóa cần nhập theo phiếu đặt hàng. 
+3. NV Kho nhập số lượng thực nhận cho từng mặt hàng sau khi kiểm đếm thực tế. 
+4. NV Kho xác nhận vị trí lưu kho cho từng loại hàng. 
+5. NV Kho xác nhận hoàn tất nhập hàng trên hệ thống. 
+6. Hệ thống cộng dồn số lượng tồn kho và lưu phiếu nhập hàng với mã số tự động.
+ | 
+ | Dòng sự kiện phụ
+ | - Tại bước 3: Nếu số lượng thực nhận ít hơn đặt hàng, hệ thống ghi nhận chênh lệch và cảnh báo NV Kho liên hệ nhà cung cấp xử lý. Nếu phát hiện hàng sai quy cách hoặc không đạt chất lượng, NV Kho ghi chú sự vụ và kích hoạt quy trình đổi trả với nhà cung cấp.
+ | 
+ | Điều kiện tiên quyết
+ | - Phiếu đặt hàng nhà cung cấp đã được Ban Quản lý phê duyệt với trạng thái "Chờ giao hàng". NV Kho đã đăng nhập.
+ | 
+ | Hậu điều kiện
+ | - Phiếu nhập hàng được lưu vào hệ thống. Số lượng tồn kho của từng mặt hàng được cập nhật chính xác theo thực tế nhập.
+ | 
+ | 
+Đặc tả cho UC hệ thống cho chức năng Quản lý báo cáo
+Tên use case
+ | Quản lý báo cáo
+ | 
+ | Tóm tắt
+ | - UC cho phép Ban Quản lý xem và xuất các báo cáo tổng hợp về doanh thu, tồn kho, công nợ và tình hình kinh doanh theo từng kỳ, hỗ trợ ra quyết định điều hành và hoạch định chiến lược.
+ | 
+ | Tác nhân
+ | Ban Quản lý, NV Kế toán
+ | 
+ | Use case liên quan
+ | Quản lý tài chính và công nợ, Quản lý kho, Quản lý đơn hàng
+ | 
+ | Dòng sự kiện chính
+ | 1. Ban Quản lý chọn chức năng "Báo cáo thống kê".
+2. Hệ thống hiển thị menu các loại báo cáo: Doanh thu, Tồn kho, Công nợ, Nhập-Xuất hàng, Hiệu suất giao hàng. 
+3. Ban Quản lý chọn loại báo cáo và thiết lập kỳ thống kê (ngày/tháng/quý/năm). 
+4. Hệ thống truy vấn dữ liệu và hiển thị báo cáo dạng bảng và biểu đồ. 
+5. Ban Quản lý lọc chi tiết theo nhóm hàng, khách hàng, nhân viên hoặc nhà cung cấp. 6. Ban Quản lý xuất báo cáo ra file Excel/PDF để lưu trữ hoặc trình bày.
+ | 
+ | Dòng sự kiện phụ
+ | - Cập nhật đơn giá: Người dùng chọn mặt hàng, nhập đơn giá mới và ngày áp dụng; hệ thống lưu lịch sử giá theo thời gian. 
+- Tại bước 4: Nếu khoảng thời gian lớn hoặc dữ liệu nhiều, hệ thống hiển thị thanh tiến trình tải. NV Kế toán chỉ được xem các báo cáo trong phạm vi tài chính được phân quyền.
+ | 
+ | Điều kiện tiên quyết
+ | - Ban Quản lý hoặc NV Kế toán đã đăng nhập với quyền xem báo cáo. Dữ liệu nghiệp vụ đã được cập nhật vào hệ thống.
+ | 
+ | Hậu điều kiện
+ | - Báo cáo hiển thị chính xác theo kỳ và tiêu chí đã chọn. File báo cáo được xuất thành công nếu có yêu cầu.
+ | 
+ | 
+Đặc tả cho UC hệ thống cho chức năng  quản Lý Tài Khoản
+Tên use case
+ | Quản Lý Tài Khoản
+ | 
+ | Tóm tắt
+ | - UC cho phép Quản trị viên tạo mới, chỉnh sửa, phân quyền và vô hiệu hóa tài khoản cho tất cả người dùng trong hệ thống (nhân viên và khách hàng), đảm bảo mỗi người dùng truy cập đúng phạm vi chức năng.
+ | 
+ | Tác nhân
+ | Quản trị viên, Ban Quản lý
+ | 
+ | Use case liên quan
+ | Đăng nhập
+ | 
+ | Dòng sự kiện chính
+ | 1. Quản trị viên chọn chức năng "Quản lý tài khoản". 
+2. Hệ thống hiển thị danh sách tài khoản phân theo vai trò (Khách hàng / Nhân viên / Quản lý). 
+3. Quản trị viên chọn "Tạo tài khoản mới" cho nhân viên. 
+4. Hệ thống hiển thị form nhập: họ tên, vai trò, phòng ban, tên đăng nhập, mật khẩu tạm thời. 
+5. Quản trị viên nhập đầy đủ thông tin và xác nhận. 
+6. Hệ thống lưu tài khoản vào CSDL, gán quyền hạn theo vai trò và thông báo tạo thành công.
+ | 
+ | Dòng sự kiện phụ
+ | - Tại bước 6: Nếu tên đăng nhập đã tồn tại, hệ thống thông báo lỗi trùng lặp và yêu cầu nhập tên khác. Vô hiệu hóa tài khoản: Quản trị viên chọn tài khoản, xác nhận vô hiệu hóa; hệ thống ngăn đăng nhập nhưng vẫn giữ lịch sử giao dịch. Mở khóa tài khoản bị khóa do nhập sai mật khẩu nhiều lần.
+ | 
+ | Điều kiện tiên quyết
+ | - Quản trị viên đã đăng nhập với quyền quản trị hệ thống cao nhất.
+ | 
+ | Hậu điều kiện
+ | - Tài khoản mới được tạo thành công với phân quyền đúng theo vai trò. Người dùng mới có thể đăng nhập và thực hiện các chức năng trong phạm vi quyền hạn.
+ | 
+ | 
+Đặc tả cho UC hệ thống cho chức năng Quản Lý Mặt Hàng
+Tên use case
+ | Quản Lý Mặt Hàng
+ | 
+ | Tóm tắt
+ | - UC cho phép NV Kho cập nhật chi tiết kỹ thuật từng mặt hàng vật liệu xây dựng (quy cách, trọng lượng, kích thước, nhà sản xuất), theo dõi trạng thái kinh doanh và liên kết thông tin kỹ thuật phục vụ tư vấn và xuất kho.
+ | 
+ | Tác nhân
+ | NV Kho, NV Kinh doanh
+ | 
+ | Use case liên quan
+ | Quản lý kho, Quản lý danh mục hàng hóa
+ | 
+ | Dòng sự kiện chính
+ | 1. NV Kho chọn chức năng "Quản lý mặt hàng". 
+2. Hệ thống hiển thị danh sách mặt hàng với thông tin: mã hàng, tên, quy cách, tồn kho hiện tại, trạng thái. 
+3. NV Kho chọn mặt hàng cần xem hoặc chỉnh sửa thông tin chi tiết. 
+4. Hệ thống hiển thị đầy đủ thông tin kỹ thuật của mặt hàng. 
+5. NV Kho cập nhật thông tin kỹ thuật (quy cách, nhà sản xuất, mức tồn kho tối thiểu). 6. Hệ thống lưu thay đổi vào CSDL và cập nhật trạng thái hiển thị.
+ | 
+ | Dòng sự kiện phụ
+ | - Ngừng kinh doanh mặt hàng: NV Kho đổi trạng thái mặt hàng thành "Ngừng bán", mặt hàng không hiển thị khi lập đơn hàng hoặc báo giá. Cảnh báo tồn kho thấp: Khi tồn kho thực tế xuống dưới mức tối thiểu thiết lập, hệ thống tự động gửi cảnh báo cho NV Kho để lập đề xuất nhập hàng.
+ | 
+ | Điều kiện tiên quyết
+ | - NV Kho đã đăng nhập. Mặt hàng đã tồn tại trong danh mục hàng hóa.
+ | 
+ | Hậu điều kiện
+ | - Thông tin chi tiết mặt hàng được cập nhật và lưu vào CSDL. Mức tồn kho tối thiểu được giám sát tự động bởi hệ thống.
+ | 
+ | 
+Đặc tả cho UC hệ thống cho chức năng Quản Lý Kho
+Tên use case
+ | Quản Lý Kho
+ | 
+ | Tóm tắt
+ | - UC cho phép NV Kho theo dõi toàn bộ luồng hàng hóa nhập – xuất – tồn thực tế tại kho, thực hiện kiểm kê định kỳ, điều chỉnh số lượng tồn kho và đảm bảo dữ liệu kho khớp với thực tế.
+ | 
+ | Tác nhân
+ | NV Kho, Ban Quản lý
+ | 
+ | Use case liên quan
+ | Quản lý nhập hàng, Quản lý báo cáo
+ | 
+ | Dòng sự kiện chính
+ | 1. NV Kho chọn chức năng "Quản lý kho". 2. Hệ thống hiển thị tổng quan tồn kho: danh sách mặt hàng, số lượng tồn, vị trí lưu kho, cảnh báo tồn thấp. 
+3. NV Kho chọn mặt hàng cần kiểm tra chi tiết lịch sử nhập/xuất. 
+4. Hệ thống hiển thị lịch sử giao dịch: ngày nhập/xuất, số lượng, chứng từ liên quan. 
+5. NV Kho thực hiện kiểm kê thực tế và nhập số lượng đếm được vào hệ thống. 
+6. Hệ thống so sánh số lượng kiểm kê với tồn kho sổ sách và hiển thị chênh lệch. 
+7. NV Kho xác nhận điều chỉnh, hệ thống cập nhật tồn kho theo số liệu kiểm kê thực tế.
+ | 
+ | Dòng sự kiện phụ
+ | - Tại bước 6: Nếu có chênh lệch lớn, hệ thống yêu cầu NV Kho nhập lý do điều chỉnh và gửi báo cáo chênh lệch lên Ban Quản lý phê duyệt trước khi cập nhật. Hệ thống tự động cảnh báo khi tồn kho bất kỳ mặt hàng nào xuống dưới mức tối thiểu.
+ | 
+ | Điều kiện tiên quyết
+ | - NV Kho đã đăng nhập. Danh mục mặt hàng và lịch sử giao dịch đã được cập nhật trong hệ thống.
+ | 
+ | Hậu điều kiện
+ | - Số liệu tồn kho được cập nhật chính xác theo thực tế kiểm kê. Biên bản kiểm kê được lưu vào hệ thống. Ban Quản lý nhận được báo cáo chênh lệch (nếu có).
+ | 
+ | 
+Đặc tả cho UC hệ thống cho chức năng Quản Lý Danh Mục Hàng Hóa
+Tên use case
+ | Quản Lý Danh Mục Hàng Hóa
+ | 
+ | Tóm tắt
+ | - UC cho phép NV Kinh doanh và NV Kho duy trì danh mục vật liệu xây dựng theo nhóm sản phẩm (thép hình, thép hộp, tôn, xà gồ…), cập nhật đơn giá theo thời điểm thị trường và quản lý trạng thái kinh doanh của từng mặt hàng.
+ | 
+ | Tác nhân
+ | NV Kinh doanh, NV Kho
+ | 
+ | Use case liên quan
+ | Quản lý mặt hàng, Quản lý kho
+ | 
+ | Dòng sự kiện chính
+ | 1. NV Kinh doanh/NV Kho chọn chức năng "Quản lý danh mục hàng hóa". 
+2. Hệ thống hiển thị danh sách hàng hóa phân theo nhóm sản phẩm với đơn giá hiện hành. 
+3. Người dùng chọn "Thêm mặt hàng mới". 4. Hệ thống hiển thị form nhập: tên hàng, mã hàng, nhóm hàng, quy cách kỹ thuật, đơn vị tính, đơn giá. 
+5. Người dùng nhập đầy đủ thông tin và xác nhận lưu. 
+6. Hệ thống kiểm tra dữ liệu và lưu mặt hàng mới vào CSDL.
+ | 
+ | Dòng sự kiện phụ
+ | -Thông báo lỗi trùng mã hàng, cập nhật đơn giá theo thời điểm, và chuyển trạng thái "Ngừng bán"
+ | 
+ | Điều kiện tiên quyết
+ | - NV Kinh doanh hoặc NV Kho đã đăng nhập với quyền quản lý danh mục.
+ | 
+ | Hậu điều kiện
+ | - Mặt hàng mới được lưu vào CSDL. Đơn giá mới có hiệu lực từ ngày áp dụng, sẵn sàng cho các nghiệp vụ báo giá và nhập kho.
+ | 
+ | 
+
+Đặc tả cho UC hệ thống cho chức năng Quản Lý giao nhận và bàn giao
+
+Tên use case
+ | Quản Lý giao nhận và bàn giao
+ | 
+ | Tóm tắt
+ | - UC cho phép NV Kho và Đơn vị vận chuyển thực hiện bàn giao hàng hóa đến công trình khách hàng, kiểm đếm thực tế, lập biên bản bàn giao và cập nhật trạng thái hoàn tất giao hàng vào hệ thống.
+ | 
+ | Tác nhân
+ | NV Kho, Đơn vị vận chuyển, Khách hàng
+ | 
+ | Use case liên quan
+ | Quản lý lô trình, Quản lý đổi trả hàng
+ | 
+ | Dòng sự kiện chính
+ | 1. NV Kho chọn lô trình đang vận chuyển và xem chi tiết các đơn hàng trong chuyến.
+2. Đơn vị vận chuyển đến công trình, phối hợp với khách hàng kiểm đếm số lượng thực tế.
+3. Khách hàng và đơn vị vận chuyển kiểm tra quy cách kỹ thuật của hàng (mã thép, độ dày, chủng loại).
+4. Hai bên xác nhận hàng đúng số lượng và đạt yêu cầu kỹ thuật.
+5. NV Kho cập nhật xác nhận bàn giao thành công trên hệ thống.
+6. Hệ thống cập nhật trạng thái đơn hàng thành "Đã giao hàng" và thông báo cho NV Kế toán quyết toán.
+ | 
+ | Dòng sự kiện phụ
+ | - Tại bước 3: Nếu phát hiện hàng sai quy cách hoặc không đủ số lượng, đơn vị vận chuyển lập biên bản sự vụ, ký xác nhận cùng khách hàng và kích hoạt quy trình đổi trả hàng lỗi.
+ | 
+ | Điều kiện tiên quyết
+ | - Lô trình giao hàng đã được lập và hàng hóa đã xuất kho.
+- Đơn vị vận chuyển đã nhận hàng từ kho.
+ | 
+ | Hậu điều kiện
+ | - Biên bản bàn giao được ghi nhận trong hệ thống.
+- Trạng thái đơn hàng chuyển thành "Đã giao hàng".
+- NV Kế toán được thông báo để tiến hành quyết toán công nợ.
+ | 
+ | 
+Đặc tả cho UC hệ thống cho chức năng Đổi trả hàng
+
+
+Tên use case
+ | Quản lý đổi trả hàng
+ | 
+ | Tóm tắt
+ | - UC được kích hoạt khi phát sinh hàng lỗi, sai quy cách tại công trình hoặc hàng nhập từ nhà máy không đạt yêu cầu kỹ thuật. 
+- UC mô tả quy trình thu hồi hàng, phân loại, xử lý và điều chỉnh công nợ tương ứng trên hệ thống.
+ | 
+ | Tác nhân	
+ | Khách hàng, NV Giao nhận (Đơn vị vận chuyển), NV Kho, NV Kế toán
+ | 
+ | Use case liên quan 
+ | Quản lý giao nhận và bàn giao, Quản lý kho
+ | 
+ | Dòng sự kiện chính
+ | 1. Khách hàng thông báo hàng lỗi/sai quy cách cho cửa hàng.
+2. NV Giao nhận đến hiện trường, phối hợp với khách hàng lập biên bản sự vụ ghi rõ lý do, số lượng hàng lỗi.
+3. NV Giao nhận tiến hành thu hồi hàng lỗi và vận chuyển về kho.
+4. NV Kho tiếp nhận, kiểm tra và phân loại hàng thu hồi: hàng còn dùng được nhập lại kho; hàng hỏng hoàn toàn trả về nhà cung cấp.
+5. NV Kho cập nhật số lượng hàng thu hồi vào hệ thống và bàn giao chứng từ cho NV Kế toán.
+6. NV Kế toán điều chỉnh giảm trừ công nợ tương ứng trên sổ của khách hàng trong hệ thống.
+7. Hệ thống ghi nhận hoàn tất xử lý và thông báo đến các bên liên quan.
+ | 
+ | Dòng sự kiện phụ
+ | - Tại bước 4 – Khách hàng yêu cầu đổi hàng ngay:
+   - NV Kho kiểm tra tồn kho đối với mặt hàng cần thay thế.
+   - Nếu còn tồn kho: phối hợp với bộ phận kinh doanh sắp xếp giao hàng thay thế sớm nhất.
+   - Nếu hết tồn kho: khởi tạo quy trình nhập hàng từ nhà cung cấp và thông báo thời gian dự kiến cho khách hàng.
+ | 
+ | Điều kiện tiên quyết
+ | - Đơn hàng đã được giao và có biên bản bàn giao hoặc biên bản sự vụ ghi nhận hàng lỗi/sai quy cách.
+- NV Giao nhận hoặc NV Kho đã đăng nhập hệ thống.
+ | 
+ | Hậu điều kiện
+ | - Biên bản sự vụ và hàng thu hồi được ghi nhận trong hệ thống.
+- Tồn kho được cập nhật theo số lượng hàng nhập lại thực tế.
+- Công nợ của khách hàng được điều chỉnh chính xác.
+- Khách hàng nhận được hàng thay thế hoặc được xác nhận phương án xử lý.
+ | 
+ | 
+
+2.4. SƠ ĐỒ LỚP MỨC PHÂN TÍCH
+
+2.5. KẾT CHƯƠNG 
+Khép lại Chương 2, nhóm thực hiện đã hoàn thành toàn bộ giai đoạn phân tích hệ thống thông tin quản lý cửa hàng vật liệu xây dựng theo phương pháp hướng đối tượng, sử dụng ngôn ngữ mô hình hóa thống nhất UML làm công cụ biểu diễn chính thức.
+Thông qua việc xây dựng Sơ đồ Use Case nghiệp vụ, nhóm đã xác định rõ ranh giới hệ thống và vai trò của từng tác nhân tham gia vào quy trình vận hành, bao gồm: Khách hàng, Nhân viên Kinh doanh, Nhân viên Kho, Nhân viên Kế toán, Đơn vị Vận chuyển và Ban Quản lý. Đây là nền tảng quan trọng để nhóm định hình phạm vi chức năng cần triển khai trong hệ thống.
+Ở phần Mô hình hóa nghiệp vụ, mười quy trình nghiệp vụ trọng tâm đặc thù của ngành vật liệu xây dựng đã được biểu diễn bằng sơ đồ hoạt động và sơ đồ tương tác. Từ quy trình tư vấn và lập báo giá, ký hợp đồng đặt hàng, thanh toán, quản lý công nợ, kiểm tra và bàn giao hàng, đổi trả hàng lỗi, tổ chức giao hàng và vận chuyển, quản lý kho, quản lý danh mục cho đến báo cáo thống kê — mỗi quy trình đều được phân tích chi tiết bao gồm dòng sự kiện chính, dòng sự kiện thay thế, điều kiện tiên quyết và hậu điều kiện, giúp bộc lộ rõ logic nghiệp vụ thực tế và các ngoại lệ có thể phát sinh.
+Phần Mô hình hóa chức năng với hệ thống đặc tả Use Case bao gồm đầy đủ các chức năng: Quản lý đơn hàng, Quản lý hợp đồng, Quản lý tài chính và công nợ, Quản lý lô trình, Quản lý nhập hàng, Quản lý giao nhận và bàn giao, Quản lý báo cáo, Quản lý tài khoản, Quản lý mặt hàng, Quản lý kho, Quản lý danh mục hàng hóa và Quản lý đổi trả hàng. Đây là tập hợp chức năng toàn diện, phản ánh trực tiếp nhu cầu thực tiễn của doanh nghiệp được khảo sát.
+Cuối cùng, Sơ đồ lớp mức phân tích đã cụ thể hóa các thực thể nghiệp vụ cốt lõi, thuộc tính và mối quan hệ giữa chúng, tạo ra khung cấu trúc dữ liệu vững chắc làm tiền đề cho bước thiết kế hệ thống ở chương tiếp theo.
+Những sản phẩm phân tích trong Chương 2 không chỉ đảm bảo tính chính xác, đầy đủ của yêu cầu phần mềm mà còn thiết lập một ngôn ngữ chung giữa nhóm phát triển và người dùng nghiệp vụ. Trên cơ sở đó, Chương 3: Thiết kế hệ thống sẽ kế thừa toàn bộ kết quả phân tích để đi vào giai đoạn thiết kế cơ sở dữ liệu quan hệ, thiết kế giao diện và thiết kế chức năng chi tiết theo mô hình ba lớp — bước cuối cùng trước khi hiện thực hóa giải pháp phần mềm hoàn chỉnh.
+
+
+CHƯƠNG 3: THIẾT KẾ HỆ THỐNG
+
+3.1. GIỚI THIỆU 
+Chương 3 trình bày kết quả thiết kế hệ thống thông tin quản lý cửa hàng vật liệu xây dựng, bao gồm thiết kế cơ sở dữ liệu với 24 bảng quan hệ được chuyển đổi từ sơ đồ lớp mức phân tích, thiết kế giao diện người dùng cho từng nhóm tác nhân, sơ đồ lớp mức thiết kế và thiết kế chức năng hệ thống theo mô hình ba lớp. Các nội dung thiết kế được xây dựng bám sát kết quả phân tích ở Chương 2, đảm bảo phản ánh đầy đủ mười quy trình nghiệp vụ đặc thù của ngành vật liệu xây dựng.
+3.2. THIẾT KẾ CSDL 
+Chuyển đổi từ sơ đồ lớp mức phân tích sang mô hình dữ liệu quan hệ.
+Kết quả: 
+
+
+
+1. NHÓM HÀNG HÓA
+DanhMucHangHoa( MaDM, TenDM ) 
+NhaCungCap( MaNCC, TenNCC, DiaChi ) 
+KhachHang( MaKH, TenKH, DiaChi, SDT, Email ) 
+HangHoa( MaHang, TenHang, SoLuong, DVT, QuyCach, DonGia, MaDM, MaNCC ) 
+
+2. NHÓM NHÂN SỰ
+BanQuanLy( MaQL, TenQL, CapBac ) 
+NhanVien( MaNV, TenNV, Email, GioiTinh, SDT, DoanhSo, PhuongTien, LoaiKeToan, KhoPhuTrach ) 
+TaiKhoan( Matk, Tendangnhap, Matkhau, Email, Quyen, MaKH, MaNV ) 
+
+3. NHÓM ĐƠN HÀNG
+DonHang( MaDon, TenDon, SoLuong, NgayDat, TongTien ) 
+ChiTietDonHang( MaDon, MaHang, SoLuong, DonGia, ThanhTien, Loai )\n(PK = MaDon + MaHang) 
+BangBaoGia( MaBaoGia, NgayLap, ThanhTienDuKien, TrangThai, GhiChu ) 
+ChiTietBaoGia( MaBaoGia, MaHang, SoLuong, DonGia, ThanhTien )\n(PK = MaBaoGia + MaHang) 
+
+4. NHÓM HỢP ĐỒNG
+HopDong( MaHopDong, NgayKy, DieuKhoanGiaoHang, DieuKhoanThanhToan, MucChietKhau, TrangThai, MaQL, MaNV ) 
+ChiTietHopDong( MaHopDong, MaHang, SoLuong, DonGia )\n(PK = MaHopDong + MaHang) 
+HoaDon( SoHoaDon, NgayLap, NhanVienLap, ThanhTien, MaHopDong ) 
+
+5. NHÓM KHO & GIAO HÀNG
+PhieuNhapKho( MaPhieu, NgayNhap, SoLuongNhap, QuyCach, TrangThai, MaNV ) 
+ChiTietNhapKho( MaPhieu, MaHang, SoLuong, DonGia )\n(PK = MaPhieu + MaHang) 
+BienBanNhapHang( SoBB, NgayNhap, MaPhieu, GhiChuLoi ) 
+LenhXuat( MaLenh, NgayXuat, SoLuongXuat, DiaDiemGiao, TrangThai, SoHoaDon ) 
+BienBanBanGiao( SoBB, NgayGiao, TinhTrangHang, MaLenh, GhiChuLoi ) 
+BienBanSuVu( SoBB, LyDo, SoLuongLoi, MaLenh ) 
+
+6. NHÓM TÀI CHÍNH
+CongNo( MaDoitac, TongNo, HanThanhToan, MaKH, MaHopDong ) 
+BaoCaoThongKe( MaBC, LoaiBC, Ngay, MaQL, MaNV )
+
+3.3. THIẾT KẾ GIAO DIỆN HỆ THỐNG
+3.3.1. Giao diện đăng nhập
+
+3.3.2. Giao diện đăng ký
+
+3.3.3. Giao diện quản lý đơn hàng
+a, giao diện xóa, đổi trạng thái, sửa đơn hàng
+
+b, giao diện thêm đơn hàng
+
+
+c, giao diện mua hàng
+
+
+3.3.4. Giao diện quản lý hợp đồng
+
+3.3.5. Giao diện quản lý thông tin cá nhân
+a, giao diện thông tin cá nhân
+
+
+
+3.3.6. Giao diện quản lý danh mục
+a, giao diện quản lý danh mục
+
+
+b, giao diện thêm danh mục
+
+
+c, giao diện xóa danh mục
+
+
+3.3.7. Giao diện quản lý tài khoản
+
+3.3.8. Giao diện quản lý giao nhận và bàn giao
+
+3.3.9. Giao diện quản lý đổi trả hàng
+
+
+3.3.10. Giao diện quản lý tài chính
+a, giao diện ghi nhận công nợ
+
+b, giao diện thanh toán công nợ
+
+c, giao diện theo dõi hạn thanh toán
+
+
+3.3.11. Giao diện quản lý kho
+a, giao diện nhập kho
+
+b, giao diện xuất kho
+
+
+c, giao diện tính tồn kho
+
+d, giao diện cập nhật tồn kho
+
+3.3.12. Giao diện quản lý hàng hóa
+a, giao diện tạo phiếu nhập hàng
+
+
+
+
+
+
+3.3.13. Giao diện quản lý báo cáo thống kê
+
+
+
+
+
+
+3.4. SƠ ĐỒ LỚP Ở MỨC THIẾT KẾ
+
+3.5. THIẾT KẾ CHỨC NĂNG HỆ THỐNG
+3.5.1. Sơ đồ 3 lớp chức năng quản lí đơn hàng
+
+3.5.2. Chức năng mua hàng của Quản lý đơn hàng
+a) Sơ đồ tuần tự chức năng mua hàng
+
+3.5.3. Chức năng tra cứu đơn của Quản lý đơn hàng
+a) Sơ đồ tuần tự chức năng tra cứu đơn 
+
+
+3.5.4. Chức năng hủy đơn của Quản lý đơn hàng
+a) Sơ đồ tuần tự chức năng hủy đơn
+
+
+
+3.5.5. Chức năng sửa đơn hàng của Quản lý đơn hàng
+a) Sơ đồ tuần tự chức năng sửa đơn hàng
+
+
+
+3.5.6. Chức năng thêm đơn hàng của Quản lý đơn hàng
+a) Sơ đồ tuần tự chức năng thêm đơn hàng
+
+
+3.5.7. Chức năng xóa đơn hàng của Quản lý đơn hàng
+a) Sơ đồ tuần tự chức năng xóa đơn hàng
+
+
+3.5.8. Sơ đồ 3 lớp Quản lý hợp đồng
+
+3.5.9. Chức năng hủy hợp đồng trong Quản lý hợp đồng
+a) sơ đồ tuần tự chức năng hủy hợp đồng
+
+3.5.10. Chức năng sửa hợp đồng trong Quản lý hợp đồng
+a) sơ đồ tuần tự chức năng sửa hợp đồng
+
+
+3.5.11. Chức năng tìm kiếm hợp đồng trong Quản lý hợp đồng
+a) sơ đồ tuần tự chức năng tìm kiếm hợp đồng
+
+3.5.12. Chức năng thêm hợp đồng trong Quản lý hợp đồng
+a) sơ đồ tuần tự chức năng thêm hợp đồng
+
+
+
+3.5.13. Sơ đồ 3 lớp trong Quản lý thông tin cá nhân
+
+3.5.14. Chức năng cập nhật thông tin trong Quản lý thông tin cá nhân
+a) sơ đồ tuần tự chức năng cập nhật thông tin
+
+
+3.5.15. Chức năng thêm thông tin trong Quản lý thông tin cá nhân
+a) sơ đồ tuần tự chức năng thêm thông tin
+
+
+3.5.16. Chức năng tra cứu thông tin trong Quản lý thông tin cá nhân
+a) sơ đồ tuần tự chức năng tra cứu thông tin
+
+3.5.17. Chức năng cập nhật danh mục trong Quản lý danh mục
+a) sơ đồ lớp theo mô hình 3 lớp chức năng cập nhật danh mục
+
+b) sơ đồ tuần tự chức năng cập nhật danh mục
+
+3.5.18. Chức năng thêm danh mục trong Quản lý danh mục
+a) sơ đồ lớp theo mô hình 3 lớp chức năng thêm danh mục
+
+b) sơ đồ tuần tự chức năng thêm danh mục
+
+3.5.19. Chức năng xóa danh mục trong Quản lý danh mục
+a) sơ đồ lớp theo mô hình 3 lớp chức năng xóa danh mục
+
+b) sơ đồ tuần tự chức năng xóa danh mục
+
+3.5.20. Chức năng cập nhật tài khoản trong Quản lý tài khoản
+a) sơ đồ lớp theo mô hình 3 lớp chức năng cập nhật tài khoản
+
+b) sơ đồ tuần tự chức năng cập nhật tài khoản
+
+
+
+3.5.21. Chức năng đặt lại mật khẩu trong Quản lý tài khoản
+a) sơ đồ lớp theo mô hình 3 lớp chức năng đặt lại mật khẩu
+
+b) sơ đồ tuần tự chức năng đặt lại mật khẩu
+
+
+3.5.22. Chức năng thêm tài khoản trong Quản lý tài khoản
+a) sơ đồ lớp theo mô hình 3 lớp chức năng thêm tài khoản
+
+b) sơ đồ tuần tự chức năng thêm tài khoản
+
+3.5.23. Chức năng phân quyền tài khoản trong Quản lý tài khoản
+a) sơ đồ lớp theo mô hình 3 lớp chức năng phân quyền tài khoản
+
+b) sơ đồ tuần tự chức năng phân quyền tài khoản
+
+3.5.24. Chức năng xóa/khóa tài khoản trong Quản lý tài khoản
+a) sơ đồ lớp theo mô hình 3 lớp chức năng xóa/khóa tài khoản
+
+b) sơ đồ tuần tự chức năng xóa/khóa tài khoản
+
+
+3.5.25. Chức năng Báo cáo thống kê trong Quản lý báo cáo
+a) sơ đồ lớp theo mô hình 3 lớp chức năng Báo cáo thống kê
+
+b) sơ đồ tuần tự chức năng Báo cáo thống kê
+
+3.5.26. Chức năng lập báo cáo tài chính trong Quản lý báo cáo
+a) sơ đồ lớp theo mô hình 3 lớp chức năng lập báo cáo tài chính
+
+b) sơ đồ tuần tự chức năng lập báo cáo tài chính
+
+3.5.27. Chức năng lập báo cáo tồn kho trong Quản lý báo cáo
+a) sơ đồ lớp theo mô hình 3 lớp chức năng lập báo cáo tồn kho
+
+b) sơ đồ tuần tự chức năng lập báo cáo tồn kho
+
+3.5.28. Chức năng Phê duyệt báo cáo trong Quản lý báo cáo
+a) sơ đồ lớp theo mô hình 3 lớp chức năng Phê duyệt báo cáo
+
+b) sơ đồ tuần tự chức năng Phê duyệt báo cáo
+
+3.5.29. Chức năng Kiểm kê kho trong Quản lý kho
+a) sơ đồ lớp theo mô hình 3 lớp chức năng Kiểm kê kho
+
+b) sơ đồ tuần tự chức năng Kiểm kê kho
+
+3.5.30. Chức năng Tính tồn kho trong Quản lý kho
+a) sơ đồ lớp theo mô hình 3 lớp chức năng Tính tồn kho
+
+b) sơ đồ tuần tự chức năng Tính tồn kho
+
+3.5.31. Chức năng Xuất kho trong Quản lý kho
+a) sơ đồ lớp theo mô hình 3 lớp chức năng Xuất kho
+
+b) sơ đồ tuần tự chức năng Xuất kho
+
+3.5.32. Chức năng Nhập kho trong Quản lý kho
+a) sơ đồ lớp theo mô hình 3 lớp chức năng Nhập kho
+
+b) sơ đồ tuần tự chức năng Nhập kho
+
+3.5.33. Chức năng Liên kết nhà cung cấp trong Quản lý nhập hàng
+a) sơ đồ lớp theo mô hình 3 lớp chức năng Liên kết nhà cung cấp
+
+b) sơ đồ tuần tự chức năng Liên kết nhà cung cấp
+
+3.5.34. Chức năng Theo dõi đơn hàng trong Quản lý nhập hàng
+a) sơ đồ lớp theo mô hình 3 lớp chức năng Theo dõi đơn hàng
+
+b) sơ đồ tuần tự chức năng Theo dõi đơn hàng
+
+3.5.35. Chức năng Lập phiếu nhập kho trong Quản lý nhập hàng
+a) sơ đồ lớp theo mô hình 3 lớp chức năng Lập phiếu nhập kho
+
+b) sơ đồ tuần tự chức năng Lập phiếu nhập kho
+
+3.5.36. Chức năng Cập nhật tồn kho trong Quản lý nhập hàng
+a) sơ đồ lớp theo mô hình 3 lớp chức năng Cập nhật tồn kho
+
+b) sơ đồ tuần tự chức năng Cập nhật tồn kho
+
+3.5.37. Chức năng Quản lý giao nhận và bàn giao
+a) sơ đồ lớp theo mô hình 3 lớp chức năng Quản lý giao nhận và bàn giao
+
+b) sơ đồ tuần tự chức năng Quản lý giao nhận và bàn giao
+
+3.5.38. Chức năng Đổi trả hàng
+a) sơ đồ lớp theo mô hình 3 lớp chức năng Đổi trả hàng
+
+b) sơ đồ tuần tự chức năng Đổi trả hàng
+
+
+3.5.39. Chức năng ghi nhận công nợ trong Quản lý tài chính
+a) sơ đồ lớp theo mô hình 3 lớp chức năng ghi nhận công nợ
+b) sơ đồ tuần tự chức năng ghi nhận công nợ
+
+3.5.40. Chức năng thanh toán công nợ trong Quản lý tài chính
+a) sơ đồ lớp theo mô hình 3 lớp chức năng thanh toán công nợ
+
+b) sơ đồ tuần tự chức năng thanh toán công nợ
+
+3.5.41. Chức năng theo dõi đơn hàng thanh toán trong Quản lý tài chính
+a) sơ đồ lớp theo mô hình 3 lớp chức năng theo dõi đơn hàng thanh toán
+
+b) sơ đồ tuần tự chức năng theo dõi đơn hàng thanh toán
+
+
+
+
+
+
+
+
+
+
+CHƯƠNG 4: KẾT LUẬN
+
+4.1. Tổng kết đề tài
+Qua quá trình thực hiện đề tài "Phân tích thiết kế hệ thống thông tin quản lý doanh nghiệp vật liệu xây dựng", nhóm đã hoàn thành một lộ trình nghiên cứu đầy đủ từ khảo sát thực tế đến phân tích, thiết kế hệ thống theo đúng phương pháp luận của môn học. Xuất phát từ thực trạng quản lý thủ công còn nhiều bất cập tại Công ty TNHH Kinh doanh Vật liệu xây dựng Sài Gòn (42A Cống Lỡ, Quận Tân Bình, TP.HCM), nhóm đã nhận diện bài toán, xác lập mục tiêu và triển khai các bước phân tích thiết kế một cách có hệ thống.
+Ở giai đoạn khảo sát (Chương 1), nhóm đã tiếp cận trực tiếp quy trình vận hành thực tiễn, thu thập các biểu mẫu chứng từ gốc và xác định rõ mười nghiệp vụ trọng tâm đặc thù của ngành phân phối vật liệu xây dựng. Những "điểm nghẽn" được nhận diện — thiếu đồng bộ dữ liệu liên phòng ban, khó kiểm soát đơn giá biến động và rủi ro thất thoát từ quản lý công nợ rời rạc — đã trở thành động lực cốt lõi để định hướng toàn bộ quá trình thiết kế hệ thống.
+Ở giai đoạn phân tích (Chương 2), bằng ngôn ngữ UML, nhóm đã mô hình hóa toàn bộ nghiệp vụ thành các sơ đồ Use Case, sơ đồ hoạt động, sơ đồ tuần tự và sơ đồ cộng tác. Hệ thống chức năng được đặc tả chi tiết với đầy đủ dòng sự kiện chính, ngoại lệ xử lý và ràng buộc điều kiện, đảm bảo bao phủ toàn diện nhu cầu của tất cả tác nhân trong hệ thống.
+Ở giai đoạn thiết kế (Chương 3), các kết quả phân tích được hiện thực hóa thành mô hình cơ sở dữ liệu quan hệ, thiết kế giao diện người dùng và thiết kế chức năng chi tiết theo mô hình ba lớp, tạo ra bản thiết kế kỹ thuật hoàn chỉnh sẵn sàng cho giai đoạn lập trình.
+4.2. Những kết quả đạt được
+Sau quá trình thực hiện, đề tài đã đạt được các kết quả chính sau:
+Về mặt nghiệp vụ, nhóm đã hệ thống hóa và chuẩn hóa mười quy trình nghiệp vụ thực tiễn của doanh nghiệp phân phối vật liệu xây dựng, từ đó xây dựng được một tập hợp yêu cầu chức năng rõ ràng, có thể đo lường và kiểm chứng được.
+Về mặt kỹ thuật, nhóm đã xây dựng đầy đủ bộ tài liệu phân tích thiết kế gồm: sơ đồ Use Case nghiệp vụ và hệ thống, đặc tả chi tiết mười hai Use Case chức năng, sơ đồ lớp mức phân tích, mô hình cơ sở dữ liệu quan hệ và thiết kế giao diện hệ thống.
+Về mặt thực tiễn, hệ thống được thiết kế phục vụ đồng thời hai nhóm đối tượng: tác nhân nội bộ (Ban quản lý, Nhân viên kinh doanh, Nhân viên kho, Nhân viên kế toán, Quản trị viên) và tác nhân bên ngoài (Khách hàng, Đơn vị vận chuyển, Nhà cung cấp). Thiết kế phân quyền chi tiết theo vai trò đảm bảo mỗi tác nhân chỉ truy cập đúng phạm vi chức năng được giao, góp phần nâng cao tính bảo mật và chuyên nghiệp của hệ thống.
+4.3. Hạn chế và hướng phát triển
+Bên cạnh những kết quả đạt được, đề tài vẫn còn một số hạn chế nhất định. Do giới hạn về thời gian và phạm vi của môn học, nhóm chưa đi sâu vào các nghiệp vụ kế toán thuế chuyên sâu, chưa tích hợp module quản lý tiền lương nhân viên và chưa xây dựng chức năng kết nối với các phần mềm kế toán bên ngoài như MISA hay Fast Accounting.
+Trong tương lai, hệ thống có thể được phát triển mở rộng theo các hướng sau. Thứ nhất, bổ sung tính năng dự báo nhu cầu nhập hàng dựa trên phân tích dữ liệu lịch sử tồn kho và xu hướng tiêu thụ. Thứ hai, tích hợp cổng thanh toán trực tuyến để khách hàng có thể thực hiện giao dịch ngay trên nền tảng hệ thống. Thứ ba, phát triển ứng dụng di động giúp nhân viên giao nhận và nhân viên kho thực hiện nghiệp vụ ngoài hiện trường một cách linh hoạt. Thứ tư, tích hợp tính năng phân tích kinh doanh thông minh (Business Intelligence) hỗ trợ Ban Quản lý trong việc ra quyết định chiến lược dựa trên dữ liệu thực tế.
+4.4. Lời kết
+Đề tài "Phân tích thiết kế hệ thống thông tin quản lý cửa hàng vật liệu xây dựng" không chỉ là sản phẩm học thuật minh chứng cho sự vận dụng linh hoạt các kiến thức từ môn Phân tích thiết kế hệ thống thông tin, mà còn mang ý nghĩa thực tiễn sâu sắc khi đề xuất một giải pháp số hóa thiết thực cho doanh nghiệp được khảo sát. Nhóm thực hiện trân trọng cảm ơn sự hướng dẫn tận tình của Th.S Đinh Thị Mận trong suốt quá trình nghiên cứu và thực hiện đề tài. Những kiến thức và kỹ năng được tích lũy qua đề tài này sẽ là hành trang quý báu cho nhóm trong các dự án phát triển phần mềm thực tế sau này.
+
+
+
+
+
+
+
+\nTÀI LIỆU THAM KHẢO
+Tiếng Việt
+[1] Phạm Nguyễn Cương, Nguyễn Trần Minh Thư, Hồ Bảo Quốc (2016), Giáo trình Phân tích thiết kế hệ thống thông tin theo hướng đối tượng, Nhà xuất bản Khoa học và Kỹ thuật.
+Website
+[2] https://monhoc.vn/tai-lieu/giao-trinh-phan-tich-thiet-ke-huong-doi-tuong-voi-uml-1574/
+ 
+
+

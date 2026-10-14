@@ -91,7 +91,7 @@ html[data-theme=dark] .staff-app .staff-record-list,html[data-theme=dark] .staff
 
 html[data-theme=dark] .cmc-select-error{color:#ffb6a8}html[data-theme=dark] .btn-outline-danger{color:#ffb6a8;border-color:#bc7b70}html[data-theme=dark] .btn-outline-danger:hover{background:#5d302b;color:#fff}
 html[data-theme=dark] .quote-card .status,html[data-theme=dark] .order-list .status{border-color:#5b7562}
-html[data-theme=dark] :is(.quote-card .status-requested,.quote-card .status-draft,.quote-card .status-pending_discount_approval,.order-list .status-awaiting_confirmation,.order-list .status-awaiting_payment){background:#5b421e;color:#ffe7ab;border-color:#aa8542}
+html[data-theme=dark] :is(.quote-card .status-requested,.quote-card .status-draft,.quote-card .status-pending_discount_approval,.order-list .status-awaiting_confirmation,.order-list .status-awaiting_contract,.order-list .status-awaiting_payment){background:#5b421e;color:#ffe7ab;border-color:#aa8542}
 html[data-theme=dark] :is(.quote-card .status-sent,.quote-card .status-accepted,.order-list .status-ready_to_issue,.order-list .status-ready_to_ship,.order-list .status-delivered){background:#1e5036;color:#d6f3df;border-color:#5c9c72}
 html[data-theme=dark] :is(.quote-card .status-rejected,.quote-card .status-cancelled,.order-list .status-rejected,.order-list .status-cancelled,.order-list .status-delivery_incident){background:#602e2b;color:#ffe0d8;border-color:#b07168}
 html[data-theme=dark] .quote-detail-status{background:#5b421e;color:#ffe7ab;border-color:#aa8542}

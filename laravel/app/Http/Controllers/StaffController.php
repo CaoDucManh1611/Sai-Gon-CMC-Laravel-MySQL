@@ -14,8 +14,15 @@ class StaffController extends Controller
 {
     public function dashboard(Request $request): View
     {
+        $contracts = DB::table('contracts')->leftJoin('orders', 'orders.id', '=', 'contracts.order_id')
+            ->leftJoin('quotes', 'quotes.id', '=', 'contracts.quote_id')
+            ->select('contracts.*', 'orders.code as order_code')
+            ->when($request->filled('contract'), fn ($query) => $query->where('contracts.code', 'like', '%'.$request->query('contract').'%'))
+            ->orderByDesc('contracts.id')->limit(30)->get();
         $salesOrders = DB::table('orders')->join('users', 'users.id', '=', 'orders.customer_id')
-            ->select('orders.*', 'users.name as customer_name')
+            ->leftJoin('contracts', 'contracts.order_id', '=', 'orders.id')
+            ->leftJoin('quotes', 'quotes.id', '=', 'orders.quote_id')
+            ->select('orders.*', 'users.name as customer_name', 'contracts.code as draft_contract_code', 'quotes.staff_note as quote_stock_note')
             ->when($request->route('section') === 'sales_orders' && $request->filled('q'), fn ($query) => $query->where(fn ($matches) => $matches->where('orders.code', 'like', '%'.$request->query('q').'%')->orWhere('users.name', 'like', '%'.$request->query('q').'%')))
             ->when($request->route('section') === 'sales_orders' && $request->filled('status'), fn ($query) => $query->where('orders.status', $request->query('status')))
             ->orderByDesc('orders.id')->limit(100)->get();
@@ -42,25 +49,37 @@ class StaffController extends Controller
                 ->select('quote_items.*', 'products.name as product_name')->selectRaw('COALESCE(stock.available, 0) as available')
                 ->get()->groupBy('quote_id'),
             'purchaseItems' => DB::table('purchase_items')->join('products', 'products.id', '=', 'purchase_items.product_id')->select('purchase_items.*', 'products.name as product_name')->get()->groupBy('purchase_order_id'),
-            'contracts' => DB::table('contracts')->join('quotes', 'quotes.id', '=', 'contracts.quote_id')
-                ->select('contracts.*', 'quotes.customer_id')
-                ->when($request->filled('contract'), fn ($query) => $query->where('contracts.code', 'like', '%'.$request->query('contract').'%'))
-                ->orderByDesc('contracts.id')->limit(30)->get(),
+            'contracts' => $contracts,
+            'contractItems' => DB::table('order_items')->join('products', 'products.id', '=', 'order_items.product_id')
+                ->whereIn('order_items.order_id', $contracts->pluck('order_id')->filter())
+                ->select('order_items.*', 'products.name as product_name', 'products.unit', 'products.specification')
+                ->get()->groupBy('order_id'),
             'orders' => DB::table('orders')->orderByDesc('id')->limit(30)->get(),
             'staffAccountCount' => DB::table('users')->where('role', '!=', 'customer')->count(),
             'invoices' => DB::table('invoices')->get()->keyBy('order_id'),
             'debts' => DB::table('debts')->leftJoin('orders', 'orders.id', '=', 'debts.order_id')
-                ->select('debts.*', 'orders.status as order_status')->orderByDesc('debts.id')->limit(30)->get(),
+                ->leftJoin('contracts', 'contracts.id', '=', 'orders.contract_id')
+                ->select('debts.*', 'orders.status as order_status', 'orders.requires_contract',
+                    'orders.code as order_code', 'contracts.code as contract_code', 'contracts.status as contract_status')
+                ->orderByDesc('debts.id')->limit(30)->get(),
             'customerCredits' => DB::table('customer_credits')->join('users', 'users.id', '=', 'customer_credits.customer_id')
                 ->select('customer_credits.*', 'users.name as customer_name')->orderByDesc('customer_credits.id')->limit(30)->get(),
             'creditUsed' => DB::table('customer_credit_movements')->select('customer_credit_id')
                 ->selectRaw('SUM(amount) as total')->groupBy('customer_credit_id')->pluck('total', 'customer_credit_id'),
-            'customerDebts' => DB::table('debts')->where('direction', 'receivable')->where('status', 'open')->get(),
+            'customerDebts' => DB::table('debts')->leftJoin('orders', 'orders.id', '=', 'debts.order_id')
+                ->leftJoin('contracts', 'contracts.id', '=', 'orders.contract_id')
+                ->where('debts.direction', 'receivable')->where('debts.status', 'open')
+                ->where(fn ($query) => $query->whereNull('orders.id')->orWhere(function ($orderQuery) {
+                    $orderQuery->whereNotIn('orders.status', ['rejected', 'cancelled'])
+                        ->where(fn ($contractQuery) => $contractQuery->where('orders.requires_contract', false)
+                            ->orWhere('contracts.status', 'signed'));
+                }))->select('debts.*')->get(),
             'purchases' => DB::table('purchase_orders')->orderByDesc('id')->limit(30)->get(),
             'supplierIncidents' => DB::table('supplier_incidents')->join('purchase_items', 'purchase_items.id', '=', 'supplier_incidents.purchase_item_id')
                 ->join('products', 'products.id', '=', 'purchase_items.product_id')
                 ->select('supplier_incidents.*', 'products.name as product_name')->orderByDesc('supplier_incidents.id')->limit(30)->get(),
-            'shipments' => DB::table('shipments')->orderByDesc('id')->limit(30)->get(),
+            'shipments' => DB::table('shipments')->join('orders', 'orders.id', '=', 'shipments.order_id')
+                ->select('shipments.*', 'orders.delivery_address')->orderByDesc('shipments.id')->limit(30)->get(),
             'deliveryRuns' => DB::table('delivery_runs')->orderByDesc('id')->limit(30)->get(),
             'returns' => DB::table('returns')->orderByDesc('id')->limit(30)->get(),
             'supplierReturns' => DB::table('supplier_returns')->get()->keyBy('return_id'),
@@ -94,7 +113,7 @@ class StaffController extends Controller
             'sales_orders' => ['sales', 'manager', 'admin'],
             'finance' => ['accounting', 'manager', 'admin'], 'purchases' => ['warehouse', 'manager', 'admin'],
             'orders' => ['warehouse', 'delivery', 'accounting', 'manager', 'admin'],
-            'returns' => ['warehouse', 'accounting', 'manager', 'admin'],
+            'returns' => ['warehouse', 'delivery', 'accounting', 'manager', 'admin'],
             'inventory' => ['warehouse', 'manager', 'admin'],
         ];
         abort_unless(isset($roles[$section]), 404);
@@ -103,18 +122,24 @@ class StaffController extends Controller
         return $this->dashboard($request)->with('activeSection', $section);
     }
 
-    public function reviewPickupOrder(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
+    public function reviewOrder(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
     {
         $data = $request->validate(['decision' => ['required', 'in:confirm,reject'], 'reason' => ['required_if:decision,reject', 'nullable', 'string', 'max:2000']]);
-        $workflow->reviewPickupOrder($id, $request->user()->id, $data['decision'] === 'confirm', $data['reason'] ?? null);
+        $workflow->reviewOrder($id, $request->user()->id, $data['decision'] === 'confirm', $data['reason'] ?? null);
 
         return back()->with('success', $data['decision'] === 'confirm' ? 'Đã xác nhận đơn hàng.' : 'Đã từ chối đơn hàng và gửi lý do cho khách.');
     }
 
     public function sendQuote(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
     {
-        $data = $request->validate(['valid_until' => ['required', 'date', 'after_or_equal:today'], 'prices' => ['nullable', 'array'], 'prices.*' => ['numeric', 'min:0']]);
-        $workflow->sendQuote($id, $request->user()->id, $data['prices'] ?? [], $data['valid_until']);
+        $data = $request->validate([
+            'valid_until' => ['required', 'date', 'after_or_equal:today'],
+            'prices' => ['nullable', 'array'], 'prices.*' => ['numeric', 'min:0'],
+            'estimated_available_on' => ['nullable', 'date', 'after_or_equal:today'],
+            'alternative_material' => ['nullable', 'string', 'max:1000'],
+        ]);
+        $workflow->sendQuote($id, $request->user()->id, $data['prices'] ?? [], $data['valid_until'],
+            $data['estimated_available_on'] ?? null, $data['alternative_material'] ?? null);
 
         return back()->with('success', 'Đã gửi báo giá cho khách hàng.');
     }
@@ -137,14 +162,14 @@ class StaffController extends Controller
         return back()->with('success', 'Đã xử lý đề xuất chiết khấu.');
     }
 
-    public function createContract(Request $request, CommerceWorkflow $workflow, int $quoteId): RedirectResponse
+    public function createContract(Request $request, CommerceWorkflow $workflow, int $orderId): RedirectResponse
     {
         $data = $request->validate([
             'deposit_required' => ['required', 'numeric', 'min:0'],
             'payment_terms' => ['required', 'string', 'max:5000'],
             'delivery_terms' => ['required', 'string', 'max:5000'],
         ]);
-        $id = $workflow->createContract($quoteId, $request->user()->id,
+        $id = $workflow->createContract($orderId, $request->user()->id,
             (string) $data['deposit_required'], $data['payment_terms'], $data['delivery_terms']);
 
         return back()->with('success', 'Đã lập hợp đồng '.DB::table('contracts')->find($id)->code.'.');
@@ -194,7 +219,7 @@ class StaffController extends Controller
             throw $e;
         }
 
-        return back()->with('success', 'Đã ghi nhận hợp đồng ký và tạo đơn hàng.');
+        return back()->with('success', 'Đã ghi nhận hợp đồng ký. Đơn hàng chuyển sang bước tài chính.');
     }
 
     public function recordPayment(Request $request, CommerceWorkflow $workflow, int $debtId): RedirectResponse
@@ -337,9 +362,20 @@ class StaffController extends Controller
             'shipment_ids' => ['required', 'array', 'min:2'], 'shipment_ids.*' => ['required', 'integer', 'distinct'],
             'carrier_name' => ['required', 'string', 'max:150'], 'vehicle' => ['required', 'string', 'max:100'],
             'route_note' => ['required', 'string', 'max:2000'],
+            'capacity_kg' => ['required', 'numeric', 'gt:0'],
+            'capacity_m3' => ['nullable', 'numeric', 'gt:0'],
+            'stop_order' => ['required', 'array'], 'stop_order.*' => ['integer', 'min:1'],
+            'optimize_route' => ['nullable', 'boolean'],
+            'origin_lat' => ['required_if:optimize_route,1', 'nullable', 'numeric', 'between:-90,90'],
+            'origin_lon' => ['required_if:optimize_route,1', 'nullable', 'numeric', 'between:-180,180'],
+            'stop_coordinates' => ['nullable', 'array'],
+            'stop_coordinates.*.lat' => ['nullable', 'numeric', 'between:-90,90'],
+            'stop_coordinates.*.lon' => ['nullable', 'numeric', 'between:-180,180'],
         ]);
+        $origin = ! empty($data['optimize_route']) ? ['lat' => $data['origin_lat'], 'lon' => $data['origin_lon']] : null;
         $workflow->groupDeliveryRun($data['shipment_ids'], $request->user()->id,
-            $data['carrier_name'], $data['vehicle'], $data['route_note']);
+            $data['carrier_name'], $data['vehicle'], $data['route_note'], (string) $data['capacity_kg'],
+            $data['stop_order'], $origin, $data['stop_coordinates'] ?? [], isset($data['capacity_m3']) ? (string) $data['capacity_m3'] : null);
 
         return back()->with('success', 'Đã gom các đơn vào một lộ trình giao hàng.');
     }
@@ -393,6 +429,18 @@ class StaffController extends Controller
         return back()->with('success', 'Kho đã kiểm tra hàng trả.');
     }
 
+    public function collectReturn(Request $request, FulfillmentWorkflow $workflow, int $id): RedirectResponse
+    {
+        $data = $request->validate([
+            'handed_over_by' => ['required', 'string', 'max:150'],
+            'quantity' => ['required', 'numeric', 'gt:0'],
+            'note' => ['required', 'string', 'max:2000'],
+        ]);
+        $workflow->collectReturn($id, $request->user()->id, $data['handed_over_by'], (string) $data['quantity'], $data['note']);
+
+        return back()->with('success', 'Đã ghi biên bản thu hồi hàng trả.');
+    }
+
     public function sendDamagedReturnToSupplier(Request $request, FulfillmentWorkflow $workflow, int $id): RedirectResponse
     {
         $data = $request->validate([
@@ -416,6 +464,17 @@ class StaffController extends Controller
             $data['carrier_name'], $data['vehicle'], $data['route_note']);
 
         return back()->with('success', 'Đã xuất hàng thay thế và lập chuyến giao.');
+    }
+
+    public function requestExchangeRestock(Request $request, FulfillmentWorkflow $workflow, int $id): RedirectResponse
+    {
+        $data = $request->validate([
+            'supplier_id' => ['required', 'exists:suppliers,id'],
+            'unit_price' => ['required', 'numeric', 'min:0'],
+        ]);
+        $workflow->requestExchangeRestock($id, $data['supplier_id'], $request->user()->id, (string) $data['unit_price']);
+
+        return back()->with('success', 'Đã lập đề xuất nhập hàng để đổi cho khách. Dự kiến có hàng sau 14 ngày; cần Ban quản lý duyệt và kho xác nhận thực nhập.');
     }
 
     public function settleReturn(Request $request, FulfillmentWorkflow $workflow, int $id): RedirectResponse

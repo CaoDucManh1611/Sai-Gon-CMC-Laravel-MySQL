@@ -2,10 +2,10 @@
     $quotesToReview = $quotes->where('status', 'pending_discount_approval');
     $contractsToReview = $contracts->where('status', 'pending_approval');
     $purchasesToReview = $purchases->where('status', 'pending');
-    $openDebts = $debts->filter(fn ($debt) => $debt->status === 'open' && $debt->paid < $debt->amount);
+    $openDebts = $debts->filter(fn ($debt) => $debt->status === 'open' && $debt->paid < $debt->amount && ($debt->direction === 'payable' || (!in_array($debt->order_status, ['rejected', 'cancelled'], true) && (!$debt->requires_contract || $debt->contract_status === 'signed'))));
 @endphp
 <section class="manager-overview" aria-label="Tổng quan quản lý">
-    <div class="manager-heading"><div><span class="manager-kicker">CẦN QUẢN LÝ XỬ LÝ</span><h2>Việc chờ phê duyệt</h2></div><span class="manager-muted">Dữ liệu từ các hồ sơ gần nhất</span></div>
+    <div class="manager-heading"><div><span class="manager-kicker">CẦN QUẢN LÝ XỬ LÝ</span><h2>Việc chờ phê duyệt</h2></div></div>
     <div class="manager-metrics">
         <a href="{{ route('staff.section', 'quotes') }}" class="manager-metric"><span>Giá bán cần duyệt</span><strong>{{ $quotesToReview->count() }}</strong><small>Xem báo giá →</small></a>
         <a href="{{ route('staff.section', 'contracts') }}" class="manager-metric"><span>Hợp đồng cần duyệt</span><strong>{{ $contractsToReview->count() }}</strong><small>Xem hợp đồng →</small></a>

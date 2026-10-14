@@ -1,0 +1,1108 @@
+
+
+B? CÔNG THUONG
+TRU?NG Ð?I H?C CÔNG THUONG TP.HCM
+KHOA CÔNG NGH? THÔNG TIN
+????
+
+
+
+
+
+
+
+
+Ð? ÁN CÔNG NGH? JAVA
+
+
+	
+Ð? TÀI: H? TH?NG QU?N LÝ C?A HÀNG V?T LI?U XÂY D?NG
+
+	
+
+
+
+	Gi?ng viên hu?ng d?n	: TH.S Nguy?n Th? H?u
+	Sinh viên th?c hi?n	: 
+		1. 2001230508 - Cao Ð?c M?nh
+		2. 2001230832 - Nguy?n Nh?t Toàn
+		3. 2001230920 - Ngô Long Thiên
+		4. 2001230706 - Ðinh T?n Phuong
+	        		
+	
+
+	TP. H? CHÍ MINH - 2026
+
+M?C L?C
+B?NG PHÂN CÔNG CÔNG VI?C	5
+DANH M?C CÁC KÝ HI?U VÀ CH? VI?T T?T	7
+DANH M?C CÁC HÌNH V? VÀ Ð? TH?	8
+M? Ð?U	10
+CHUONG 1: T?NG QUAN	11
+1.1. GI?I THI?U	11
+1.2. M?C TIÊU VÀ PH?M VI Ð? TÀI	13
+1.2.1. M?C TIÊU Ð? TÀI	13
+1.2.2. PH?M VI Ð? TÀI	13
+1.3. KH?O SÁT H? TH?NG	14
+1.3.1. GI?I THI?U SO LU?C VÀ CO C?U T? CH?C	14
+1.3.2. QUY TRÌNH NGHI?P V? CHI TI?T	15
+1.3.3. BI?U M?U THU TH?P ÐU?C TRONG QUÁ TRÌNH KH?O SÁT	18
+1.4. K?T CHUONG	20
+CHUONG 2: PHÂN TÍCH H? TH?NG	21
+2.1. GI?I THI?U	21
+2.2.  MÔ HÌNH HÓA NGHI?P V?	22
+2.2.1. SO Ð? USE-CASE NGHI?P V?	22
+2.2.2. MÔ HÌNH HÓA QUY TRÌNH NGHI?P V?	23
+2.2.2.1. Mô hình hóa quy trình nghi?p v? tu v?n và l?p báo giá	23
+2.2.2.2. Mô hình hóa quy trình nghi?p v? ký h?p d?ng d?t hàng	26
+2.2.2.3. Mô hình hóa quy trình nghi?p v? thanh toán	29
+2.2.2.4. Mô hình hóa quy trình nghi?p v? qu?n lý công n?	33
+2.2.2.5. Mô hình hóa quy trình nghi?p v? ki?m tra và bàn giao hàng	37
+2.2.2.6. Mô hình hóa quy trình nghi?p x? lý d?i tr? hàng l?i	40
+2.2.2.7. Mô hình hóa quy trình nghi?p v? t? ch?c giao hàng và v?n chuy?n	43
+2.2.2.8. Mô hình hóa quy trình nghi?p v? qu?n lý kho	47
+2.2.2.9. Mô hình hóa quy trình nghi?p v? qu?n lý danh m?c	52
+2.2.2.10. Mô hình hóa quy trình nghi?p v? báo cáo th?ng kê	56
+2.3. MÔ HÌNH HÓA CH?C NANG	60
+2.3.1. So d? Use Case h? th?ng	60
+2.3.2. Ð?c t? Use Case h? th?ng	60
+2.4. SO Ð? L?P M?C PHÂN TÍCH	79
+2.5. K?T CHUONG	79
+CHUONG 3: THI?T K? H? TH?NG	81
+3.1. GI?I THI?U	81
+3.2. THI?T K? CSDL	81
+3.3. THI?T K? GIAO DI?N H? TH?NG	82
+3.3.1. Giao di?n dang nh?p	82
+3.3.2. Giao di?n dang ký	83
+3.3.3. Giao di?n qu?n lý don hàng	83
+3.3.4. Giao di?n qu?n lý h?p d?ng	85
+3.3.5. Giao di?n qu?n lý thông tin cá nhân	85
+3.3.6. Giao di?n qu?n lý danh m?c	86
+3.3.7. Giao di?n qu?n lý tài kho?n	88
+3.3.8. Giao di?n qu?n lý giao nh?n và bàn giao	88
+3.3.9. Giao di?n qu?n lý d?i tr? hàng	88
+3.3.10. Giao di?n qu?n lý tài chính	88
+3.3.11. Giao di?n qu?n lý kho	90
+3.3.12. Giao di?n qu?n lý hàng hóa	91
+3.3.13. Giao di?n qu?n lý báo cáo th?ng kê	92
+3.4. SO Ð? L?P ? M?C THI?T K?	92
+3.5. THI?T K? CH?C NANG H? TH?NG	93
+3.5.1. So d? 3 l?p ch?c nang qu?n lí don hàng	93
+3.5.2. Ch?c nang mua hàng c?a Qu?n lý don hàng	94
+3.5.3. Ch?c nang tra c?u don c?a Qu?n lý don hàng	94
+3.5.4. Ch?c nang h?y don c?a Qu?n lý don hàng	95
+3.5.5. Ch?c nang s?a don hàng c?a Qu?n lý don hàng	96
+3.5.6. Ch?c nang thêm don hàng c?a Qu?n lý don hàng	97
+3.5.7. Ch?c nang xóa don hàng c?a Qu?n lý don hàng	98
+3.5.8. So d? 3 l?p Qu?n lý h?p d?ng	99
+3.5.9. Ch?c nang h?y h?p d?ng trong Qu?n lý h?p d?ng	100
+3.5.10. Ch?c nang s?a h?p d?ng trong Qu?n lý h?p d?ng	101
+3.5.11. Ch?c nang tìm ki?m h?p d?ng trong Qu?n lý h?p d?ng	102
+3.5.12. Ch?c nang thêm h?p d?ng trong Qu?n lý h?p d?ng	103
+3.5.13. So d? 3 l?p trong Qu?n lý thông tin cá nhân	105
+3.5.14. Ch?c nang c?p nh?t thông tin trong Qu?n lý thông tin cá nhân	106
+3.5.15. Ch?c nang thêm thông tin trong Qu?n lý thông tin cá nhân	107
+3.5.16. Ch?c nang tra c?u thông tin trong Qu?n lý thông tin cá nhân	108
+3.5.17. Ch?c nang c?p nh?t danh m?c trong Qu?n lý danh m?c	109
+3.5.18. Ch?c nang thêm danh m?c trong Qu?n lý danh m?c	111
+3.5.19. Ch?c nang xóa danh m?c trong Qu?n lý danh m?c	113
+3.5.20. Ch?c nang c?p nh?t tài kho?n trong Qu?n lý tài kho?n	115
+3.5.21. Ch?c nang d?t l?i m?t kh?u trong Qu?n lý tài kho?n	117
+3.5.22. Ch?c nang thêm tài kho?n trong Qu?n lý tài kho?n	119
+3.5.23. Ch?c nang phân quy?n tài kho?n trong Qu?n lý tài kho?n	121
+3.5.24. Ch?c nang xóa/khóa tài kho?n trong Qu?n lý tài kho?n	123
+3.5.25. Ch?c nang Báo cáo th?ng kê trong Qu?n lý báo cáo	124
+3.5.26. Ch?c nang l?p báo cáo tài chính trong Qu?n lý báo cáo	125
+3.5.27. Ch?c nang l?p báo cáo t?n kho trong Qu?n lý báo cáo	126
+3.5.28. Ch?c nang Phê duy?t báo cáo trong Qu?n lý báo cáo	127
+3.5.29. Ch?c nang Ki?m kê kho trong Qu?n lý kho	129
+3.5.30. Ch?c nang Tính t?n kho trong Qu?n lý kho	131
+3.5.31. Ch?c nang Xu?t kho trong Qu?n lý kho	133
+3.5.32. Ch?c nang Nh?p kho trong Qu?n lý kho	135
+3.5.33. Ch?c nang Liên k?t nhà cung c?p trong Qu?n lý nh?p hàng	137
+3.5.34. Ch?c nang Theo dõi don hàng trong Qu?n lý nh?p hàng	139
+3.5.35. Ch?c nang L?p phi?u nh?p kho trong Qu?n lý nh?p hàng	141
+3.5.36. Ch?c nang C?p nh?t t?n kho trong Qu?n lý nh?p hàng	143
+3.5.37. Ch?c nang Qu?n lý giao nh?n và bàn giao	145
+3.5.38. Ch?c nang Ð?i tr? hàng	146
+3.5.39. Ch?c nang ghi nh?n công n? trong Qu?n lý tài chính	147
+3.5.40. Ch?c nang thanh toán công n? trong Qu?n lý tài chính	148
+3.5.41. Ch?c nang theo dõi don hàng thanh toán trong Qu?n lý tài chính	150
+CHUONG 4: K?T LU?N	153
+4.1. T?ng k?t d? tài	153
+4.2. Nh?ng k?t qu? d?t du?c	153
+4.3. H?n ch? và hu?ng phát tri?n	154
+4.4. L?i k?t	154
+TÀI LI?U THAM KH?O	155
+
+
+
+B?NG PHÂN CÔNG CÔNG VI?C
+S? TH? T?H? VÀ TÊNNHI?M V?HOÀN THÀNH1Cao Ð?c M?nh+ Kh?o sát và tìm hi?u v? quy trình ho?t d?ng c?a c?a hàng v?t li?u xây d?ng
++ Xây d?ng so d? UC nghi?p v?, UC h? th?ng 
++ So d? class m?c phân tích và thi?t k?
++ So d? 3 l?p, ch?c nang h? th?ng
++ So d? ho?t d?ng, tu?n t?, c?ng tác cho ch?c nang tu v?n l?p báo giá, ký h?p d?ng d?t hàng, thanh toán.
++ Xây d?ng csdl, thi?t k? giao di?n
++ Word, ppt, l?p  trình web25%2Nguy?n Nh?t Toàn+ Kh?o sát và tìm hi?u v? quy trình ho?t d?ng c?a c?a hàng v?t li?u xây d?ng
++ Xây d?ng so d? UC nghi?p v?, UC h? th?ng 
++ So d? class m?c phân tích và thi?t k?
++ So d? 3 l?p, ch?c nang h? th?ng
++ So d? ho?t d?ng, tu?n t?, c?ng tác cho ch?c nang qu?n lý công n?, ki?m tra và bàn giao hàng, x? lý d?i tr? hàng l?i.
++ Xây d?ng csdl, thi?t k? giao di?n
++ Word, ppt, l?p  trình web25%3Ngô Long Thiên+ Kh?o sát và tìm hi?u v? quy trình ho?t d?ng c?a c?a hàng v?t li?u xây d?ng
++ Xây d?ng so d? UC nghi?p v?, UC h? th?ng 
++ So d? class m?c phân tích và thi?t k?
++ So d? 3 l?p, ch?c nang h? th?ng
++ So d? ho?t d?ng, tu?n t?, c?ng tác cho ch?c nang t? ch?c uc giao hàng và v?n chuy?n, qu?n lý kho.
++ Xây d?ng csdl, thi?t k? giao di?n
++ Word, ppt, l?p  trình web25%4Ðinh T?n Phuong+ Kh?o sát và tìm hi?u v? quy trình ho?t d?ng c?a c?a hàng v?t li?u xây d?ng
++ Xây d?ng so d? UC nghi?p v?, UC h? th?ng 
++ So d? class m?c phân tích và thi?t k?
++ So d? 3 l?p, ch?c nang h? th?ng
++ So d? ho?t d?ng, tu?n t?, c?ng tác cho ch?c nang qu?n lý danh m?c, báo cáo th?ng kê.
++ Xây d?ng csdl, thi?t k? giao di?n
++ Word, ppt, l?p  trình web25%
+
+DANH M?C CÁC KÝ HI?U VÀ CH? VI?T T?T
+
+Vi?t t?tTi?ng AnhTi?ng Vi?tAPIApplication Programming InterfaceGiao di?n l?p trình ?ng d?ngBFDBusiness Function DiagramSo d? phân rã ch?c nangBPMNBusiness Process Model and NotationKý hi?u và mô hình hóa quy trình nghi?p v?CSDL-Co s? d? li?uDBMSDatabase Management SystemH? qu?n tr? co s? d? li?uDFDData Flow DiagramSo d? lu?ng d? li?uERDEntity Relationship DiagramSo d? quan h? th?c th?TNHH-Trách nhi?m h?u h?nTTV-Thành viên (qu?n tr? n?i b?)UCUse CaseBi?u d? tru?ng h?p s? d?ngUMLUnified Modeling LanguageNgôn ng? mô hình hóa th?ng nh?tVATValue Added TaxThu? giá tr? gia tangVLXD-V?t li?u xây d?ng
+
+
+
+DANH M?C CÁC HÌNH V? VÀ Ð? TH?
+
+Hình 1. 1: Hóa don gi?y v?t li?u xây d?ng	11
+Hình 1. 2: B?ng báo giá Sài Gòn CMC	19
+
+Hình 2. 1: UC Qu?n lý c?a hàng v?t li?u xây d?ng	21
+Hình 2. 2: So d? ho?t d?ng v? tu v?n và l?p báo giá	23
+Hình 2. 3: So d? tu?n t? v? tu v?n và l?p báo giá	24
+Hình 2. 4: So d? công tác v? tu v?n và l?p báo giá	24
+Hình 2. 5: So d? ho?t d?ng ký h?p d?ng d?t hàng	26
+Hình 2. 6: So d? tu?n t? ký h?p d?ng d?t hàng	27
+Hình 2. 7: So d? c?ng tác ký h?p d?ng d?t hàng	27
+Hình 2. 8:So d? ho?t d?ng thanh toán	29
+Hình 2. 9:So d? tuân t? thanh toán	30
+Hình 2. 10: So d? c?ng tác thanh toán	31
+Hình 2. 11: So d? ho?t d?ng qu?n lý công n?	33
+Hình 2. 12: So d? tu?n t? qu?n lý công n?	34
+Hình 2. 13: So d? c?ng tác qu?n lý công n?	35
+Hình 2. 14: So d? ho?t d?ng ki?m tra và bàn giao hàng	37
+Hình 2. 15: So d? tu?n t? ki?m tra và bàn giao hàng	38
+Hình 2. 16: So d? c?ng tác ki?m tra và bàn giao hàng	38
+Hình 2. 17:So d? ho?t d?ng x? lý d?i tr? hàng l?i	40
+Hình 2. 18: So d? tu?n t? x? lý d?i tr? hàng l?i	41
+Hình 2. 19: So d? c?ng tác x? lý d?i tr? hàng l?i	41
+Hình 2. 20: So d? ho?t d?ng t? ch?c giao hàng và v?n chuy?n	43
+Hình 2. 21:So d? tu?n t? t? ch?c giao hàng và v?n chuy?n	44
+Hình 2. 22: So d? c?ng tác t? ch?c giao hàng và v?n chuy?n	45
+Hình 2. 23: So d? ho?t d?ng qu?n lý kho	48
+Hình 2. 24: So d? tu?n t? qu?n lý kho	49
+Hình 2. 25: So d? c?ng tác qu?n lý kho	50
+Hình 2. 26: So d? ho?t d?ng qu?n lý danh m?c	52
+Hình 2. 27: So d? tu?n t? qu?n lý danh m?c	53
+Hình 2. 28: So d? c?ng tác qu?n lý danh m?c	54
+Hình 2. 29: So d? ho?t d?ng báo cáo th?ng kê	56
+Hình 2. 30: So d? tu?n t? báo cáo th?ng kê	57
+Hình 2. 31: So d? c?ng tác báo cáo th?ng kê	58
+
+		
+
+
+M? Ð?U
+      Trong qu?n tr? doanh nghi?p hi?n nay, h? th?ng thông tin dóng vai trò là xuong s?ng giúp cung c?p d? li?u chính xác và k?p th?i cho các quy?t d?nh kinh doanh. Ð?c bi?t d?i v?i linh v?c v?t li?u xây d?ng (VLXD), vi?c ?ng d?ng công ngh? s? không ch? giúp t? d?ng hóa quá trình x? lý don hàng, kho bãi mà còn t?i uu hóa vi?c theo dõi công n? và tuong tác tr?c ti?p v?i khách hàng trên cùng m?t n?n t?ng.
+      Qua kh?o sát th?c t?, da s? các don v? kinh doanh VLXD v?n dang duy trì phuong th?c qu?n lý th? công ho?c s? d?ng các công c? r?i r?c. Ði?u này d?n d?n tình tr?ng d? li?u gi?a các b? ph?n nhu Kho, Bán hàng và Tài chính thi?u tính d?ng b?. Ð?c thù hàng hóa có don v? tính ph?c t?p k?t h?p v?i vi?c công n? khách hàng kéo dài theo ti?n d? công trình khi?n công tác ki?m soát tr? nên r?t khó khan, d? x?y ra sai sót và th?t thoát thông tin.
+      V?n d?ng các ki?n th?c t? môn h?c "Phân tích thi?t k? h? th?ng thông tin", nhóm th?c hi?n d? tài b?ng cách ti?p c?n và s? hóa toàn b? quy trình nghi?p v? th?c ti?n. H? th?ng du?c xây d?ng không ch? ph?c v? các thành viên qu?n tr? n?i b? (TTV) trong vi?c v?n hành b? máy, mà còn m? r?ng không gian tuong tác cho Khách hàng - tác nhân tr?c ti?p tham gia vào h? th?ng d? tra c?u và d?t hàng. Nhóm t?p trung vào vi?c chu?n hóa co s? d? li?u và thi?t l?p lu?ng thông tin nh?t quán gi?a các th?c th? trong doanh nghi?p.
+      Khi hoàn thành, d? tài k? v?ng s? gi?i quy?t tri?t d? bài toán d?ng b? d? li?u gi?a các phòng ban ch?c nang, giúp ch? doanh nghi?p giám sát toàn di?n tình hình kinh doanh. Ð?ng th?i, vi?c cho phép khách hàng ch? d?ng theo dõi don hàng và công n? s? nâng cao tính minh b?ch, chuyên nghi?p và gi?m thi?u t?i da các sai sót do y?u t? con ngu?i trong quá trình tính toán t?n kho hay doanh thu.
+      V?i s? n? l?c và tâm huy?t, nhóm th?c hi?n hy v?ng d? án "Qu?n lý c?a hàng v?t li?u xây d?ng" s? mang l?i gi?i pháp th?c ti?n hi?u qu?, d?ng th?i là tài li?u tham kh?o h?u ích cho các ?ng d?ng h? th?ng thông tin sau này.
+
+
+
+
+CHUONG 1: T?NG QUAN
+1.1. GI?I THI?U 
+      Trong b?i c?nh ngành xây d?ng dang phát tri?n m?nh m?, nhu c?u cung ?ng v?t li?u t? các c?a hàng bán l? d?n ngu?i tiêu dùng và các nhà th?u ngày càng l?n. Tuy nhiên, qua kh?o sát th?c t? t?i các don v? kinh doanh v?t li?u xây d?ng (VLXD), công tác qu?n lý hi?n nay v?n mang n?ng tính th? công, ch? y?u d?a vào các lo?i hóa don bán l? vi?t tay và s? sách ghi chép r?i r?c.
+      
+Hình 1. 1: Hóa don gi?y v?t li?u xây d?ng
+      
+      Hình 1.1 Là minh ch?ng c? th? c?a vi?c quy trình bán hàng hi?n nay v?n ph? thu?c hoàn toàn vào các t? hóa don gi?y. Vi?c ghi chép th? công các thông tin t? tên khách hàng, d?a ch?, cho d?n danh m?c hàng hóa v?i các don v? tính ph?c t?p nhu kh?i, bao, cây hay viên thu?ng xuyên x?y ra sai sót. Ð?c bi?t, d?i v?i các don hàng có giá tr? l?n ho?c khách hàng thân thi?t, vi?c ghi chú n? cu và n? m?i ngay trên hóa don gi?y không ch? thi?u tính th?m m? mà còn gây khó khan c?c l?n cho công tác d?i soát, t?ng h?p d? li?u cu?i tháng. Khi kh?i lu?ng hóa don tích t? theo th?i gian, vi?c tra c?u l?i l?ch s? giao d?ch c?a m?t khách hàng c? th? tr? nên ch?m ch?p và d? d?n d?n tình tr?ng th?t thoát tài chính do thông tin b? m?, rách ho?c th?t l?c.
+      Bên c?nh dó, vì don giá v?t li?u xây d?ng thu?ng xuyên bi?n d?ng theo th? tru?ng, vi?c qu?n lý b?ng hóa don gi?y khi?n nhân viên bán hàng khó n?m b?t du?c m?c giá c?p nh?t nh?t, d?n d?n s? thi?u nh?t quán trong kinh doanh. S? r?i r?c này còn t?o ra rào c?n thông tin gi?a b? ph?n bán hàng và kho bãi, khi?n ch? c?a hàng không th? ki?m soát du?c lu?ng t?n kho th?c t? d? k?p th?i nh?p hàng hay báo giá chính xác cho khách.
+      Xu?t phát t? nh?ng b?t c?p nêu trên, nhóm th?c hi?n quy?t d?nh l?a ch?n d? tài "Phân tích thi?t k? h? th?ng thông tin qu?n lý doanh nghi?p v?t li?u xây d?ng". Lý do ch?n d? tài này không ch? nh?m m?c dích thay th? nh?ng t? hóa don gi?y b?ng m?t h? th?ng qu?n lý s? hóa chuyên nghi?p, mà còn hu?ng t?i vi?c xây d?ng m?t n?n t?ng d? li?u t?p trung. H? th?ng s? giúp t?i uu hóa quy trình t? khâu l?p hóa don, qu?n lý kho cho d?n theo dõi công n? chi ti?t, t? dó nâng cao hi?u qu? qu?n tr? và tang cu?ng kh? nang tuong tác, gi? chân khách hàng trong k? nguyên s?.
+
+
+1.2. M?C TIÊU VÀ PH?M VI Ð? TÀI
+1.2.1. M?C TIÊU Ð? TÀI
+      M?c tiêu c?t lõi c?a d? tài là xây d?ng m?t h? th?ng thông tin nh?t quán nh?m thay th? hoàn toàn phuong th?c qu?n lý d?a trên hóa don gi?y và s? sách th? công. H? th?ng hu?ng d?n vi?c tin h?c hóa toàn di?n quy trình nghi?p v?, giúp d? li?u du?c luân chuy?n thông su?t và t?c th?i gi?a khách hàng v?i b? ph?n nhân viên c?a c?a hàng. Qua dó, ch? doanh nghi?p có th? giám sát ch?t ch? tình hình kinh doanh, t?n kho và dòng ti?n mà không còn ph? thu?c vào vi?c c?ng d?n các ch?ng t? r?i r?c.
+      Bên c?nh vi?c ph?c v? công tác qu?n tr? n?i b? c?a c?a hàng, m?t m?c tiêu quan tr?ng khác c?a h? th?ng là m? r?ng không gian tuong tác cho khách hàng. Thay vì ph?i liên h? tr?c ti?p d? h?i giá hay d?i soát n?, khách hàng có th? ch? d?ng truy c?p h? th?ng d? tra c?u thông tin, d?t hàng và theo dõi l?ch s? công n? c?a mình. Vi?c này không ch? nâng cao tính minh b?ch, chuyên nghi?p mà còn gi?m b?t áp l?c x? lý thông tin cho nhân viên c?a hàng, h?n ch? t?i da các sai sót phát sinh do y?u t? con ngu?i.
+1.2.2. PH?M VI Ð? TÀI
+      Ð? d?m b?o tính kh? thi và t?p trung vào các nghi?p v? c?t lõi, d? tài gi?i h?n ph?m vi nghiên c?u trong ho?t d?ng v?n hành n?i b? c?a Công ty TNHH Kinh doanh V?t li?u xây d?ng Sài Gòn (Tòa nhà CMC - 42A C?ng L?, P. 15, Q. Tân Bình, TP. HCM). C? th?, h? th?ng t?p trung gi?i quy?t các bài toán qu?n tr? sau:
+      V? nghi?p v? h? th?ng: Nghiên c?u và xây d?ng quy trình t? d?ng hóa t? khâu ti?p nh?n nhu c?u d?n khi hoàn t?t bàn giao hàng hóa. Tr?ng tâm là qu?n lý danh m?c v?t li?u xây d?ng v?i d?c thù don giá bi?n d?ng theo th?i di?m, h? tr? l?p báo giá linh ho?t, qu?n lý h?p d?ng cung ?ng và theo dõi lu?ng hàng hóa nh?p - xu?t - t?n th?c t? t?i kho. H? th?ng cung d?m nhi?m vi?c ki?m soát dòng ti?n thông qua qu?n lý d?t c?c, thanh toán và d?i soát công n? chi ti?t cho t?ng nhà th?u ho?c nhà cung c?p.
+      V? d?i tu?ng tác nghi?p: H? th?ng du?c thi?t k? d?ng b? d? ph?c v? các nhóm ngu?i dùng chuyên trách t?i công ty. Ban Qu?n lý s? d?ng d? li?u d? di?u hành và xem báo cáo chi?n lu?c. Phòng Kinh doanh th?c hi?n các giao d?ch v?i khách hàng. Phòng Kho v?n tr?c ti?p v?n hành kho và di?u ph?i giao nh?n. Phòng Tài chính - K? toán ki?m soát hóa don, ch?ng t? và công n?. Phòng Hành chính qu?n tr? danh m?c nhân s? và phân quy?n truy c?p h? th?ng.
+      Gi?i h?n nghiên c?u: Ð? tài t?p trung vào quy trình qu?n lý kinh doanh và kho v?n d?c thù c?a ngành v?t li?u xây d?ng, không di sâu vào các nghi?p v? k? toán thu? chuyên sâu, qu?n lý ti?n luong chi ti?t hay các ho?t d?ng s?n xu?t gia công co khí.
+      V? gi?i pháp công ngh? và s? hóa quy trình (Technology Stack):
+      Ð? hi?n th?c hóa và s? hóa toàn di?n các quy trình nghi?p v? nêu trên, h? th?ng du?c xây d?ng du?i d?ng ?ng d?ng web doanh nghi?p v?i các gi?i pháp công ngh? sau:
+- Ngôn ng? l?p trình: Java (phiên b?n JDK 26) cho logic x? lý backend và Javascript (ES6+) k?t h?p HTML5/CSS3 cho ph?n giao di?n (Thymeleaf templates).
+- Backend Framework: Spring Boot 4.0.6 (s? d?ng các module Spring WebMVC, Spring Security).
+- Giao di?n & Web MVC: Spring Web MVC d? xây d?ng các API RESTful ph?c v? giao ti?p client-server và di?u hu?ng các trang view.
+- Qu?n lý d? li?u & ORM: Spring Data JPA k?t h?p thu vi?n Hibernate giúp t? d?ng ánh x? c?u trúc b?ng CSDL thành các d?i tu?ng Java (Entities), giúp truy v?n d? li?u an toàn và t?i uu th?i gian phát tri?n.
+- Qu?n lý b?o m?t: Spring Security di?u ph?i xác th?c dang nh?p, mã hóa m?t kh?u b?ng thu?t toán BCrypt và phân quy?n truy c?p chi ti?t theo vai trò ngu?i dùng (Roles).
+- Co s? d? li?u: H? qu?n tr? co s? d? li?u quan h? MySQL (phiên b?n 8.0+) luu tr? toàn b? d? li?u v?t lý c?a h? th?ng.
+- Công c? qu?n lý d? án: Apache Maven ph? trách qu?n lý các thu vi?n ph? thu?c (dependencies) và dóng gói d? án.
+1.3. KH?O SÁT H? TH?NG
+1.3.1. GI?I THI?U SO LU?C VÀ CO C?U T? CH?C
+      Công ty TNHH Kinh doanh V?t li?u xây d?ng Sài Gòn (thuong hi?u Th? Gi?i V?t Li?u Xây D?ng) có tr? s? chính t?i Tòa nhà CMC - 42A C?ng L?, P. 15, Q. Tân Bình, TP. HCM. Doanh nghi?p t?p trung vào phân ph?i các dòng s?t thép xây d?ng (thép hình, thép h?p, tôn, xà g?...) và v?t li?u dân d?ng. Ð?c thù ho?t d?ng t?i dây là danh m?c hàng hóa có quy cách k? thu?t ph?c t?p, don giá bi?n d?ng m?nh theo th? tru?ng qu?c t?, dòi h?i quy trình v?n chuy?n hàng c?ng k?nh và qu?n tr? kho bãi nghiêm ng?t d? d?m b?o kh? nang cung ?ng cho các công trình.
+      D?a trên k?t qu? kh?o sát th?c t? t?i van phòng di?u hành và h? th?ng kho bãi, b? máy v?n hành du?c thi?t l?p theo mô hình tr?c tuy?n ch?c nang nh?m t?i uu hóa lu?ng công vi?c t? khâu báo giá d?n giao nh?n. C?u trúc t? ch?c c? th? nhu sau:
+* Ban Qu?n lý: Gi? vai trò di?u hành cao nh?t, ch?u trách nhi?m ho?ch d?nh chi?n lu?c kinh doanh, phê duy?t các h?n m?c chi?t kh?u, phê duy?t d? xu?t nh?p hàng và giám sát t?ng th? báo cáo t? các phòng ban. 
+* Phòng Kinh doanh: Là b? ph?n tr?c ti?p t?o doanh thu, th?c hi?n ti?p nh?n nhu c?u khách hàng, l?p báo giá linh ho?t theo th?i di?m, so?n th?o h?p d?ng cung ?ng và qu?n tr? ti?n d? th?c hi?n h?p d?ng. 
+* Phòng Kho v?n: Qu?n tr? lu?ng hàng hóa v?t ch?t, ch?u trách nhi?m ki?m soát nghi?p v? nh?p - xu?t - t?n th?c t?, b?o qu?n s?n ph?m, c?p nh?t danh m?c hàng hóa và di?u ph?i d?i xe giao nh?n d?n công trình. 
+* Phòng Tài chính - K? toán: Ki?m soát dòng ti?n và h? so ch?ng t?, th?c hi?n xác minh thanh toán, l?p hóa don, phát hành l?nh xu?t hàng, qu?n lý ch?t ch? công n? ph?i thu/ph?i tr? v?i khách hàng và nhà cung c?p, d?ng th?i t?ng h?p và trình báo cáo tài chính d?nh k? lên Ban Qu?n lý. 
+* Phòng Hành chính: Ph? trách qu?n tr? n?i b? và nhân s?, d?m nhi?m luu tr? h? so lao d?ng, qu?n lý ch?m công và c?p phát tài nguyên h? th?ng h? tr? công tác h?u c?n chung. 
+* Ðon v? V?n chuy?n (d?i tác bên ngoài): Là các don v? v?n t?i du?c c?a hàng h?p tác d? th?c hi?n b?c x?p và v?n chuy?n hàng hóa t? kho d?n d?a di?m công trình c?a khách hàng. Ðon v? v?n chuy?n ch? d?ng liên h? nh?n hàng theo l?ch giao và ph?i h?p tr?c ti?p v?i Phòng Kho v?n trong su?t quá trình giao nh?n.
+1.3.2. QUY TRÌNH NGHI?P V? CHI TI?T
+      Quy trình tu v?n và l?p báo giá: Kh?i d?u khi khách hàng có nhu c?u mua v?t li?u xây d?ng và liên h? v?i c?a hàng. Nhân viên kinh doanh ti?p nh?n yêu c?u v? ch?ng lo?i, s? lu?ng và quy cách v?t li?u, sau dó tu v?n các lo?i s?n ph?m phù h?p (thép hình, thép h?p, tôn, xà g?...) d?a trên yêu c?u công trình. Nhân viên kinh doanh ki?m tra tình tr?ng hàng hi?n có t? b? ph?n kho, ti?n hành l?p báo giá và trình bày cho khách hàng xem xét. Trong tru?ng h?p hàng không d? t?n kho, nhân viên kinh doanh thông báo th?i gian d? ki?n có hàng ho?c d? xu?t phuong án thay th? cho khách hàng.
+      Quy trình ký h?p d?ng d?t hàng: B?t d?u sau khi khách hàng d?ng ý v?i báo giá dã du?c tu v?n. Nhân viên kinh doanh so?n th?o h?p d?ng ghi rõ ch?ng lo?i, quy cách, s? lu?ng, don giá, di?u kho?n giao hàng và thanh toán, sau dó trình lên Ban Qu?n lý d? phê duy?t m?c chi?t kh?u (n?u có). Sau khi Ban Qu?n lý xem xét và phê duy?t, h?p d?ng du?c chuy?n cho khách hàng d?c và xác nh?n tru?c khi hai bên ký k?t chính th?c. Trong tru?ng h?p khách hàng yêu c?u di?u ch?nh di?u kho?n, nhân viên kinh doanh ghi nh?n và trình l?i Ban Qu?n lý xem xét tru?c khi ký.
+      Quy trình thanh toán: Phát sinh khi có nghia v? thanh toán theo h?p d?ng dã ký k?t. Nhân viên k? toán thông báo s? ti?n c?n thanh toán cho khách hàng theo di?u kho?n h?p d?ng, sau khi xác nh?n dã nh?n d? ti?n s? l?p hóa don và phát hành l?nh xu?t hàng thông báo cho b? ph?n kho. Nhân viên k? toán d?ng th?i th?c hi?n thanh toán ti?n hàng cho nhà cung c?p và ghi nh?n xác nh?n t? phía nhà cung c?p. Trong tru?ng h?p khách hàng ch? thanh toán m?t ph?n (d?t c?c), nhân viên k? toán ghi nh?n s? ti?n dã nh?n và th?ng nh?t l?ch thanh toán ph?n còn l?i v?i khách hàng tru?c khi phát hành l?nh xu?t hàng.
+      Quy trình qu?n lý công n?: B?t d?u sau khi phát sinh giao d?ch mua bán ho?c nh?p hàng có liên quan d?n công n?. Nhân viên k? toán t?ng h?p các kho?n phát sinh công n? theo t?ng d?i tác, d?i chi?u s? li?u giao nh?n th?c t? v?i ch?ng t? thanh toán dã nh?n, sau dó thông báo s? du công n? d?n t?ng khách hàng và nhà cung c?p d? xác nh?n. Can c? trên ph?n h?i c?a các bên, nhân viên k? toán th?ng nh?t l?ch quy?t toán. Trong tru?ng h?p có chênh l?ch s? li?u, nhân viên k? toán ph?i h?p v?i nhân viên kinh doanh d? xác minh l?i ch?ng t? g?c tru?c khi xác nh?n s? du chính th?c.
+      Quy trình ki?m tra và bàn giao hàng: B?t d?u khi hàng hóa du?c v?n chuy?n d?n d?a di?m công trình c?a khách hàng. Nhân viên giao nh?n và khách hàng cùng ki?m d?m s? lu?ng th?c t?, ki?m tra quy cách k? thu?t (mã thép, d? dày, ch?ng lo?i...). Sau khi hai bên xác nh?n hàng dúng s? lu?ng và d?t yêu c?u k? thu?t, nhân viên giao hàng l?p biên b?n bàn giao d? khách hàng ký xác nh?n, sau dó mang biên b?n v? bàn cho nhân viên k? toán ti?n hành quy?t toán. Trong tru?ng h?p phát hi?n hàng sai quy cách ho?c không d? s? lu?ng, nhân viên giao hàng l?p biên b?n s? v?, ký xác nh?n cùng khách hàng và x? lý d?i tr? hàng.
+      Quy trình x? lý d?i tr? hàng l?i: Ðu?c kích ho?t khi phát sinh hàng l?i, sai quy cách t?i công trình ho?c hàng nh?p t? nhà máy không d?t yêu c?u k? thu?t. Nhân viên giao nh?n cùng khách hàng l?p biên b?n s? v? ghi rõ lý do, s? lu?ng hàng l?i và ti?n hành thu h?i hàng v? kho. Nhân viên kho ki?m tra, phân lo?i hàng thu h?i: hàng còn dùng du?c nh?p l?i kho, hàng h?ng hoàn toàn tr? v? nhà cung c?p. Sau dó nhân viên kho bàn giao ch?ng t? cho nhân viên k? toán d? di?u ch?nh gi?m tr? công n? tuong ?ng trên s? c?a khách hàng. Trong tru?ng h?p khách hàng yêu c?u d?i hàng ngay, nhân viên kho ph?i h?p v?i b? ph?n kinh doanh ki?m tra t?n kho d? s?p x?p giao hàng thay th? s?m nh?t, ho?c kh?i t?o quy trình nh?p hàng n?u không còn t?n kho.
+      Quy trình t? ch?c giao hàng và v?n chuy?n: B?t d?u sau khi don hàng du?c xác nh?n dã d?t c?c ho?c thanh toán d?. Nhân viên giao nh?n ch? d?ng liên h? c?a hàng d? xác nh?n l?ch nh?n hàng; nhân viên kho v?n cung c?p thông tin chi ti?t v? don hàng, d?a ch? công trình và th?i gian giao d? ki?n. Nhân viên giao nh?n b? trí phuong ti?n phù h?p, d?n kho ki?m d?m và d?i chi?u hàng hóa v?i l?nh xu?t, ký nh?n h? so v?n chuy?n r?i ti?n hành v?n chuy?n và bàn giao hàng t?i công trình. Sau khi khách hàng xác nh?n dã nh?n hàng, don v? v?n chuy?n thông báo l?i cho nhân viên kho v?n hoàn t?t chuy?n. N?u phát hi?n hàng b? hu h?ng ho?c sai s? lu?ng tru?c khi xu?t phát, Nhân viên giao nh?n yêu c?u nhân viên kho v?n ki?m tra l?i và l?p biên b?n xác nh?n.
+      Quy trình nh?p kho và ki?m soát ngu?n cung: B?t d?u khi nhà cung c?p ch? d?ng liên h? chào hàng ho?c khi phát sinh nhu c?u nh?p hàng t? c?a hàng. Nhân viên kho ti?p nh?n thông tin, d?i chi?u v?i tình tr?ng t?n kho th?c t? và nhu c?u t? b? ph?n kinh doanh, sau dó l?p d? xu?t nh?p hàng nêu rõ ch?ng lo?i, s? lu?ng và trình Ban Qu?n lý phê duy?t. Sau khi du?c phê duy?t, nhân viên kho thông báo l?i cho nhà cung c?p; khi hàng v?, nhân viên kho ki?m d?m s? lu?ng, ki?m tra quy cách k? thu?t, ký xác nh?n biên b?n nh?p hàng và chuy?n ch?ng t? cho nhân viên k? toán d? ghi nh?n công n? nhà cung c?p. Trong tru?ng h?p hàng không dúng quy cách ho?c thi?u s? lu?ng, nhân viên kho l?p biên b?n s? v? và yêu c?u nhà cung c?p b? sung ho?c d?i hàng.
+      Quy trình qu?n lý danh m?c hàng hóa: Ðu?c th?c hi?n khi c?n c?p nh?t danh m?c hàng hóa (thêm m?t hàng m?i, di?u ch?nh quy cách, c?p nh?t giá). Ban Qu?n lý yêu c?u c?p nh?t danh m?c theo bi?n d?ng th? tru?ng ho?c t? d? xu?t c?a nhân viên; nhân viên kinh doanh ho?c nhân viên kho l?p phi?u d? xu?t di?u ch?nh ghi rõ mã hàng, tên, quy cách k? thu?t và don giá d? xu?t r?i trình lên Ban Qu?n lý phê duy?t. Sau khi Ban Qu?n lý xem xét, di?u ch?nh (n?u c?n) và phê duy?t, nhân viên thông báo danh m?c dã c?p nh?t d?n các b? ph?n liên quan. Trong tru?ng h?p Ban Qu?n lý chua d?ng ý v?i m?c giá d? xu?t, hai bên th?o lu?n và th?ng nh?t tru?c khi áp d?ng chính th?c.
+      Quy trình báo cáo th?ng kê: Ðu?c th?c hi?n theo d?nh k? (ngày/tu?n/tháng/quý) ho?c khi Ban Qu?n lý yêu c?u báo cáo d?t xu?t. Ban Qu?n lý thông báo yêu c?u báo cáo d?n các tru?ng b? ph?n; nhân viên kinh doanh t?ng h?p s? li?u doanh thu, don hàng và tình tr?ng h?p d?ng trong k?; nhân viên kho t?ng h?p s? li?u nh?p - xu?t - t?n kho và k?t qu? ki?m kê trong k?; nhân viên k? toán t?ng h?p s? li?u thu chi, công n? ph?i thu/ph?i tr? và dòng ti?n trong k?. Các b? ph?n n?p báo cáo cho Ban Qu?n lý theo th?i h?n quy d?nh d? Ban Qu?n lý xem xét, d?t câu h?i làm rõ (n?u có) và phê duy?t. Trong tru?ng h?p s? li?u gi?a các b? ph?n có mâu thu?n, Ban Qu?n lý yêu c?u nhân viên k? toán ch? trì d?i soát l?i v?i b? ph?n liên quan tru?c khi xác nh?n báo cáo chính th?c.
+1.3.3. BI?U M?U THU TH?P ÐU?C TRONG QUÁ TRÌNH KH?O SÁT
+      Trong giai do?n kh?o sát th?c t? t?i Công ty C? ph?n SX-TM VLXD Sài Gòn (Sài Gòn CMC), nhóm dã thu th?p du?c các ch?ng t? quan tr?ng làm co s? d? li?u d?u vào cho h? th?ng. Ði?n hình là B?ng báo giá v?t li?u xây d?ng, dây là bi?u m?u c?t lõi cung c?p danh m?c hàng hóa và don giá niêm y?t chính th?c c?a don v?.
+      V? m?t thông tin, bi?u m?u này li?t kê chi ti?t các lo?i v?t li?u nhu cát bê tông, cát xây tô và các lo?i dá xây d?ng (1x2, 4x6, Mi sàng...) kèm theo don giá chu?n tính trên don v? mét kh?i Ngoài các thông tin d?nh danh doanh nghi?p và kho bãi, bi?u m?u còn xác l?p các quy t?c nghi?p v? quan tr?ng nhu don giá dã bao g?m chi phí v?n chuy?n, m?c thu? VAT m?c d?nh 10% và các hình th?c thanh toán du?c ch?p nh?n bao g?m ti?n m?t ho?c chuy?n kho?n ngân hàng.
+      Vi?c phân tích bi?u m?u này có ý nghia quy?t d?nh trong khâu thi?t k? h? th?ng, giúp xác d?nh chính xác các tru?ng d? li?u cho th?c th? V?t li?u (Tên, don v? tính, giá) và th?c th? Hóa don (Thu?, hình th?c thanh toán). Ð?ng th?i, các thông tin v? v?n chuy?n và ngân hàng trên m?u ch?ng t? là ti?n d? d? nhóm thi?t l?p các lu?ng x? lý cho b? ph?n kho và k? toán, d?m b?o ph?n m?m khi hoàn thi?n s? hoàn toàn tuong thích v?i quy trình v?n hành th?c t? t?i c?a hàng.
+      
+      
+      
+Hình 1. 2: B?ng báo giá Sài Gòn CMC
+1.4. K?T CHUONG
+      Khép l?i Chuong 1, nhóm th?c hi?n dã hoàn thành công tác kh?o sát th?c tr?ng qu?n tr? t?i Công ty TNHH Kinh doanh V?t li?u xây d?ng Sài Gòn. Thông qua vi?c ti?p c?n tr?c ti?p các bi?u m?u hóa don gi?y, b?ng báo giá niêm y?t t?i s? 42A C?ng L? và phân tích quy trình v?n hành liên phòng ban, nhóm dã nh?n di?n rõ nét nh?ng "di?m ngh?n" trong mô hình qu?n lý th? công hi?n t?i. Ðó là s? thi?u d?ng b? gi?a d? li?u kinh doanh và kho bãi, khó khan trong vi?c theo dõi don giá bi?n d?ng và nh?ng r?i ro th?t thoát tài chính t? vi?c qu?n lý công n? r?i r?c trên s? sách.
+      Vi?c xác l?p rõ ràng m?c tiêu tin h?c hóa quy trình và khoanh vùng ph?m vi nghiên c?u vào các nghi?p v? tr?ng tâm nhu: Báo giá linh ho?t, di?u ph?i giao nh?n công trình và d?i soát công n? chi ti?t là ti?n d? quan tr?ng d? xây d?ng m?t h? th?ng thông tin th?c th?. Nh?ng d? li?u kh?o sát và bi?u m?u th?c t? thu th?p du?c trong chuong này không ch? là b?ng ch?ng v? nhu c?u c?p thi?t c?a vi?c chuy?n d?i s?, mà còn là ngu?n nguyên li?u d?u vào quý giá d? nhóm ti?n hành các bu?c mô hình hóa chuyên sâu.
+      Trên co s? nh?ng hi?u bi?t v? nghi?p v? th?c ti?n dã nêu, nhóm s? ti?n hành chuy?n d?i các quy trình th? công này thành ngôn ng? c?a h? th?ng thông tin. T?i Chuong 2: Phân tích h? th?ng, nhóm s? di sâu vào vi?c xây d?ng bi?u d? phân c?p ch?c nang, mô hình hóa lu?ng d? li?u và thi?t l?p các so d? th?c th? m?i quan h?. Ðây là bu?c di quy?t d?nh d? hình thành nên khung xuong k? thu?t v?ng ch?c, bi?n nh?ng quy trình nghi?p v? ph?c t?p c?a ngành v?t li?u xây d?ng thành m?t gi?i pháp ph?n m?m nh?t quán và hi?u qu?.
+
+
+CHUONG 2: PHÂN TÍCH H? TH?NG
+
+2.1. GI?I THI?U
+      Sau khi dã xác l?p du?c n?n t?ng nghi?p v? th?c t? ? Chuong 1, giai do?n Phân tích h? th?ng dóng vai trò chuy?n hóa nh?ng quy trình th? công thành các mô hình k? thu?t chu?n hóa. M?c tiêu tr?ng tâm c?a chuong này là mô hình hóa toàn di?n c?u trúc và hành vi c?a h? th?ng qu?n lý v?t li?u xây d?ng thông qua ngôn ng? UML (Unified Modeling Language), giúp d?nh hình rõ nét cách th?c v?n hành c?a ph?n m?m tru?c khi di vào giai do?n thi?t k? chi ti?t.
+      Quá trình phân tích du?c th?c hi?n xuyên su?t qua b?n lo?i so d? then ch?t nh?m bóc tách m?i khía c?nh c?a h? th?ng:
+* So d? Use Case: Xác d?nh ranh gi?i h? th?ng, li?t kê d?y d? các ch?c nang và m?i quan h? gi?a các Tác nhân v?i các d?ch v? mà h? th?ng cung c?p.
+* So d? Ho?t d?ng (Activity Diagram): Mô t? chi ti?t lu?ng x? lý nghi?p v?, các bu?c r? nhánh và di?u ki?n trong các quy trình tr?ng tâm nhu báo giá s?t thép, xu?t kho và d?i soát công n?.
+* So d? Tu?n t? (Sequence Diagram): Ði sâu vào s? tuong tác theo th?i gian gi?a các d?i tu?ng trong h? th?ng, làm rõ cách th?c d? li?u du?c truy?n t?i d? hoàn thành m?t ch?c nang c? th?.
+* So d? C?ng tác (Collaboration Diagram): T?p trung vào m?i quan h? t? ch?c gi?a các d?i tu?ng, giúp cái nhìn v? c?u trúc h? th?ng tr? nên tr?c quan và g?n k?t hon.
+
+
+
+2.2.  MÔ HÌNH HÓA NGHI?P V?
+2.2.1. SO Ð? USE-CASE NGHI?P V? 
+
+Hình 2. 1: UC Qu?n lý c?a hàng v?t li?u xây d?ng
+
+
+
+
+
+
+2.2.2. MÔ HÌNH HÓA QUY TRÌNH NGHI?P V? 
+2.2.2.1. Mô hình hóa quy trình nghi?p v? tu v?n và l?p báo giá
+a. B?ng van b?n
+Tên Use CaseTu v?n và l?p báo giáMô t?- UC b?t d?u khi khách hàng có nhu c?u mua v?t li?u xây d?ng và liên h? v?i c?a hàng.
+- UC mô t? quá trình nhân viên kinh doanh ti?p nh?n yêu c?u, tu v?n ch?ng lo?i/quy cách và l?p báo giá cho khách hàng.Tác nhânKhách Hàng, Nhân viên Kinh doanh (C?a Hàng)Use case liên quanKý h?p d?ng d?t hàngDòng co b?n1. Khách hàng trình bày nhu c?u v? ch?ng lo?i, s? lu?ng, quy cách v?t li?u v?i nhân viên kinh doanh.
+2. Nhân viên kinh doanh tu v?n các lo?i v?t li?u phù h?p (thép hình, thép h?p, tôn, xà g?...) d?a trên yêu c?u công trình.
+3. Nhân viên kinh doanh h?i b? ph?n kho v? tình tr?ng hàng hi?n có.
+4. Nhân viên kho ph?n h?i v? s? lu?ng và quy cách hàng s?n có.
+5. Nhân viên kinh doanh l?p báo giá và trình bày cho khách hàng.
+6. Khách hàng xem xét và ph?n h?i v? báo giá.
+Dòng thay th?T?i bu?c 3, n?u hàng không d? t?n kho, nhân viên kinh doanh thông báo th?i gian d? ki?n có hàng ho?c d? xu?t phuong án thay th? cho khách hàng.
+
+
+
+
+
+b.  B?ng so d? ho?t d?ng 
+
+
+Hình 2. 2: So d? ho?t d?ng v? tu v?n và l?p báo giá
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+c. B?ng so d? tuong tác (g?m so d? tu?n t? và so d? c?ng tác)
+
+Hình 2. 3: So d? tu?n t? v? tu v?n và l?p báo giá
+
+
+Hình 2. 4: So d? công tác v? tu v?n và l?p báo giá
+
+
+
+
+
+
+
+
+
+
+2.2.2.2. Mô hình hóa quy trình nghi?p v? ký h?p d?ng d?t hàng
+a. B?ng van b?n
+Tên Use CaseKý h?p d?ng d?t hàngMô t?- UC b?t d?u sau khi khách hàng d?ng ý v?i báo giá dã du?c tu v?n.
+- UC mô t? quá trình hai bên th?a thu?n, th?ng nh?t di?u kho?n và ký k?t h?p d?ng cung ?ng v?t li?u.Tác nhânKhách Hàng, Nhân viên Kinh doanh (C?a Hàng), Ban Qu?n lý (C?a Hàng)Use case liên quanTu v?n và l?p báo giáDòng co b?n1. Khách hàng xác nh?n d?ng ý v?i báo giá và d? ngh? ký h?p d?ng.
+2. Nhân viên kinh doanh so?n th?o h?p d?ng ghi rõ ch?ng lo?i, quy cách, s? lu?ng, don giá, di?u kho?n giao hàng và thanh toán.
+3. Nhân viên kinh doanh trình h?p d?ng lên Ban Qu?n lý d? phê duy?t m?c chi?t kh?u (n?u có).
+4. Ban Qu?n lý xem xét và phê duy?t h?p d?ng.
+5. Nhân viên kinh doanh chuy?n h?p d?ng cho khách hàng d?c và xác nh?n.
+6. Hai bên ký k?t h?p d?ng.Dòng thay th?T?i bu?c 5, n?u khách hàng yêu c?u di?u ch?nh di?u kho?n, nhân viên kinh doanh ghi nh?n và trình l?i Ban Qu?n lý xem xét tru?c khi ký.
+
+
+
+
+
+
+
+
+
+
+
+b. B?ng so d? ho?t d?ng
+
+Hình 2. 5: So d? ho?t d?ng ký h?p d?ng d?t hàng
+
+
+
+
+c. B?ng so d? tuong tác (g?m so d? tu?n t? và so d? c?ng tác)
+
+Hình 2. 6: So d? tu?n t? ký h?p d?ng d?t hàng
+
+Hình 2. 7: So d? c?ng tác ký h?p d?ng d?t hàng
+
+
+2.2.2.3. Mô hình hóa quy trình nghi?p v? thanh toán
+a. B?ng van b?n
+
+Tên Use CaseThanh toánMô t?- UC b?t d?u khi phát sinh nghia v? thanh toán theo h?p d?ng dã ký k?t gi?a các bên.
+- UC mô t? quá trình xác nh?n, th?c hi?n và ghi nh?n thanh toán gi?a khách hàng, c?a hàng và nhà cung c?p.Tác nhânKhách Hàng, Nhân viên K? toán (C?a Hàng), Nhà Cung C?p, Nhân viên khoUse case liên quanký h?p d?ng d?t hàngDòng co b?n1. Nhân viên k? toán thông báo s? ti?n c?n thanh toán cho khách hàng theo di?u kho?n h?p d?ng.
+2. Khách hàng th?c hi?n thanh toán cho c?a hàng.
+3. Nhân viên k? toán xác nh?n dã nh?n d? ti?n và l?p hóa don
+4. phát hành l?nh xu?t hàng thông báo cho b? ph?n kho.
+5. Nhân viên k? toán th?c hi?n thanh toán ti?n hàng cho nhà cung c?p.
+6. Nhà cung c?p xác nh?n dã nh?n du?c thanh toán và thông báo l?i cho nhân viên k? toán.Dòng thay th?T?i bu?c 2, n?u khách hàng ch? thanh toán m?t ph?n (d?t c?c), nhân viên k? toán ghi nh?n s? ti?n dã nh?n và th?ng nh?t l?ch thanh toán ph?n còn l?i v?i khách hàng tru?c khi th?c hi?n bu?c 4.
+
+
+
+
+b.  B?ng so d? ho?t d?ng 
+
+Hình 2. 8:So d? ho?t d?ng thanh toán
+
+
+
+
+c. B?ng so d? tuong tác (g?m so d? tu?n t? và so d? c?ng tác)
+
+
+Hình 2. 9:So d? tuân t? thanh toán
+
+
+
+
+Hình 2. 10: So d? c?ng tác thanh toán
+
+2.2.2.4. Mô hình hóa quy trình nghi?p v? qu?n lý công n?
+a. B?ng van b?n
+Tên Use CaseQu?n lý công n?Mô t?- UC b?t d?u sau khi phát sinh giao d?ch mua bán ho?c nh?p hàng có liên quan d?n công n?. 
+- UC mô t? quá trình nhân viên k? toán theo dõi, d?i soát công n? v?i khách hàng và nhà cung c?pTác nhânNhân viên K? toán, Nhân viên Kinh doanhUse case liên quanThanh toánDòng co b?n1. Nhân viên k? toán ti?p nh?n yêu c?u qu?n lý công n?
+2. Nhân viên k? toán t?ng h?p các kho?n phát sinh công n? theo t?ng d?i tác (khách hàng và nhà cung c?p). 
+3. Nhân viên k? toán d?i chi?u s? li?u giao nh?n th?c t? v?i ch?ng t? thanh toán dã nh?n. 4. Nhân viên k? toán thông báo s? du công n? d?n t?ng khách hàng và nhà cung c?p d? xác nh?n. 
+5. Khách hàng và nhà cung c?p xác nh?n s? du công n?. 
+6. Nhân viên k? toán cung c?p l?ch quy?t toán.Dòng thay th?T?i bu?c 3, n?u nhân viên k? toán d?i chi?u s? li?u có chênh l?ch, nhân viên k? toán ph?i h?p v?i nhân viên kinh doanh d? xác minh l?i ch?ng t? g?c.
+T?i bu?c 4, n?u khách hàng ho?c nhà cung c?p ph?n h?i có chênh l?ch s? li?u, nhân viên k? toán ph?i h?p v?i nhân viên kinh doanh d? xác minh l?i ch?ng t? g?c tru?c khi xác nh?n s? du chính th?c.
+
+
+
+
+
+
+
+b.  B?ng so d? ho?t d?ng 
+
+Hình 2. 11: So d? ho?t d?ng qu?n lý công n?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+c. B?ng so d? tuong tác (g?m so d? tu?n t? và so d? c?ng tác)
+
+Hình 2. 12: So d? tu?n t? qu?n lý công n?
+
+
+Hình 2. 13: So d? c?ng tác qu?n lý công n?
+
+
+
+
+
+2.2.2.5. Mô hình hóa quy trình nghi?p v? ki?m tra và bàn giao hàng
+a. B?ng van b?n
+Tên Use CaseKi?m tra và bàn giao hàngMô t?- UC b?t d?u khi hàng hóa du?c v?n chuy?n d?n d?a di?m công trình c?a khách hàng.
+- UC mô t? quá trình nhân viên giao nh?n và khách hàng ki?m tra ch?t lu?ng, s? lu?ng hàng và ký biên b?n bàn giao.Tác nhânNhân viên Giao nh?n Use case liên quanX? lý d?i tr? hàng, T? ch?c giao hàng và v?n chuy?nDòng co b?n1. Nhân viên giao nh?n ti?p nh?n yêu c?u giao hàng.
+2. Nhân viên giao nh?n v?n chuy?n hàng d?n công trình.
+3. Nhân viên giao nh?n ki?m d?m s? lu?ng th?c t?.
+4. Nhân viên giao nh?n yêu c?u khách hàng ki?m tra s? lu?ng và quy cách k? thu?t (mã thép, d? dày, ch?ng lo?i...).
+5. Nhân viên giao hàng l?p biên b?n bàn giao.
+6. Nhân viên giao nh?n yêu c?u khách hàng ký xác nh?n vào biên b?n bàn giao.
+7. Nhân viên giao nh?n mang biên b?n v? bàn cho nhân viên k? toán d? ti?n hành quy?t toán.Dòng thay th?T?i bu?c 3 và 4, n?u phát hi?n hàng sai quy cách ho?c không d? s? lu?ng, nhân viên giao hàng l?p biên b?n su v?, ký xác nh?n, ti?p theo g?i cho khách hàng ký xác nh?n biên b?n su v? và sau dó x? lý d?i tr? hàng cho khách.
+b.  B?ng so d? ho?t d?ng 
+
+
+Hình 2. 14: So d? ho?t d?ng ki?m tra và bàn giao hàng
+c. B?ng so d? tuong tác (g?m so d? tu?n t? và so d? c?ng tác)
+
+Hình 2. 15: So d? tu?n t? ki?m tra và bàn giao hàng
+
+
+
+Hình 2. 16: So d? c?ng tác ki?m tra và bàn giao hàng
+
+
+
+
+
+2.2.2.6. Mô hình hóa quy trình nghi?p x? lý d?i tr? hàng l?i
+a. B?ng van b?n
+Tên Use CaseX? lý d?i tr? hàng l?iMô t?- UC b?t d?u khi phát sinh hàng l?i, sai quy cách t?i công trình ho?c hàng nh?p t? nhà máy không d?t yêu c?u k? thu?t. UC mô t? quá trình l?p biên b?n, thu h?i hàng v? kho và di?u ch?nh công n? liên quan.Tác nhânKhách Hàng, Nhân viên Giao nh?n (C?a hàng), Nhân viên Kho (C?a hàng), Nhân viên K? toán (C?a hàng)Use case liên quanT? ch?c giao hàng và v?n chuy?n.Dòng co b?n1. Nhân viên giao nh?n ti?p nh?n yêu c?u d?i tr? hàng l?i
+2. Nhân viên giao nh?n d?n hi?n tru?ng ph?i h?p l?p biên b?n s? v? ghi rõ lý do, s? lu?ng hàng l?i 
+3. Nhân viên giao nh?n ti?n hành thu h?i hàng v? kho. 
+4. Nhân viên kho ti?p nh?n, ki?m tra và phân lo?i hàng thu h?i
+5. Nhân viên kho bàn giao biên b?n và ch?ng t? thu h?i cho nhân viên k? toán. 
+6. Nhân viên k? toán di?u ch?nh gi?m tr? công n? tuong ?ng trên s? c?a khách hàng và thông báo hoàn t?t cho các bên liên quan.Dòng thay th?T?i bu?c 4, n?u khách hàng yêu c?u d?i hàng ngay: 
+- Nhân viên kho ki?m tra t?n kho. 
+- N?u còn hàng: th?c hi?n usecase t? ch?c giao hàng và v?n chuy?n.
+- N?u không còn hàng: Nhân viên kho ti?n hành nh?p hàng b? sung, sau dó th?c hi?n usecase t? ch?c giao hàng và v?n chuy?n.
+b.  B?ng so d? ho?t d?ng 
+
+Hình 2. 17:So d? ho?t d?ng x? lý d?i tr? hàng l?i
+
+c. B?ng so d? tuong tác (g?m so d? tu?n t? và so d? c?ng tác)
+
+Hình 2. 18: So d? tu?n t? x? lý d?i tr? hàng l?i
+
+Hình 2. 19: So d? c?ng tác x? lý d?i tr? hàng l?i
+
+
+2.2.2.7. Mô hình hóa quy trình nghi?p v? t? ch?c giao hàng và v?n chuy?n
+a. B?ng van b?n
+Tên Use Caset? ch?c giao hàng và v?n chuy?nMô t?- UC b?t d?u sau khi don hàng du?c xác nh?n dã d?t c?c ho?c thanh toán d?.
+- UC mô t? quá trình don v? v?n chuy?n ch? d?ng liên h? nh?n hàng, ph?i h?p v?i b? ph?n kho v?n b?c x?p và v?n chuy?n hàng d?n công trình cho khách hàng.Tác nhânNhân viên Kho v?n (C?a Hàng), Ðon V? V?n Chuy?n, Khách HàngUse case liên quanKi?m tra và bàn giao hàng, thanh toánDòng co b?n1. Ðon v? v?n chuy?n ch? d?ng liên h? c?a hàng d? xác nh?n l?ch và yêu c?u nh?n hàng.
+2. Nhân viên kho v?n cung c?p thông tin chi ti?t v? don hàng, d?a ch? công trình và th?i gian giao d? ki?n cho don v? v?n chuy?n.
+3. Ðon v? v?n chuy?n b? trí phuong ti?n phù h?p và d?n kho nh?n hàng.
+4. Ðon v? v?n chuy?n ki?m d?m hàng hóa, d?i chi?u v?i l?nh xu?t v? ch?ng lo?i và s? lu?ng.
+5. Ðon v? v?n chuy?n xác nh?n dã nh?n d? hàng và ký nh?n h? so v?n chuy?n.
+6. Ðon v? v?n chuy?n ti?n hành v?n chuy?n và bàn giao hàng t?i công trình cho khách hàng.
+7. Khách hàng xác nh?n dã nh?n hàng, don v? v?n chuy?n thông báo l?i cho nhân viên kho v?n hoàn t?t chuy?n.Dòng thay th?T?i bu?c 4, n?u phát hi?n hàng b? hu h?ng ho?c sai s? lu?ng, don v? v?n chuy?n yêu c?u nhân viên kho v?n ki?m tra l?i và l?p biên b?n xác nh?n tru?c khi xu?t phát.
+
+b.  B?ng so d? ho?t d?ng
+
+Hình 2. 20: So d? ho?t d?ng t? ch?c giao hàng và v?n chuy?n
+
+
+c. B?ng so d? tuong tác (g?m so d? tu?n t? và so d? c?ng tác)
+
+Hình 2. 21:So d? tu?n t? t? ch?c giao hàng và v?n chuy?n
+
+Hình 2. 22: So d? c?ng tác t? ch?c giao hàng và v?n chuy?n
+
+
+2.2.2.8. Mô hình hóa quy trình nghi?p v? qu?n lý kho
+a. B?ng van b?n
+Tên Use CaseNh?p kho và ki?m soát ngu?n cungMô t?- UC b?t d?u khi nhà cung c?p ch? d?ng liên h? chào hàng ho?c khi phát sinh nhu c?u nh?p hàng t? c?a hàng.
+- UC mô t? quá trình nhân viên kho ph?i h?p v?i các b? ph?n liên quan d? nh?p hàng, ki?m kê và d?m b?o t?n kho dáp ?ng nhu c?u kinh doanh.Tác nhânNhà Cung C?p, Nhân viên Kho (C?a Hàng), Ban Qu?n lý (C?a Hàng), Nhân viên K? toán (C?a Hàng)Use case liên quanX? lý hàng l?i, báo cáo th?ng kêDòng co b?n1. Nhà cung c?p ch? d?ng liên h? c?a hàng d? chào hàng, cung c?p thông tin ch?ng lo?i, quy cách và báo giá.
+2. Nhân viên kho ti?p nh?n thông tin, d?i chi?u v?i tình tr?ng t?n kho th?c t? và nhu c?u t? b? ph?n kinh doanh.
+3. Nhân viên kho l?p d? xu?t nh?p hàng nêu rõ ch?ng lo?i, s? lu?ng và trình Ban Qu?n lý phê duy?t.
+4. Ban Qu?n lý xem xét và phê duy?t d? xu?t nh?p hàng.
+5. Nhân viên kho thông báo l?i cho nhà cung c?p v? s? lu?ng và quy cách hàng c?n nh?p.
+6. Khi hàng v?, nhân viên kho ki?m d?m s? lu?ng và ki?m tra quy cách k? thu?t.
+7. Nhân viên kho ký xác nh?n biên b?n nh?p hàng v?i nhà cung c?p.
+8. Nhân viên kho chuy?n ch?ng t? nh?p hàng cho nhân viên k? toán d? ghi nh?n công n? nhà cung c?p.Dòng thay th?T?i bu?c 6, n?u hàng nh?n v? không dúng quy cách ho?c thi?u s? lu?ng, nhân viên kho l?p biên b?n s? v? và yêu c?u nhà cung c?p b? sung ho?c d?i hàng.
+b.  B?ng so d? ho?t d?ng 
+
+Hình 2. 23: So d? ho?t d?ng qu?n lý kho
+
+c. B?ng so d? tuong tác (g?m so d? tu?n t? và so d? c?ng tác)
+
+Hình 2. 24: So d? tu?n t? qu?n lý kho
+
+Hình 2. 25: So d? c?ng tác qu?n lý kho
+
+
+2.2.2.9. Mô hình hóa quy trình nghi?p v? qu?n lý danh m?c
+a. B?ng van b?n
+Tên Use CaseQu?n lý danh m?cMô t?- UC b?t d?u khi c?n c?p nh?t danh m?c hàng hóa (thêm m?t hàng m?i, di?u ch?nh quy cách, c?p nh?t giá).
+- UC mô t? quá trình nhân viên kinh doanh/kho ph?i h?p v?i Ban Qu?n lý d? duy trì danh m?c hàng hóa chính xác và d?y d?.Tác nhânNhân viên Kinh doanh / Nhân viên Kho (C?a Hàng), Ban Qu?n lý (C?a Hàng)Use case liên quanQu?n lý kho, tu v?n và l?p báo giáDòng co b?n1. Ban qu?n lý yêu c?u c?p nh?t danh m?c (m?t hàng m?i t? nhà cung c?p, di?u ch?nh don giá theo th? tru?ng).
+2. Nhân viên l?p phi?u d? xu?t di?u ch?nh danh m?c ghi rõ mã hàng, tên, quy cách k? thu?t và don giá d? xu?t.
+3. Nhân viên trình phi?u d? xu?t lên Ban Qu?n lý d? phê duy?t.
+4. Ban Qu?n lý xem xét, di?u ch?nh (n?u c?n) và phê duy?t thay d?i danh m?c.
+5. Nhân viên thông báo danh m?c dã c?p nh?t cho các b? ph?n liên quan (kinh doanh, kho).Dòng thay th?T?i bu?c 4, n?u Ban Qu?n lý chua d?ng ý v?i m?c giá d? xu?t, hai bên th?o lu?n và th?ng nh?t tru?c khi áp d?ng chính th?c.
+b.  B?ng so d? ho?t d?ng 
+
+Hình 2. 26: So d? ho?t d?ng qu?n lý danh m?c
+
+
+c. B?ng so d? tuong tác (g?m so d? tu?n t? và so d? c?ng tác)
+
+Hình 2. 27: So d? tu?n t? qu?n lý danh m?c
+
+
+
+Hình 2. 28: So d? c?ng tác qu?n lý danh m?c
+2.2.2.10. Mô hình hóa quy trình nghi?p v? báo cáo th?ng kê
+a. B?ng van b?n
+Tên Use CaseBáo cáo th?ng kêMô t?- UC b?t d?u theo d?nh k? (ngày/tu?n/tháng/quý) ho?c khi Ban Qu?n lý yêu c?u báo cáo d?t xu?t.
+- UC mô t? quá trình các b? ph?n t?ng h?p s? li?u và trình báo cáo lên Ban Qu?n lý d? ph?c v? ra quy?t d?nh kinh doanh.Tác nhânNhân viên K? toán, Nhân viên Kinh doanh, Nhân viên Kho (C?a Hàng), Ban Qu?n lý (C?a Hàng)Use case liên quanThanh toán, qu?n lý công n?, qu?n lý khoDòng co b?n1. Ban Qu?n lý thông báo yêu c?u báo cáo d?nh k? d?n các tru?ng b? ph?n.
+2. Nhân viên kinh doanh t?ng h?p s? li?u doanh thu, don hàng, tình tr?ng h?p d?ng trong k?.
+3. Nhân viên kho t?ng h?p s? li?u nh?p - xu?t - t?n kho, k?t qu? ki?m kê trong k?.
+4. Nhân viên k? toán t?ng h?p s? li?u thu chi, công n? ph?i thu/ph?i tr? và dòng ti?n trong k?.
+5. Các b? ph?n n?p báo cáo cho Ban Qu?n lý theo th?i h?n quy d?nh.
+6. Ban Qu?n lý xem xét, d?t câu h?i làm rõ (n?u có) và phê duy?t báo cáo.Dòng thay th?T?i bu?c 5, n?u s? li?u gi?a các b? ph?n có mâu thu?n, Ban Qu?n lý yêu c?u nhân viên k? toán ch? trì d?i soát l?i v?i b? ph?n liên quan tru?c khi xác nh?n báo cáo chính th?c.
+
+
+b.  B?ng so d? ho?t d?ng 
+
+Hình 2. 29: So d? ho?t d?ng báo cáo th?ng kê
+c. B?ng so d? tuong tác (g?m so d? tu?n t? và so d? c?ng tác)
+
+Hình 2. 30: So d? tu?n t? báo cáo th?ng kê
+
+Hình 2. 31: So d? c?ng tác báo cáo th?ng kê
+
+
+
+
+
+
+
+
+
+
+
+2.3. MÔ HÌNH HÓA CH?C NANG
+2.3.1. So d? Use Case h? th?ng
+
+2.3.2. Ð?c t? Use Case h? th?ng
+Ð?c t? cho UC h? th?ng cho ch?c nang dang ký
+Tên use caseÐang KýTóm t?tUC cho phép Khách hàng t? t?o tài kho?n trên h? th?ng d? có th? tra c?u thông tin, d?t hàng và theo dõi công n? mà không c?n liên h? tr?c ti?p c?a hàng.Ta´c nhânKhách hàngUse case liên quanÐang nh?pDòng s? ki?n chính1. Khách hàng truy c?p giao di?n và ch?n "Ðang ký tài kho?n". 
+2. H? th?ng hi?n th? form nh?p thông tin: h? tên, s? di?n tho?i, d?a ch?, m?t kh?u. 
+3. Khách hàng nh?p d?y d? thông tin và xác nh?n dang ký. 
+4. H? th?ng ki?m tra tính h?p l? c?a d? li?u (s? di?n tho?i chua t?n t?i). 
+5. H? th?ng t?o tài kho?n, sinh mã khách hàng và thông báo dang ký thành công.Dòng s? ki?n ph?T?i bu?c 4: N?u s? di?n tho?i dã t?n t?i trong h? th?ng, h? th?ng thông báo l?i và yêu c?u nh?p s? khác ho?c dang nh?p vào tài kho?n có s?n. N?u thông tin nh?p thi?u ho?c không h?p l?, h? th?ng hi?n th? thông báo l?i tuong ?ng t?ng tru?ng.Ði?u ki?n tiên quy?tKhách hàng chua có tài kho?n trong h? th?ng.H?u di?u ki?nTài kho?n khách hàng du?c t?o thành công, luu vào CSDL v?i mã khách hàng duy nh?t. Khách hàng có th? dang nh?p ngay sau khi dang ký.
+Ð?c t? cho UC h? th?ng cho ch?c nang  Ðang Nh?p
+Tên use caseÐang Nh?pTóm t?tUC cho phép t?t c? ngu?i dùng (Khách hàng, NV Kinh doanh, NV K? toán, NV Kho, Qu?n lý, Qu?n tr? viên) xác th?c danh tính và truy c?p h? th?ng v?i quy?n h?n tuong ?ng vai trò.Ta´c nhânKhách hàng, NV kinh doanh, NV k? toán, NV kho, Ban qu?n lý, Qu?n tr? viênUse case liên quanÐang kýDòng s? ki?n chính1. Ngu?i dùng truy c?p giao di?n dang nh?p c?a h? th?ng. 
+2. H? th?ng hi?n th? form nh?p tên dang nh?p và m?t kh?u. 
+3. Ngu?i dùng nh?p thông tin dang nh?p và xác nh?n. 
+4. H? th?ng xác th?c thông tin v?i CSDL. 5. H? th?ng xác d?nh vai trò và phân quy?n tuong ?ng. 
+6. H? th?ng chuy?n hu?ng ngu?i dùng d?n giao di?n phù h?p v?i vai trò.Dòng s? ki?n ph?T?i bu?c 4: N?u tên dang nh?p ho?c m?t kh?u sai, h? th?ng thông báo l?i và cho phép th? l?i. N?u nh?p sai quá 5 l?n liên ti?p, h? th?ng t?m khóa tài kho?n và yêu c?u liên h? Qu?n tr? viên d? m? khóa.Ði?u ki?n tiên quy?tTài kho?n ngu?i dùng dã t?n t?i và dang ho?t d?ng trong h? th?ng.H?u di?u ki?nPhiên làm vi?c du?c kh?i t?o thành công. Giao di?n và các ch?c nang hi?n th? dúng theo vai trò c?a ngu?i dùng.
+Ð?c t? cho UC h? th?ng cho ch?c nang  tra c?u thông tin cá nhân
+Tên use caseTra c?u thông tin cá nhânTóm t?t- UC cho phép Khách hàng xem l?i thông tin tài kho?n cá nhân, l?ch s? don hàng, tr?ng thái h?p d?ng và s? du công n? c?a mình trên h? th?ng m?t cách ch? d?ng, minh b?ch.Ta´c nhânKhách hàngUse case liên quanÐang nh?pDòng s? ki?n chính1. Khách hàng dang nh?p và ch?n ch?c nang "Thông tin cá nhân". 
+2. H? th?ng hi?n th? thông tin tài kho?n: h? tên, s? di?n tho?i, d?a ch? công trình. 
+3. Khách hàng ch?n m?c "L?ch s? don hàng" d? xem các don hàng dã d?t. 
+4. H? th?ng hi?n th? danh sách don hàng kèm tr?ng thái (Ch? x? lý / Ðang giao / Ðã giao). 
+5. Khách hàng ch?n m?c "Công n? c?a tôi" d? xem s? du công n? hi?n t?i. 
+6. H? th?ng hi?n th? s? ti?n dã thanh toán, s? còn n? và l?ch thanh toán theo h?p d?ng.Dòng s? ki?n ph?- T?i bu?c 2: Khách hàng có th? ch?nh s?a thông tin cá nhân (s? di?n tho?i, d?a ch?) và luu l?i; h? th?ng c?p nh?t vào CSDL. T?i bu?c 3: Khách hàng có th? l?c don hàng theo kho?ng th?i gian ho?c tr?ng thái.Ði?u ki?n tiên quy?t- Khách hàng dã dang nh?p thành công vào h? th?ng.H?u di?u ki?n-  Thông tin cá nhân, l?ch s? don hàng và công n? du?c hi?n th? chính xác theo d? li?u th?c t? trong h? th?ng.
+Ð?c t? cho UC h? th?ng cho ch?c nang  qu?n lý don hàng
+Tên use caseQu?n lý don hàngTóm t?t- UC cho phép Khách hàng d?t don hàng v?t li?u xây d?ng tr?c ti?p trên h? th?ng và cho phép NV Kinh doanh ti?p nh?n, xác nh?n, theo dõi và c?p nh?t tr?ng thái t?ng don hàng.Ta´c nhânKhách hàng, NV Kinh doanhUsecase liên quanUsecase dang nh?p, Usecase qu?n lý h?p d?ngDòng s? ki?n chính1. Khách hàng dang nh?p và ch?n ch?c nang "Ð?t don hàng". 
+2. H? th?ng hi?n th? danh m?c v?t li?u xây d?ng hi?n có. 
+3. Khách hàng ch?n m?t hàng, nh?p s? lu?ng và quy cách yêu c?u.
+4. H? th?ng hi?n th? don giá hi?n hành, tính t?ng ti?n và ki?m tra t?n kho. 
+5. Khách hàng xác nh?n d?t hàng. 
+6. H? th?ng luu don hàng, sinh mã don t? d?ng và thông báo d?n NV Kinh doanh. 
+7. NV Kinh doanh xem xét và xác nh?n don hàng trên h? th?ng.Dòng s? ki?n ph?- T?i bu?c 4: N?u hàng không d? t?n kho, h? th?ng c?nh báo và hi?n th? s? lu?ng t?n th?c t?, d? xu?t ngày d? ki?n có hàng. 
+- T?i bu?c 7: NV Kinh doanh có th? t? ch?i don và ghi rõ lý do; h? th?ng thông báo l?i cho khách hàng.Ði?u ki?n tiên quy?t- Khách hàng dã dang nh?p. Danh m?c hàng hóa và don giá dã du?c c?p nh?t trong h? th?ng.H?u di?u ki?n- Ðon hàng du?c luu vào h? th?ng v?i mã s? duy nh?t và tr?ng thái "Ch? xác nh?n". NV Kinh doanh nh?n du?c thông báo d? x? lý ti?p theo.
+Ð?c t? cho UC h? th?ng cho ch?c nang  qu?n lý H?p Ð?ng
+Tên use caseQu?n lý H?p Ð?ngTóm t?t- UC cho phép NV kinh doanh t?o h?p d?ng cung ?ng VLXD d?a trên don hàng dã du?c xác nh?n, bao g?m di?u kho?n thanh toán, ti?n d? giao hàng và t? l? d?t c?c; trình Ban qu?n lý phê duy?t.Ta´c nhân	NV Kinh doanh, Khách hàng, Ban Qu?n lýUse case liên quanQu?n lý don hàngDòng s? ki?n chính1. NV Kinh doanh ch?n don hàng dã xác nh?n và ch?n "L?p h?p d?ng". 
+2. H? th?ng t? d?ng di?n thông tin t? don hàng vào m?u h?p d?ng. 
+3. NV Kinh doanh b? sung di?u kho?n: t? l? d?t c?c, phuong th?c thanh toán, ti?n d? giao hàng. 
+4. NV Kinh doanh xác nh?n và g?i h?p d?ng lên Ban Qu?n lý phê duy?t. 
+5. Ban Qu?n lý ki?m tra và phê duy?t h?p d?ng trên h? th?ng. 
+6. H? th?ng sinh mã h?p d?ng, c?p nh?t tr?ng thái "Ðã duy?t" và thông báo cho NV Kinh doanh.Dòng s? ki?n ph?- T?i bu?c 5: N?u Ban Qu?n lý yêu c?u ch?nh s?a, h? th?ng tr? h?p d?ng v? tr?ng thái "C?n ch?nh s?a" kèm ghi chú. Sau khi ký k?t th?c t?, NV Kinh doanh c?p nh?t tr?ng thái thành "Ðã ký" và dính kèm file scan.Ði?u ki?n tiên quy?t- Ðon hàng dã du?c NV Kinh doanh xác nh?n. NV Kinh doanh dã dang nh?p.H?u di?u ki?n- H?p d?ng du?c luu vào h? th?ng v?i mã s? duy nh?t, tr?ng thái "Ðã ký". H? th?ng s?n sàng ti?p nh?n thanh toán và di?u ph?i xu?t kho.
+Ð?c t? cho UC h? th?ng cho ch?c nang  Qu?n lý tài chính và công n?
+Tên use caseQu?n lý tài chính và công n?Tóm t?t- UC cho phép NV K? toán ghi nh?n thanh toán t? khách hàng và d?n nhà cung c?p, l?p hóa don, phát hành l?nh xu?t hàng và theo dõi s? du công n? ph?i thu/ph?i tr? theo th?i gian th?c.Ta´c nhânNV K? toán, Khách hàng, Nhà cung c?p, Ban Qu?n lýUse case liên quanQu?n lý h?p d?ng, qu?n lý don hàngDòng s? ki?n chính1. NV K? toán ch?n h?p d?ng có phát sinh thanh toán. 
+2. H? th?ng hi?n th? thông tin h?p d?ng: t?ng giá tr?, s? dã thu, s? còn l?i theo di?u kho?n. 
+3. NV K? toán ghi nh?n s? ti?n khách hàng thanh toán và phuong th?c (ti?n m?t/chuy?n kho?n). 
+4. H? th?ng c?p nh?t s? ti?n dã thu, tính s? du công n? còn l?i. 
+5. NV K? toán xác nh?n và l?p hóa don. 
+6. H? th?ng luu hóa don và t? d?ng phát hành l?nh xu?t hàng g?i NV Kho. 
+7. H? th?ng c?p nh?t s? công n? và g?i thông báo s? du d?n khách hàng.Dòng s? ki?n ph?- T?i bu?c 3: N?u khách hàng ch? d?t c?c m?t ph?n, h? th?ng ghi nh?n s? ti?n d?t c?c và thi?t l?p l?ch thanh toán ph?n còn l?i. L?nh xu?t hàng ch? du?c phát hành khi dáp ?ng di?u ki?n thanh toán theo h?p d?ng.Ði?u ki?n tiên quy?t- H?p d?ng dã du?c ký k?t và luu trong h? th?ng. NV K? toán dã dang nh?p.H?u di?u ki?n- Kho?n thanh toán du?c ghi nh?n, hóa don luu vào h? th?ng. L?nh xu?t hàng t? d?ng phát hành d?n kho. S? công n? du?c c?p nh?t chính xác.
+Ð?c t? cho UC h? th?ng cho ch?c nang  Qu?n Lý Lô Trình
+Tên use caseQu?n Lý Lô TrìnhTóm t?t- UC cho phép NV Kho ph?i h?p v?i Ðon v? v?n chuy?n l?p k? ho?ch l? trình giao hàng cho t?ng chuy?n xe, t?i uu hóa tuy?n du?ng giao d?n nhi?u công trình và theo dõi ti?n trình v?n chuy?n th?c t?.Ta´c nhânNV Kho, Ðon v? v?n chuy?n, Ban Qu?n lýUse case liên quanQu?n lý nh?p hàng, qu?n lý giao nh?n và bàn giaoDòng s? ki?n chính1. NV Kho ch?n ch?c nang "Qu?n lý lô trình". 
+2. H? th?ng hi?n th? danh sách các l?nh xu?t hàng dã s?n sàng c?n giao. 
+3. NV Kho nhóm các l?nh xu?t theo khu v?c d?a lý và b? trí thành t?ng chuy?n xe. 4. NV Kho ch?n don v? v?n chuy?n và phuong ti?n phù h?p cho t?ng lô trình. 
+5. H? th?ng luu k? ho?ch lô trình và thông báo l?ch giao cho don v? v?n chuy?n. 
+6. NV Kho c?p nh?t tr?ng thái lô trình theo th?c t? (Ðang v?n chuy?n / Ðã giao xong).Dòng s? ki?n ph?- T?i bu?c 3: N?u hàng hóa c?a m?t l?nh xu?t quá c?ng k?nh (thép dài, s? lu?ng l?n), h? th?ng c?nh báo d? NV Kho b? trí phuong ti?n tr?ng t?i phù h?p. 
+- T?i bu?c 6: N?u có s? c? trên du?ng giao, NV Kho ghi nh?n s? c? và thông báo cho khách hàng v? th?i gian giao d? ki?n m?i.Ði?u ki?n tiên quy?t- L?nh xu?t hàng dã có tr?ng thái "Ðã xu?t kho". NV Kho dã dang nh?p.H?u di?u ki?n- K? ho?ch lô trình du?c luu vào h? th?ng. Ðon v? v?n chuy?n nh?n du?c l?ch giao hàng chi ti?t. Tr?ng thái v?n chuy?n du?c theo dõi liên t?c.
+Ð?c t? cho UC h? th?ng cho ch?c nang Qu?n lý nh?p hàng
+Tên use caseQu?n lý nh?p hàngTóm t?t- UC cho phép NV Kho ghi nh?n hàng hóa nh?p t? nhà cung c?p, ki?m d?m th?c t?, d?i chi?u v?i phi?u d?t hàng và c?p nh?t s? lu?ng t?n kho trong h? th?ng.Ta´c nhânNV Kho, Nhà cung c?p, Ban Qu?n lýUse case liên quanQu?n lý kho, Qu?n lý danh m?c hàng hóaDòng s? ki?n chính1. NV Kho ch?n ch?c nang "Nh?p hàng" và ch?n phi?u d?t hàng tuong ?ng t? nhà cung c?p. 
+2. H? th?ng hi?n th? danh sách hàng hóa c?n nh?p theo phi?u d?t hàng. 
+3. NV Kho nh?p s? lu?ng th?c nh?n cho t?ng m?t hàng sau khi ki?m d?m th?c t?. 
+4. NV Kho xác nh?n v? trí luu kho cho t?ng lo?i hàng. 
+5. NV Kho xác nh?n hoàn t?t nh?p hàng trên h? th?ng. 
+6. H? th?ng c?ng d?n s? lu?ng t?n kho và luu phi?u nh?p hàng v?i mã s? t? d?ng.Dòng s? ki?n ph?- T?i bu?c 3: N?u s? lu?ng th?c nh?n ít hon d?t hàng, h? th?ng ghi nh?n chênh l?ch và c?nh báo NV Kho liên h? nhà cung c?p x? lý. N?u phát hi?n hàng sai quy cách ho?c không d?t ch?t lu?ng, NV Kho ghi chú s? v? và kích ho?t quy trình d?i tr? v?i nhà cung c?p.Ði?u ki?n tiên quy?t- Phi?u d?t hàng nhà cung c?p dã du?c Ban Qu?n lý phê duy?t v?i tr?ng thái "Ch? giao hàng". NV Kho dã dang nh?p.H?u di?u ki?n- Phi?u nh?p hàng du?c luu vào h? th?ng. S? lu?ng t?n kho c?a t?ng m?t hàng du?c c?p nh?t chính xác theo th?c t? nh?p.
+Ð?c t? cho UC h? th?ng cho ch?c nang Qu?n lý báo cáo
+Tên use caseQu?n lý báo cáoTóm t?t- UC cho phép Ban Qu?n lý xem và xu?t các báo cáo t?ng h?p v? doanh thu, t?n kho, công n? và tình hình kinh doanh theo t?ng k?, h? tr? ra quy?t d?nh di?u hành và ho?ch d?nh chi?n lu?c.Ta´c nhânBan Qu?n lý, NV K? toánUse case liên quanQu?n lý tài chính và công n?, Qu?n lý kho, Qu?n lý don hàngDòng s? ki?n chính1. Ban Qu?n lý ch?n ch?c nang "Báo cáo th?ng kê".
+2. H? th?ng hi?n th? menu các lo?i báo cáo: Doanh thu, T?n kho, Công n?, Nh?p-Xu?t hàng, Hi?u su?t giao hàng. 
+3. Ban Qu?n lý ch?n lo?i báo cáo và thi?t l?p k? th?ng kê (ngày/tháng/quý/nam). 
+4. H? th?ng truy v?n d? li?u và hi?n th? báo cáo d?ng b?ng và bi?u d?. 
+5. Ban Qu?n lý l?c chi ti?t theo nhóm hàng, khách hàng, nhân viên ho?c nhà cung c?p. 6. Ban Qu?n lý xu?t báo cáo ra file Excel/PDF d? luu tr? ho?c trình bày.Dòng s? ki?n ph?- C?p nh?t don giá: Ngu?i dùng ch?n m?t hàng, nh?p don giá m?i và ngày áp d?ng; h? th?ng luu l?ch s? giá theo th?i gian. 
+- T?i bu?c 4: N?u kho?ng th?i gian l?n ho?c d? li?u nhi?u, h? th?ng hi?n th? thanh ti?n trình t?i. NV K? toán ch? du?c xem các báo cáo trong ph?m vi tài chính du?c phân quy?n.Ði?u ki?n tiên quy?t- Ban Qu?n lý ho?c NV K? toán dã dang nh?p v?i quy?n xem báo cáo. D? li?u nghi?p v? dã du?c c?p nh?t vào h? th?ng.H?u di?u ki?n- Báo cáo hi?n th? chính xác theo k? và tiêu chí dã ch?n. File báo cáo du?c xu?t thành công n?u có yêu c?u.
+Ð?c t? cho UC h? th?ng cho ch?c nang  qu?n Lý Tài Kho?n
+Tên use caseQu?n Lý Tài Kho?nTóm t?t- UC cho phép Qu?n tr? viên t?o m?i, ch?nh s?a, phân quy?n và vô hi?u hóa tài kho?n cho t?t c? ngu?i dùng trong h? th?ng (nhân viên và khách hàng), d?m b?o m?i ngu?i dùng truy c?p dúng ph?m vi ch?c nang.Ta´c nhânQu?n tr? viên, Ban Qu?n lýUse case liên quanÐang nh?pDòng s? ki?n chính1. Qu?n tr? viên ch?n ch?c nang "Qu?n lý tài kho?n". 
+2. H? th?ng hi?n th? danh sách tài kho?n phân theo vai trò (Khách hàng / Nhân viên / Qu?n lý). 
+3. Qu?n tr? viên ch?n "T?o tài kho?n m?i" cho nhân viên. 
+4. H? th?ng hi?n th? form nh?p: h? tên, vai trò, phòng ban, tên dang nh?p, m?t kh?u t?m th?i. 
+5. Qu?n tr? viên nh?p d?y d? thông tin và xác nh?n. 
+6. H? th?ng luu tài kho?n vào CSDL, gán quy?n h?n theo vai trò và thông báo t?o thành công.Dòng s? ki?n ph?- T?i bu?c 6: N?u tên dang nh?p dã t?n t?i, h? th?ng thông báo l?i trùng l?p và yêu c?u nh?p tên khác. Vô hi?u hóa tài kho?n: Qu?n tr? viên ch?n tài kho?n, xác nh?n vô hi?u hóa; h? th?ng ngan dang nh?p nhung v?n gi? l?ch s? giao d?ch. M? khóa tài kho?n b? khóa do nh?p sai m?t kh?u nhi?u l?n.Ði?u ki?n tiên quy?t- Qu?n tr? viên dã dang nh?p v?i quy?n qu?n tr? h? th?ng cao nh?t.H?u di?u ki?n- Tài kho?n m?i du?c t?o thành công v?i phân quy?n dúng theo vai trò. Ngu?i dùng m?i có th? dang nh?p và th?c hi?n các ch?c nang trong ph?m vi quy?n h?n.
+Ð?c t? cho UC h? th?ng cho ch?c nang Qu?n Lý M?t Hàng
+Tên use caseQu?n Lý M?t HàngTóm t?t- UC cho phép NV Kho c?p nh?t chi ti?t k? thu?t t?ng m?t hàng v?t li?u xây d?ng (quy cách, tr?ng lu?ng, kích thu?c, nhà s?n xu?t), theo dõi tr?ng thái kinh doanh và liên k?t thông tin k? thu?t ph?c v? tu v?n và xu?t kho.Ta´c nhânNV Kho, NV Kinh doanhUse case liên quanQu?n lý kho, Qu?n lý danh m?c hàng hóaDòng s? ki?n chính1. NV Kho ch?n ch?c nang "Qu?n lý m?t hàng". 
+2. H? th?ng hi?n th? danh sách m?t hàng v?i thông tin: mã hàng, tên, quy cách, t?n kho hi?n t?i, tr?ng thái. 
+3. NV Kho ch?n m?t hàng c?n xem ho?c ch?nh s?a thông tin chi ti?t. 
+4. H? th?ng hi?n th? d?y d? thông tin k? thu?t c?a m?t hàng. 
+5. NV Kho c?p nh?t thông tin k? thu?t (quy cách, nhà s?n xu?t, m?c t?n kho t?i thi?u). 6. H? th?ng luu thay d?i vào CSDL và c?p nh?t tr?ng thái hi?n th?.Dòng s? ki?n ph?- Ng?ng kinh doanh m?t hàng: NV Kho d?i tr?ng thái m?t hàng thành "Ng?ng bán", m?t hàng không hi?n th? khi l?p don hàng ho?c báo giá. C?nh báo t?n kho th?p: Khi t?n kho th?c t? xu?ng du?i m?c t?i thi?u thi?t l?p, h? th?ng t? d?ng g?i c?nh báo cho NV Kho d? l?p d? xu?t nh?p hàng.Ði?u ki?n tiên quy?t- NV Kho dã dang nh?p. M?t hàng dã t?n t?i trong danh m?c hàng hóa.H?u di?u ki?n- Thông tin chi ti?t m?t hàng du?c c?p nh?t và luu vào CSDL. M?c t?n kho t?i thi?u du?c giám sát t? d?ng b?i h? th?ng.
+Ð?c t? cho UC h? th?ng cho ch?c nang Qu?n Lý Kho
+Tên use caseQu?n Lý KhoTóm t?t- UC cho phép NV Kho theo dõi toàn b? lu?ng hàng hóa nh?p - xu?t - t?n th?c t? t?i kho, th?c hi?n ki?m kê d?nh k?, di?u ch?nh s? lu?ng t?n kho và d?m b?o d? li?u kho kh?p v?i th?c t?.Ta´c nhânNV Kho, Ban Qu?n lýUse case liên quanQu?n lý nh?p hàng, Qu?n lý báo cáoDòng s? ki?n chính1. NV Kho ch?n ch?c nang "Qu?n lý kho". 2. H? th?ng hi?n th? t?ng quan t?n kho: danh sách m?t hàng, s? lu?ng t?n, v? trí luu kho, c?nh báo t?n th?p. 
+3. NV Kho ch?n m?t hàng c?n ki?m tra chi ti?t l?ch s? nh?p/xu?t. 
+4. H? th?ng hi?n th? l?ch s? giao d?ch: ngày nh?p/xu?t, s? lu?ng, ch?ng t? liên quan. 
+5. NV Kho th?c hi?n ki?m kê th?c t? và nh?p s? lu?ng d?m du?c vào h? th?ng. 
+6. H? th?ng so sánh s? lu?ng ki?m kê v?i t?n kho s? sách và hi?n th? chênh l?ch. 
+7. NV Kho xác nh?n di?u ch?nh, h? th?ng c?p nh?t t?n kho theo s? li?u ki?m kê th?c t?.Dòng s? ki?n ph?- T?i bu?c 6: N?u có chênh l?ch l?n, h? th?ng yêu c?u NV Kho nh?p lý do di?u ch?nh và g?i báo cáo chênh l?ch lên Ban Qu?n lý phê duy?t tru?c khi c?p nh?t. H? th?ng t? d?ng c?nh báo khi t?n kho b?t k? m?t hàng nào xu?ng du?i m?c t?i thi?u.Ði?u ki?n tiên quy?t- NV Kho dã dang nh?p. Danh m?c m?t hàng và l?ch s? giao d?ch dã du?c c?p nh?t trong h? th?ng.H?u di?u ki?n- S? li?u t?n kho du?c c?p nh?t chính xác theo th?c t? ki?m kê. Biên b?n ki?m kê du?c luu vào h? th?ng. Ban Qu?n lý nh?n du?c báo cáo chênh l?ch (n?u có).
+Ð?c t? cho UC h? th?ng cho ch?c nang Qu?n Lý Danh M?c Hàng Hóa
+Tên use caseQu?n Lý Danh M?c Hàng HóaTóm t?t- UC cho phép NV Kinh doanh và NV Kho duy trì danh m?c v?t li?u xây d?ng theo nhóm s?n ph?m (thép hình, thép h?p, tôn, xà g?...), c?p nh?t don giá theo th?i di?m th? tru?ng và qu?n lý tr?ng thái kinh doanh c?a t?ng m?t hàng.Ta´c nhânNV Kinh doanh, NV KhoUse case liên quanQu?n lý m?t hàng, Qu?n lý khoDòng s? ki?n chính1. NV Kinh doanh/NV Kho ch?n ch?c nang "Qu?n lý danh m?c hàng hóa". 
+2. H? th?ng hi?n th? danh sách hàng hóa phân theo nhóm s?n ph?m v?i don giá hi?n hành. 
+3. Ngu?i dùng ch?n "Thêm m?t hàng m?i". 4. H? th?ng hi?n th? form nh?p: tên hàng, mã hàng, nhóm hàng, quy cách k? thu?t, don v? tính, don giá. 
+5. Ngu?i dùng nh?p d?y d? thông tin và xác nh?n luu. 
+6. H? th?ng ki?m tra d? li?u và luu m?t hàng m?i vào CSDL.Dòng s? ki?n ph?-Thông báo l?i trùng mã hàng, c?p nh?t don giá theo th?i di?m, và chuy?n tr?ng thái "Ng?ng bán"Ði?u ki?n tiên quy?t- NV Kinh doanh ho?c NV Kho dã dang nh?p v?i quy?n qu?n lý danh m?c.H?u di?u ki?n- M?t hàng m?i du?c luu vào CSDL. Ðon giá m?i có hi?u l?c t? ngày áp d?ng, s?n sàng cho các nghi?p v? báo giá và nh?p kho.
+
+Ð?c t? cho UC h? th?ng cho ch?c nang Qu?n Lý giao nh?n và bàn giao
+
+Tên use caseQu?n Lý giao nh?n và bàn giaoTóm t?t- UC cho phép NV Kho và Ðon v? v?n chuy?n th?c hi?n bàn giao hàng hóa d?n công trình khách hàng, ki?m d?m th?c t?, l?p biên b?n bàn giao và c?p nh?t tr?ng thái hoàn t?t giao hàng vào h? th?ng.Ta´c nhânNV Kho, Ðon v? v?n chuy?n, Khách hàngUse case liên quanQu?n lý lô trình, Qu?n lý d?i tr? hàngDòng s? ki?n chính1. NV Kho ch?n lô trình dang v?n chuy?n và xem chi ti?t các don hàng trong chuy?n.
+2. Ðon v? v?n chuy?n d?n công trình, ph?i h?p v?i khách hàng ki?m d?m s? lu?ng th?c t?.
+3. Khách hàng và don v? v?n chuy?n ki?m tra quy cách k? thu?t c?a hàng (mã thép, d? dày, ch?ng lo?i).
+4. Hai bên xác nh?n hàng dúng s? lu?ng và d?t yêu c?u k? thu?t.
+5. NV Kho c?p nh?t xác nh?n bàn giao thành công trên h? th?ng.
+6. H? th?ng c?p nh?t tr?ng thái don hàng thành "Ðã giao hàng" và thông báo cho NV K? toán quy?t toán.Dòng s? ki?n ph?- T?i bu?c 3: N?u phát hi?n hàng sai quy cách ho?c không d? s? lu?ng, don v? v?n chuy?n l?p biên b?n s? v?, ký xác nh?n cùng khách hàng và kích ho?t quy trình d?i tr? hàng l?i.Ði?u ki?n tiên quy?t- Lô trình giao hàng dã du?c l?p và hàng hóa dã xu?t kho.
+- Ðon v? v?n chuy?n dã nh?n hàng t? kho.H?u di?u ki?n- Biên b?n bàn giao du?c ghi nh?n trong h? th?ng.
+- Tr?ng thái don hàng chuy?n thành "Ðã giao hàng".
+- NV K? toán du?c thông báo d? ti?n hành quy?t toán công n?.
+Ð?c t? cho UC h? th?ng cho ch?c nang Ð?i tr? hàng
+
+
+Tên use caseQu?n lý d?i tr? hàngTóm t?t- UC du?c kích ho?t khi phát sinh hàng l?i, sai quy cách t?i công trình ho?c hàng nh?p t? nhà máy không d?t yêu c?u k? thu?t. 
+- UC mô t? quy trình thu h?i hàng, phân lo?i, x? lý và di?u ch?nh công n? tuong ?ng trên h? th?ng.Ta´c nhân	Khách hàng, NV Giao nh?n (Ðon v? v?n chuy?n), NV Kho, NV K? toánUse case liên quan Qu?n lý giao nh?n và bàn giao, Qu?n lý khoDòng s? ki?n chính1. Khách hàng thông báo hàng l?i/sai quy cách cho c?a hàng.
+2. NV Giao nh?n d?n hi?n tru?ng, ph?i h?p v?i khách hàng l?p biên b?n s? v? ghi rõ lý do, s? lu?ng hàng l?i.
+3. NV Giao nh?n ti?n hành thu h?i hàng l?i và v?n chuy?n v? kho.
+4. NV Kho ti?p nh?n, ki?m tra và phân lo?i hàng thu h?i: hàng còn dùng du?c nh?p l?i kho; hàng h?ng hoàn toàn tr? v? nhà cung c?p.
+5. NV Kho c?p nh?t s? lu?ng hàng thu h?i vào h? th?ng và bàn giao ch?ng t? cho NV K? toán.
+6. NV K? toán di?u ch?nh gi?m tr? công n? tuong ?ng trên s? c?a khách hàng trong h? th?ng.
+7. H? th?ng ghi nh?n hoàn t?t x? lý và thông báo d?n các bên liên quan.Dòng s? ki?n ph?- T?i bu?c 4 - Khách hàng yêu c?u d?i hàng ngay:
+   - NV Kho ki?m tra t?n kho d?i v?i m?t hàng c?n thay th?.
+   - N?u còn t?n kho: ph?i h?p v?i b? ph?n kinh doanh s?p x?p giao hàng thay th? s?m nh?t.
+   - N?u h?t t?n kho: kh?i t?o quy trình nh?p hàng t? nhà cung c?p và thông báo th?i gian d? ki?n cho khách hàng.Ði?u ki?n tiên quy?t- Ðon hàng dã du?c giao và có biên b?n bàn giao ho?c biên b?n s? v? ghi nh?n hàng l?i/sai quy cách.
+- NV Giao nh?n ho?c NV Kho dã dang nh?p h? th?ng.H?u di?u ki?n- Biên b?n s? v? và hàng thu h?i du?c ghi nh?n trong h? th?ng.
+- T?n kho du?c c?p nh?t theo s? lu?ng hàng nh?p l?i th?c t?.
+- Công n? c?a khách hàng du?c di?u ch?nh chính xác.
+- Khách hàng nh?n du?c hàng thay th? ho?c du?c xác nh?n phuong án x? lý.
+
+2.4. SO Ð? L?P M?C PHÂN TÍCH
+
+2.5. K?T CHUONG 
+      Khép l?i Chuong 2, nhóm th?c hi?n dã hoàn thành toàn b? giai do?n phân tích h? th?ng thông tin qu?n lý c?a hàng v?t li?u xây d?ng theo phuong pháp hu?ng d?i tu?ng, s? d?ng ngôn ng? mô hình hóa th?ng nh?t UML làm công c? bi?u di?n chính th?c.
+      Thông qua vi?c xây d?ng So d? Use Case nghi?p v?, nhóm dã xác d?nh rõ ranh gi?i h? th?ng và vai trò c?a t?ng tác nhân tham gia vào quy trình v?n hành, bao g?m: Khách hàng, Nhân viên Kinh doanh, Nhân viên Kho, Nhân viên K? toán, Ðon v? V?n chuy?n và Ban Qu?n lý. Ðây là n?n t?ng quan tr?ng d? nhóm d?nh hình ph?m vi ch?c nang c?n tri?n khai trong h? th?ng.
+      ? ph?n Mô hình hóa nghi?p v?, mu?i quy trình nghi?p v? tr?ng tâm d?c thù c?a ngành v?t li?u xây d?ng dã du?c bi?u di?n b?ng so d? ho?t d?ng và so d? tuong tác. T? quy trình tu v?n và l?p báo giá, ký h?p d?ng d?t hàng, thanh toán, qu?n lý công n?, ki?m tra và bàn giao hàng, d?i tr? hàng l?i, t? ch?c giao hàng và v?n chuy?n, qu?n lý kho, qu?n lý danh m?c cho d?n báo cáo th?ng kê - m?i quy trình d?u du?c phân tích chi ti?t bao g?m dòng s? ki?n chính, dòng s? ki?n thay th?, di?u ki?n tiên quy?t và h?u di?u ki?n, giúp b?c l? rõ logic nghi?p v? th?c t? và các ngo?i l? có th? phát sinh.
+      Ph?n Mô hình hóa ch?c nang v?i h? th?ng d?c t? Use Case bao g?m d?y d? các ch?c nang: Qu?n lý don hàng, Qu?n lý h?p d?ng, Qu?n lý tài chính và công n?, Qu?n lý lô trình, Qu?n lý nh?p hàng, Qu?n lý giao nh?n và bàn giao, Qu?n lý báo cáo, Qu?n lý tài kho?n, Qu?n lý m?t hàng, Qu?n lý kho, Qu?n lý danh m?c hàng hóa và Qu?n lý d?i tr? hàng. Ðây là t?p h?p ch?c nang toàn di?n, ph?n ánh tr?c ti?p nhu c?u th?c ti?n c?a doanh nghi?p du?c kh?o sát.
+      Cu?i cùng, So d? l?p m?c phân tích dã c? th? hóa các th?c th? nghi?p v? c?t lõi, thu?c tính và m?i quan h? gi?a chúng, t?o ra khung c?u trúc d? li?u v?ng ch?c làm ti?n d? cho bu?c thi?t k? h? th?ng ? chuong ti?p theo.
+      Nh?ng s?n ph?m phân tích trong Chuong 2 không ch? d?m b?o tính chính xác, d?y d? c?a yêu c?u ph?n m?m mà còn thi?t l?p m?t ngôn ng? chung gi?a nhóm phát tri?n và ngu?i dùng nghi?p v?. Trên co s? dó, Chuong 3: Thi?t k? h? th?ng s? k? th?a toàn b? k?t qu? phân tích d? di vào giai do?n thi?t k? co s? d? li?u quan h?, thi?t k? giao di?n và thi?t k? ch?c nang chi ti?t theo mô hình ba l?p - bu?c cu?i cùng tru?c khi hi?n th?c hóa gi?i pháp ph?n m?m hoàn ch?nh.
+
+
+CHUONG 3: THI?T K? H? TH?NG
+
+3.1. GI?I THI?U 
+      Chuong 3 trình bày k?t qu? thi?t k? h? th?ng thông tin qu?n lý c?a hàng v?t li?u xây d?ng, bao g?m thi?t k? co s? d? li?u v?i 24 b?ng quan h? du?c chuy?n d?i t? so d? l?p m?c phân tích, thi?t k? giao di?n ngu?i dùng cho t?ng nhóm tác nhân, so d? l?p m?c thi?t k? và thi?t k? ch?c nang h? th?ng theo mô hình ba l?p. Các n?i dung thi?t k? du?c xây d?ng bám sát k?t qu? phân tích ? Chuong 2, d?m b?o ph?n ánh d?y d? mu?i quy trình nghi?p v? d?c thù c?a ngành v?t li?u xây d?ng.
+3.2. THI?T K? CSDL 
+Chuy?n d?i t? so d? l?p m?c phân tích sang mô hình d? li?u quan h?.
+K?t qu?: 
+
+
+
+1. NHÓM HÀNG HÓA
+DanhMucHangHoa( MaDM, TenDM ) 
+NhaCungCap( MaNCC, TenNCC, DiaChi ) 
+KhachHang( MaKH, TenKH, DiaChi, SDT, Email ) 
+HangHoa( MaHang, TenHang, SoLuong, DVT, QuyCach, DonGia, MaDM, MaNCC ) 
+
+2. NHÓM NHÂN S?
+BanQuanLy( MaQL, TenQL, CapBac ) 
+NhanVien( MaNV, TenNV, Email, GioiTinh, SDT, DoanhSo, PhuongTien, LoaiKeToan, KhoPhuTrach ) 
+TaiKhoan( Matk, Tendangnhap, Matkhau, Email, Quyen, MaKH, MaNV ) 
+
+3. NHÓM ÐON HÀNG
+DonHang( MaDon, TenDon, SoLuong, NgayDat, TongTien ) 
+ChiTietDonHang( MaDon, MaHang, SoLuong, DonGia, ThanhTien, Loai )
+(PK = MaDon + MaHang) 
+BangBaoGia( MaBaoGia, NgayLap, ThanhTienDuKien, TrangThai, GhiChu ) 
+ChiTietBaoGia( MaBaoGia, MaHang, SoLuong, DonGia, ThanhTien )
+(PK = MaBaoGia + MaHang) 
+
+4. NHÓM H?P Ð?NG
+HopDong( MaHopDong, NgayKy, DieuKhoanGiaoHang, DieuKhoanThanhToan, MucChietKhau, TrangThai, MaQL, MaNV ) 
+ChiTietHopDong( MaHopDong, MaHang, SoLuong, DonGia )
+(PK = MaHopDong + MaHang) 
+HoaDon( SoHoaDon, NgayLap, NhanVienLap, ThanhTien, MaHopDong ) 
+
+5. NHÓM KHO & GIAO HÀNG
+PhieuNhapKho( MaPhieu, NgayNhap, SoLuongNhap, QuyCach, TrangThai, MaNV ) 
+ChiTietNhapKho( MaPhieu, MaHang, SoLuong, DonGia )
+(PK = MaPhieu + MaHang) 
+BienBanNhapHang( SoBB, NgayNhap, MaPhieu, GhiChuLoi ) 
+LenhXuat( MaLenh, NgayXuat, SoLuongXuat, DiaDiemGiao, TrangThai, SoHoaDon ) 
+BienBanBanGiao( SoBB, NgayGiao, TinhTrangHang, MaLenh, GhiChuLoi ) 
+BienBanSuVu( SoBB, LyDo, SoLuongLoi, MaLenh ) 
+
+6. NHÓM TÀI CHÍNH
+CongNo( MaDoitac, TongNo, HanThanhToan, MaKH, MaHopDong ) 
+BaoCaoThongKe( MaBC, LoaiBC, Ngay, MaQL, MaNV )
+
+3.3. THI?T K? GIAO DI?N H? TH?NG
+3.3.1. Giao di?n dang nh?p
+
+3.3.2. Giao di?n dang ký
+
+3.3.3. Giao di?n qu?n lý don hàng
+a, giao di?n xóa, d?i tr?ng thái, s?a don hàng
+
+b, giao di?n thêm don hàng
+
+
+c, giao di?n mua hàng
+
+
+3.3.4. Giao di?n qu?n lý h?p d?ng
+
+3.3.5. Giao di?n qu?n lý thông tin cá nhân
+a, giao di?n thông tin cá nhân
+
+
+
+3.3.6. Giao di?n qu?n lý danh m?c
+a, giao di?n qu?n lý danh m?c
+
+
+b, giao di?n thêm danh m?c
+
+
+c, giao di?n xóa danh m?c
+
+
+3.3.7. Giao di?n qu?n lý tài kho?n
+
+3.3.8. Giao di?n qu?n lý giao nh?n và bàn giao
+
+3.3.9. Giao di?n qu?n lý d?i tr? hàng
+
+
+3.3.10. Giao di?n qu?n lý tài chính
+a, giao di?n ghi nh?n công n?
+
+b, giao di?n thanh toán công n?
+
+c, giao di?n theo dõi h?n thanh toán
+
+
+3.3.11. Giao di?n qu?n lý kho
+a, giao di?n nh?p kho
+
+b, giao di?n xu?t kho
+
+
+c, giao di?n tính t?n kho
+
+d, giao di?n c?p nh?t t?n kho
+
+3.3.12. Giao di?n qu?n lý hàng hóa
+a, giao di?n t?o phi?u nh?p hàng
+
+
+
+
+
+
+3.3.13. Giao di?n qu?n lý báo cáo th?ng kê
+
+
+
+
+
+
+3.4. SO Ð? L?P ? M?C THI?T K?
+
+3.5. THI?T K? CH?C NANG H? TH?NG
+3.5.1. So d? 3 l?p ch?c nang qu?n lí don hàng
+
+3.5.2. Ch?c nang mua hàng c?a Qu?n lý don hàng
+a) So d? tu?n t? ch?c nang mua hàng
+
+3.5.3. Ch?c nang tra c?u don c?a Qu?n lý don hàng
+a) So d? tu?n t? ch?c nang tra c?u don 
+
+
+3.5.4. Ch?c nang h?y don c?a Qu?n lý don hàng
+a) So d? tu?n t? ch?c nang h?y don
+
+
+
+3.5.5. Ch?c nang s?a don hàng c?a Qu?n lý don hàng
+a) So d? tu?n t? ch?c nang s?a don hàng
+
+
+
+3.5.6. Ch?c nang thêm don hàng c?a Qu?n lý don hàng
+a) So d? tu?n t? ch?c nang thêm don hàng
+
+
+3.5.7. Ch?c nang xóa don hàng c?a Qu?n lý don hàng
+a) So d? tu?n t? ch?c nang xóa don hàng
+
+
+3.5.8. So d? 3 l?p Qu?n lý h?p d?ng
+
+3.5.9. Ch?c nang h?y h?p d?ng trong Qu?n lý h?p d?ng
+a) so d? tu?n t? ch?c nang h?y h?p d?ng
+
+3.5.10. Ch?c nang s?a h?p d?ng trong Qu?n lý h?p d?ng
+a) so d? tu?n t? ch?c nang s?a h?p d?ng
+
+
+3.5.11. Ch?c nang tìm ki?m h?p d?ng trong Qu?n lý h?p d?ng
+a) so d? tu?n t? ch?c nang tìm ki?m h?p d?ng
+
+3.5.12. Ch?c nang thêm h?p d?ng trong Qu?n lý h?p d?ng
+a) so d? tu?n t? ch?c nang thêm h?p d?ng
+
+
+
+3.5.13. So d? 3 l?p trong Qu?n lý thông tin cá nhân
+
+3.5.14. Ch?c nang c?p nh?t thông tin trong Qu?n lý thông tin cá nhân
+a) so d? tu?n t? ch?c nang c?p nh?t thông tin
+
+
+3.5.15. Ch?c nang thêm thông tin trong Qu?n lý thông tin cá nhân
+a) so d? tu?n t? ch?c nang thêm thông tin
+
+
+3.5.16. Ch?c nang tra c?u thông tin trong Qu?n lý thông tin cá nhân
+a) so d? tu?n t? ch?c nang tra c?u thông tin
+
+3.5.17. Ch?c nang c?p nh?t danh m?c trong Qu?n lý danh m?c
+a) so d? l?p theo mô hình 3 l?p ch?c nang c?p nh?t danh m?c
+
+b) so d? tu?n t? ch?c nang c?p nh?t danh m?c
+
+3.5.18. Ch?c nang thêm danh m?c trong Qu?n lý danh m?c
+a) so d? l?p theo mô hình 3 l?p ch?c nang thêm danh m?c
+
+b) so d? tu?n t? ch?c nang thêm danh m?c
+
+3.5.19. Ch?c nang xóa danh m?c trong Qu?n lý danh m?c
+a) so d? l?p theo mô hình 3 l?p ch?c nang xóa danh m?c
+
+b) so d? tu?n t? ch?c nang xóa danh m?c
+
+3.5.20. Ch?c nang c?p nh?t tài kho?n trong Qu?n lý tài kho?n
+a) so d? l?p theo mô hình 3 l?p ch?c nang c?p nh?t tài kho?n
+
+b) so d? tu?n t? ch?c nang c?p nh?t tài kho?n
+
+
+
+3.5.21. Ch?c nang d?t l?i m?t kh?u trong Qu?n lý tài kho?n
+a) so d? l?p theo mô hình 3 l?p ch?c nang d?t l?i m?t kh?u
+
+b) so d? tu?n t? ch?c nang d?t l?i m?t kh?u
+
+
+3.5.22. Ch?c nang thêm tài kho?n trong Qu?n lý tài kho?n
+a) so d? l?p theo mô hình 3 l?p ch?c nang thêm tài kho?n
+
+b) so d? tu?n t? ch?c nang thêm tài kho?n
+
+3.5.23. Ch?c nang phân quy?n tài kho?n trong Qu?n lý tài kho?n
+a) so d? l?p theo mô hình 3 l?p ch?c nang phân quy?n tài kho?n
+
+b) so d? tu?n t? ch?c nang phân quy?n tài kho?n
+
+3.5.24. Ch?c nang xóa/khóa tài kho?n trong Qu?n lý tài kho?n
+a) so d? l?p theo mô hình 3 l?p ch?c nang xóa/khóa tài kho?n
+
+b) so d? tu?n t? ch?c nang xóa/khóa tài kho?n
+
+
+3.5.25. Ch?c nang Báo cáo th?ng kê trong Qu?n lý báo cáo
+a) so d? l?p theo mô hình 3 l?p ch?c nang Báo cáo th?ng kê
+
+b) so d? tu?n t? ch?c nang Báo cáo th?ng kê
+
+3.5.26. Ch?c nang l?p báo cáo tài chính trong Qu?n lý báo cáo
+a) so d? l?p theo mô hình 3 l?p ch?c nang l?p báo cáo tài chính
+
+b) so d? tu?n t? ch?c nang l?p báo cáo tài chính
+
+3.5.27. Ch?c nang l?p báo cáo t?n kho trong Qu?n lý báo cáo
+a) so d? l?p theo mô hình 3 l?p ch?c nang l?p báo cáo t?n kho
+
+b) so d? tu?n t? ch?c nang l?p báo cáo t?n kho
+
+3.5.28. Ch?c nang Phê duy?t báo cáo trong Qu?n lý báo cáo
+a) so d? l?p theo mô hình 3 l?p ch?c nang Phê duy?t báo cáo
+
+b) so d? tu?n t? ch?c nang Phê duy?t báo cáo
+
+3.5.29. Ch?c nang Ki?m kê kho trong Qu?n lý kho
+a) so d? l?p theo mô hình 3 l?p ch?c nang Ki?m kê kho
+
+b) so d? tu?n t? ch?c nang Ki?m kê kho
+
+3.5.30. Ch?c nang Tính t?n kho trong Qu?n lý kho
+a) so d? l?p theo mô hình 3 l?p ch?c nang Tính t?n kho
+
+b) so d? tu?n t? ch?c nang Tính t?n kho
+
+3.5.31. Ch?c nang Xu?t kho trong Qu?n lý kho
+a) so d? l?p theo mô hình 3 l?p ch?c nang Xu?t kho
+
+b) so d? tu?n t? ch?c nang Xu?t kho
+
+3.5.32. Ch?c nang Nh?p kho trong Qu?n lý kho
+a) so d? l?p theo mô hình 3 l?p ch?c nang Nh?p kho
+
+b) so d? tu?n t? ch?c nang Nh?p kho
+
+3.5.33. Ch?c nang Liên k?t nhà cung c?p trong Qu?n lý nh?p hàng
+a) so d? l?p theo mô hình 3 l?p ch?c nang Liên k?t nhà cung c?p
+
+b) so d? tu?n t? ch?c nang Liên k?t nhà cung c?p
+
+3.5.34. Ch?c nang Theo dõi don hàng trong Qu?n lý nh?p hàng
+a) so d? l?p theo mô hình 3 l?p ch?c nang Theo dõi don hàng
+
+b) so d? tu?n t? ch?c nang Theo dõi don hàng
+
+3.5.35. Ch?c nang L?p phi?u nh?p kho trong Qu?n lý nh?p hàng
+a) so d? l?p theo mô hình 3 l?p ch?c nang L?p phi?u nh?p kho
+
+b) so d? tu?n t? ch?c nang L?p phi?u nh?p kho
+
+3.5.36. Ch?c nang C?p nh?t t?n kho trong Qu?n lý nh?p hàng
+a) so d? l?p theo mô hình 3 l?p ch?c nang C?p nh?t t?n kho
+
+b) so d? tu?n t? ch?c nang C?p nh?t t?n kho
+
+3.5.37. Ch?c nang Qu?n lý giao nh?n và bàn giao
+a) so d? l?p theo mô hình 3 l?p ch?c nang Qu?n lý giao nh?n và bàn giao
+      
+b) so d? tu?n t? ch?c nang Qu?n lý giao nh?n và bàn giao
+
+3.5.38. Ch?c nang Ð?i tr? hàng
+a) so d? l?p theo mô hình 3 l?p ch?c nang Ð?i tr? hàng
+
+b) so d? tu?n t? ch?c nang Ð?i tr? hàng
+
+
+3.5.39. Ch?c nang ghi nh?n công n? trong Qu?n lý tài chính
+a) so d? l?p theo mô hình 3 l?p ch?c nang ghi nh?n công n?
+b) so d? tu?n t? ch?c nang ghi nh?n công n?
+
+3.5.40. Ch?c nang thanh toán công n? trong Qu?n lý tài chính
+a) so d? l?p theo mô hình 3 l?p ch?c nang thanh toán công n?
+
+b) so d? tu?n t? ch?c nang thanh toán công n?
+
+3.5.41. Ch?c nang theo dõi don hàng thanh toán trong Qu?n lý tài chính
+a) so d? l?p theo mô hình 3 l?p ch?c nang theo dõi don hàng thanh toán
+
+b) so d? tu?n t? ch?c nang theo dõi don hàng thanh toán
+
+
+
+
+
+
+
+
+
+
+CHUONG 4: K?T LU?N
+
+4.1. T?ng k?t d? tài
+      Qua quá trình th?c hi?n d? tài "Phân tích thi?t k? h? th?ng thông tin qu?n lý doanh nghi?p v?t li?u xây d?ng", nhóm dã hoàn thành m?t l? trình nghiên c?u d?y d? t? kh?o sát th?c t? d?n phân tích, thi?t k? h? th?ng theo dúng phuong pháp lu?n c?a môn h?c. Xu?t phát t? th?c tr?ng qu?n lý th? công còn nhi?u b?t c?p t?i Công ty TNHH Kinh doanh V?t li?u xây d?ng Sài Gòn (42A C?ng L?, Qu?n Tân Bình, TP.HCM), nhóm dã nh?n di?n bài toán, xác l?p m?c tiêu và tri?n khai các bu?c phân tích thi?t k? m?t cách có h? th?ng.
+      ? giai do?n kh?o sát (Chuong 1), nhóm dã ti?p c?n tr?c ti?p quy trình v?n hành th?c ti?n, thu th?p các bi?u m?u ch?ng t? g?c và xác d?nh rõ mu?i nghi?p v? tr?ng tâm d?c thù c?a ngành phân ph?i v?t li?u xây d?ng. Nh?ng "di?m ngh?n" du?c nh?n di?n - thi?u d?ng b? d? li?u liên phòng ban, khó ki?m soát don giá bi?n d?ng và r?i ro th?t thoát t? qu?n lý công n? r?i r?c - dã tr? thành d?ng l?c c?t lõi d? d?nh hu?ng toàn b? quá trình thi?t k? h? th?ng.
+      ? giai do?n phân tích (Chuong 2), b?ng ngôn ng? UML, nhóm dã mô hình hóa toàn b? nghi?p v? thành các so d? Use Case, so d? ho?t d?ng, so d? tu?n t? và so d? c?ng tác. H? th?ng ch?c nang du?c d?c t? chi ti?t v?i d?y d? dòng s? ki?n chính, ngo?i l? x? lý và ràng bu?c di?u ki?n, d?m b?o bao ph? toàn di?n nhu c?u c?a t?t c? tác nhân trong h? th?ng.
+      ? giai do?n thi?t k? (Chuong 3), các k?t qu? phân tích du?c hi?n th?c hóa thành mô hình co s? d? li?u quan h?, thi?t k? giao di?n ngu?i dùng và thi?t k? ch?c nang chi ti?t theo mô hình ba l?p, t?o ra b?n thi?t k? k? thu?t hoàn ch?nh s?n sàng cho giai do?n l?p trình.
+4.2. Nh?ng k?t qu? d?t du?c
+      Sau quá trình th?c hi?n, d? tài dã d?t du?c các k?t qu? chính sau:
+      V? m?t nghi?p v?, nhóm dã h? th?ng hóa và chu?n hóa mu?i quy trình nghi?p v? th?c ti?n c?a doanh nghi?p phân ph?i v?t li?u xây d?ng, t? dó xây d?ng du?c m?t t?p h?p yêu c?u ch?c nang rõ ràng, có th? do lu?ng và ki?m ch?ng du?c.
+      V? m?t k? thu?t, nhóm dã xây d?ng d?y d? b? tài li?u phân tích thi?t k? g?m: so d? Use Case nghi?p v? và h? th?ng, d?c t? chi ti?t mu?i hai Use Case ch?c nang, so d? l?p m?c phân tích, mô hình co s? d? li?u quan h? và thi?t k? giao di?n h? th?ng.
+      V? m?t th?c ti?n, h? th?ng du?c thi?t k? ph?c v? d?ng th?i hai nhóm d?i tu?ng: tác nhân n?i b? (Ban qu?n lý, Nhân viên kinh doanh, Nhân viên kho, Nhân viên k? toán, Qu?n tr? viên) và tác nhân bên ngoài (Khách hàng, Ðon v? v?n chuy?n, Nhà cung c?p). Thi?t k? phân quy?n chi ti?t theo vai trò d?m b?o m?i tác nhân ch? truy c?p dúng ph?m vi ch?c nang du?c giao, góp ph?n nâng cao tính b?o m?t và chuyên nghi?p c?a h? th?ng.
+4.3. H?n ch? và hu?ng phát tri?n
+      Bên c?nh nh?ng k?t qu? d?t du?c, d? tài v?n còn m?t s? h?n ch? nh?t d?nh. Do gi?i h?n v? th?i gian và ph?m vi c?a môn h?c, nhóm chua di sâu vào các nghi?p v? k? toán thu? chuyên sâu, chua tích h?p module qu?n lý ti?n luong nhân viên và chua xây d?ng ch?c nang k?t n?i v?i các ph?n m?m k? toán bên ngoài nhu MISA hay Fast Accounting.
+      Trong tuong lai, h? th?ng có th? du?c phát tri?n m? r?ng theo các hu?ng sau. Th? nh?t, b? sung tính nang d? báo nhu c?u nh?p hàng d?a trên phân tích d? li?u l?ch s? t?n kho và xu hu?ng tiêu th?. Th? hai, tích h?p c?ng thanh toán tr?c tuy?n d? khách hàng có th? th?c hi?n giao d?ch ngay trên n?n t?ng h? th?ng. Th? ba, phát tri?n ?ng d?ng di d?ng giúp nhân viên giao nh?n và nhân viên kho th?c hi?n nghi?p v? ngoài hi?n tru?ng m?t cách linh ho?t. Th? tu, tích h?p tính nang phân tích kinh doanh thông minh (Business Intelligence) h? tr? Ban Qu?n lý trong vi?c ra quy?t d?nh chi?n lu?c d?a trên d? li?u th?c t?.
+4.4. L?i k?t
+      Ð? tài "Phân tích thi?t k? h? th?ng thông tin qu?n lý c?a hàng v?t li?u xây d?ng" không ch? là s?n ph?m h?c thu?t minh ch?ng cho s? v?n d?ng linh ho?t các ki?n th?c t? môn Phân tích thi?t k? h? th?ng thông tin, mà còn mang ý nghia th?c ti?n sâu s?c khi d? xu?t m?t gi?i pháp s? hóa thi?t th?c cho doanh nghi?p du?c kh?o sát. Nhóm th?c hi?n trân tr?ng c?m on s? hu?ng d?n t?n tình c?a Th.S Ðinh Th? M?n trong su?t quá trình nghiên c?u và th?c hi?n d? tài. Nh?ng ki?n th?c và k? nang du?c tích luy qua d? tài này s? là hành trang quý báu cho nhóm trong các d? án phát tri?n ph?n m?m th?c t? sau này.
+
+
+
+
+
+
+
+
+TÀI LI?U THAM KH?O
+Tiê´ng Viê?t
+[1] Ph?m Nguy?n Cuong, Nguy?n Tr?n Minh Thu, H? B?o Qu?c (2016), Giáo trình Phân tích thi?t k? h? th?ng thông tin theo hu?ng d?i tu?ng, Nhà xu?t b?n Khoa h?c và K? thu?t.
+Website
+[2] https://monhoc.vn/tai-lieu/giao-trinh-phan-tich-thiet-ke-huong-doi-tuong-voi-uml-1574/
+ 
+
+
+2
+
+
+2
+
+

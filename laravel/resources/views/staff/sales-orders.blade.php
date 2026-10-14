@@ -7,7 +7,7 @@
         <label>Tìm theo mã hoặc khách hàng<input class="form-control" name="q" value="{{ request('q') }}" placeholder="Mã đơn hoặc tên khách"></label>
         <label>Trạng thái<select class="form-select" name="status">
             <option value="">Tất cả trạng thái</option>
-            @foreach(['awaiting_confirmation' => 'Chờ xác nhận', 'awaiting_payment' => 'Chờ thanh toán', 'ready_to_issue' => 'Chờ xuất kho', 'ready_to_ship' => 'Sẵn sàng giao', 'shipping' => 'Đang giao', 'delivery_incident' => 'Giao hàng gặp sự cố', 'delivered' => 'Đã giao', 'rejected' => 'Đã từ chối', 'cancelled' => 'Đã hủy'] as $value => $label)
+            @foreach(['awaiting_confirmation' => 'Chờ xác nhận', 'awaiting_contract' => 'Chờ lập hợp đồng', 'awaiting_payment' => 'Chờ thanh toán', 'ready_to_issue' => 'Chờ xuất kho', 'ready_to_ship' => 'Sẵn sàng giao', 'shipping' => 'Đang giao', 'delivery_incident' => 'Giao hàng gặp sự cố', 'delivered' => 'Đã giao', 'rejected' => 'Đã từ chối', 'cancelled' => 'Đã hủy'] as $value => $label)
                 <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
             @endforeach
         </select></label>
@@ -30,12 +30,14 @@
                     @endforeach
                 </tbody></table></div>
                 @if($order->rejection_reason)<p class="sales-order-reason"><strong>Lý do từ chối:</strong> {{ $order->rejection_reason }}</p>@endif
+                @if($order->quote_stock_note)<p class="sales-order-reason"><strong>Phản hồi thiếu tồn:</strong> {{ $order->quote_stock_note }}</p>@endif
+                @if($order->stock_shortage_note)<p class="sales-order-reason"><strong>Đơn nhận tại kho thiếu tồn:</strong> {{ $order->stock_shortage_note }}. Dự kiến có hàng {{ \Carbon\Carbon::parse($order->estimated_available_on)->format('d/m/Y') }}. Kiểm tra tồn thực tế trước khi xác nhận; nếu chưa có hàng, liên hệ khách để thống nhất lịch hoặc vật liệu thay thế.</p>@endif
                 @if($order->status === 'awaiting_confirmation' && in_array($role, ['sales', 'admin'], true))
                     <div class="sales-order-actions">
                         <form class="sales-order-confirm" method="post" action="{{ route('staff.orders.review', $order->id) }}">
                             @csrf
                             <input type="hidden" name="decision" value="confirm">
-                            <p>Xác nhận đơn để chuyển sang bước thanh toán.</p>
+                            <p>Xác nhận đơn để chuyển sang bước lập hợp đồng.</p>
                             <button class="btn btn-dark">Xác nhận đơn</button>
                         </form>
                         <form class="sales-order-reject" method="post" action="{{ route('staff.orders.review', $order->id) }}">
@@ -48,6 +50,22 @@
                             </div>
                         </form>
                     </div>
+                @endif
+                @if($order->status === 'awaiting_contract' && in_array($role, ['sales', 'admin'], true))
+                    @if(!$order->draft_contract_code)
+                        <form method="post" action="{{ route('staff.contracts.create', $order->id) }}" class="mt-3">
+                            @csrf
+                            <h3 class="h5">Lập hợp đồng từ đơn {{ $order->code }}</h3>
+                            <div class="row g-3">
+                                <div class="col-md-3"><label class="form-label">Cọc yêu cầu<input class="form-control" type="number" name="deposit_required" min="0" max="{{ $order->total }}" step="0.01" value="0" required></label></div>
+                                <div class="col-md-4"><label class="form-label">Điều khoản thanh toán<textarea class="form-control" name="payment_terms" required></textarea></label></div>
+                                <div class="col-md-4"><label class="form-label">Điều khoản giao hàng<textarea class="form-control" name="delivery_terms" required></textarea></label></div>
+                            </div>
+                            <button class="btn btn-dark mt-3">Lập hợp đồng</button>
+                        </form>
+                    @else
+                        <p class="mt-3 mb-0">Hợp đồng đã được lập. <a href="{{ route('staff.section', ['section' => 'contracts', 'contract' => $order->draft_contract_code]) }}">Xem hợp đồng</a>.</p>
+                    @endif
                 @endif
             </div>
         </details>

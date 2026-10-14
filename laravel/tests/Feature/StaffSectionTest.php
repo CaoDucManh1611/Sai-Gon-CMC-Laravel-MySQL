@@ -35,7 +35,7 @@ class StaffSectionTest extends TestCase
             'finance' => ['accounting', 'manager', 'admin'],
             'purchases' => ['warehouse', 'manager', 'admin'],
             'orders' => ['warehouse', 'delivery', 'accounting', 'manager', 'admin'],
-            'returns' => ['warehouse', 'accounting', 'manager', 'admin'],
+            'returns' => ['warehouse', 'delivery', 'accounting', 'manager', 'admin'],
             'inventory' => ['warehouse', 'manager', 'admin'],
         ];
         foreach (['sales', 'warehouse', 'accounting', 'manager', 'admin', 'delivery'] as $role) {

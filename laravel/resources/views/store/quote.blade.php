@@ -30,6 +30,6 @@
         <form method="post" action="{{ route('my.quote.withdraw',$quote->id) }}" class="mt-3" onsubmit="return confirm('Rút yêu cầu báo giá này? Lịch sử vẫn được lưu.');">@csrf<button class="btn btn-outline-danger" type="submit">Rút yêu cầu</button></form>
     @endif
     @if($quote->status==='sent')<p>Báo giá có hiệu lực đến {{ $quote->valid_until }}.</p><form method="post" action="{{ route('my.quote.accept',$quote->id) }}">@csrf<button class="btn-editorial dark" type="submit">Chấp nhận báo giá</button></form>
-    @elseif($quote->status==='accepted')<p>Đã chấp nhận. Nhân viên đang lập hợp đồng.</p>@endif
+    @elseif($quote->status==='accepted')<p>Đã chấp nhận. Đơn hàng đã được tạo và đang chờ nhân viên Kinh doanh xác nhận. <a href="{{ route('my.orders') }}">Xem đơn hàng</a>.</p>@endif
 </div>
 @endsection

@@ -41,6 +41,13 @@
             @if($debts->isEmpty())
                 <div class="account-empty"><span aria-hidden="true">✓</span><strong>Chưa phát sinh công nợ.</strong><p>Các khoản cần thanh toán sẽ hiển thị tại đây.</p></div>
             @else
+                <div class="customer-debt-filter" role="search" aria-label="Lọc công nợ" data-debt-filter>
+                    <label>Tìm công nợ<input type="search" class="form-control" placeholder="Nhập mã hoặc nội dung" aria-label="Tìm công nợ"></label>
+                    <label>Trạng thái<select class="form-select" aria-label="Trạng thái công nợ"><option value="">Tất cả</option><option value="open">Còn phải trả</option><option value="settled">Đã thanh toán</option></select></label>
+                    <label>Sắp xếp<select class="form-select" aria-label="Sắp xếp công nợ"><option value="new">Mới nhất trước</option><option value="old">Cũ nhất trước</option></select></label>
+                    <button class="customer-debt-clear" type="button">Xóa lọc</button>
+                    <output class="customer-debt-count" aria-live="polite"></output>
+                </div>
                 <div class="account-table-scroll" role="region" aria-label="Công nợ của tôi" tabindex="0">
                     <table class="table">
                         <thead><tr><th>Mã</th><th>Giá trị</th><th>Đã thanh toán</th><th>Còn lại</th><th>Hẹn quyết toán</th></tr></thead>
@@ -51,6 +58,7 @@
                         </tbody>
                     </table>
                 </div>
+                <p class="customer-debt-empty" hidden>Không có khoản công nợ phù hợp.</p>
             @endif
         </section>
 

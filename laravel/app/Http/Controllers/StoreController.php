@@ -88,7 +88,7 @@ class StoreController extends Controller
             ->get(['product_id', 'warehouse_id', 'quantity'])->keyBy(fn ($row) => $row->product_id.'-'.$row->warehouse_id);
         $reserved = DB::table('order_items')->join('orders', 'orders.id', '=', 'order_items.order_id')
             ->whereIn('order_items.product_id', $ids)->whereIn('orders.pickup_warehouse_id', $warehouses->pluck('id'))
-            ->whereIn('orders.status', ['awaiting_confirmation', 'awaiting_payment', 'ready_to_issue'])
+            ->whereIn('orders.status', ['awaiting_contract', 'awaiting_payment', 'ready_to_issue'])
             ->select('order_items.product_id', 'orders.pickup_warehouse_id')
             ->selectRaw('SUM(order_items.quantity) as quantity')
             ->groupBy('order_items.product_id', 'orders.pickup_warehouse_id')
@@ -121,8 +121,27 @@ class StoreController extends Controller
 
         $warehouses = DB::table('warehouses')->where('active', true)->orderBy('name')->get();
         $canPickup = $products->every(fn ($product) => $product->direct_purchase_allowed);
+        $availability = [];
+        $stock = DB::table('inventory')->whereIn('product_id', $products->pluck('id'))
+            ->whereIn('warehouse_id', $warehouses->pluck('id'))->get()
+            ->keyBy(fn ($row) => $row->warehouse_id.':'.$row->product_id);
+        $reserved = DB::table('order_items')->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->whereIn('order_items.product_id', $products->pluck('id'))
+            ->whereIn('orders.pickup_warehouse_id', $warehouses->pluck('id'))
+            ->whereIn('orders.status', ['awaiting_contract', 'awaiting_payment', 'ready_to_issue'])
+            ->select('orders.pickup_warehouse_id', 'order_items.product_id')
+            ->selectRaw('SUM(order_items.quantity) as quantity')
+            ->groupBy('orders.pickup_warehouse_id', 'order_items.product_id')->get()
+            ->keyBy(fn ($row) => $row->pickup_warehouse_id.':'.$row->product_id);
+        foreach ($warehouses as $warehouse) {
+            foreach ($products as $product) {
+                $key = $warehouse->id.':'.$product->id;
+                $available = bcsub((string) ($stock[$key]->quantity ?? 0), (string) ($reserved[$key]->quantity ?? 0), 3);
+                $availability[$warehouse->id][$product->id] = max(0, (float) $available);
+            }
+        }
 
-        return view('store.cart', compact('cart', 'products', 'total', 'warehouses', 'canPickup'));
+        return view('store.cart', compact('cart', 'products', 'total', 'warehouses', 'canPickup', 'availability'));
     }
 
     public function addToCart(Request $request): RedirectResponse
@@ -206,7 +225,7 @@ class StoreController extends Controller
         $id = $workflow->placePickupOrder($request->user()->id, $request->session()->get('cart', []), $data['warehouse_id']);
         $request->session()->forget('cart');
 
-        return redirect()->route('my.orders')->with('success', 'Đã đặt đơn '.DB::table('orders')->find($id)->code.'. Thanh toán tại quầy trước khi nhận hàng.');
+        return redirect()->route('my.orders')->with('success', 'Đã đặt đơn '.DB::table('orders')->find($id)->code.'. Nhân viên Kinh doanh sẽ xác nhận và lập hợp đồng trước khi thanh toán.');
     }
 
     public function cancelPickupOrder(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
@@ -266,18 +285,25 @@ class StoreController extends Controller
 
     public function acceptQuote(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
     {
-        $workflow->acceptQuote($id, $request->user()->id);
+        $orderId = $workflow->acceptQuote($id, $request->user()->id);
 
-        return redirect()->route('my.quote', $id)->with('success', 'Đã chấp nhận báo giá. Nhân viên sẽ lập hợp đồng.');
+        return redirect()->route('my.orders')->with('success', 'Đã tạo đơn '.DB::table('orders')->find($orderId)->code.' từ báo giá. Nhân viên Kinh doanh sẽ xác nhận đơn.');
     }
 
     public function myContracts(Request $request): View
     {
-        $contracts = DB::table('contracts')->join('quotes', 'quotes.id', '=', 'contracts.quote_id')
-            ->where('quotes.customer_id', $request->user()->id)
-            ->select('contracts.*')->orderByDesc('contracts.id')->get();
+        $contracts = DB::table('contracts')->leftJoin('orders', 'orders.id', '=', 'contracts.order_id')
+            ->leftJoin('quotes', 'quotes.id', '=', 'contracts.quote_id')
+            ->where(fn ($query) => $query->where('orders.customer_id', $request->user()->id)
+                ->orWhere('quotes.customer_id', $request->user()->id))
+            ->whereIn('contracts.status', ['approved', 'changes_requested', 'signed', 'cancelled'])
+            ->select('contracts.*', 'orders.code as order_code')->orderByDesc('contracts.id')->get();
+        $contractItems = DB::table('order_items')->join('products', 'products.id', '=', 'order_items.product_id')
+            ->whereIn('order_items.order_id', $contracts->pluck('order_id')->filter())
+            ->select('order_items.*', 'products.name as product_name', 'products.unit', 'products.specification')
+            ->get()->groupBy('order_id');
 
-        return view('store.contracts', compact('contracts'));
+        return view('store.contracts', compact('contracts', 'contractItems'));
     }
 
     public function respondToContract(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
@@ -290,7 +316,9 @@ class StoreController extends Controller
 
     public function myOrders(Request $request): View
     {
-        $orders = DB::table('orders')->where('customer_id', $request->user()->id)->orderByDesc('id')->get();
+        $orders = DB::table('orders')->leftJoin('quotes', 'quotes.id', '=', 'orders.quote_id')
+            ->where('orders.customer_id', $request->user()->id)
+            ->select('orders.*', 'quotes.staff_note as quote_stock_note')->orderByDesc('orders.id')->get();
         $items = DB::table('order_items')->join('products', 'products.id', '=', 'order_items.product_id')
             ->whereIn('order_id', $orders->pluck('id'))->select('order_items.*', 'products.name', 'products.image_path', 'products.unit')->get()->groupBy('order_id');
         $returns = DB::table('returns')->whereIn('order_id', $orders->pluck('id'))->get()->groupBy('order_id');
@@ -320,12 +348,17 @@ class StoreController extends Controller
         ]);
         $workflow->requestReturn($id, $request->user()->id, $data['product_id'], (string) $data['quantity'], $data['reason'], $data['type']);
 
-        return back()->with('success', 'Đã gửi yêu cầu trả hàng để kho kiểm tra.');
+        return back()->with('success', 'Đã gửi yêu cầu '.($data['type'] === 'exchange' ? 'đổi' : 'trả').' hàng để kho kiểm tra.');
     }
 
     public function profile(Request $request): View
     {
-        $debts = DB::table('debts')->where('customer_id', $request->user()->id)->orderByDesc('id')->get();
+        $debts = DB::table('debts')->join('orders', 'orders.id', '=', 'debts.order_id')
+            ->leftJoin('contracts', 'contracts.id', '=', 'orders.contract_id')
+            ->where('debts.customer_id', $request->user()->id)->where('debts.direction', 'receivable')
+            ->whereNotIn('orders.status', ['rejected', 'cancelled'])
+            ->where(fn ($query) => $query->where('orders.requires_contract', false)->orWhere('contracts.status', 'signed'))
+            ->select('debts.*')->orderByDesc('debts.id')->get();
         $credits = DB::table('customer_credits')->where('customer_id', $request->user()->id)
             ->orderByDesc('id')->get();
         $creditUsed = DB::table('customer_credit_movements')->whereIn('customer_credit_id', $credits->pluck('id'))

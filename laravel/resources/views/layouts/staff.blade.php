@@ -25,7 +25,7 @@
         'finance' => ['Tài chính & công nợ', 'TC', ['accounting', 'manager', 'admin']],
         'purchases' => ['Nhập hàng', 'NH', ['warehouse', 'manager', 'admin']],
         'orders' => ['Xuất kho & giao nhận', 'GN', ['warehouse', 'delivery', 'accounting', 'manager', 'admin']],
-        'returns' => ['Đổi trả', 'ĐT', ['warehouse', 'accounting', 'manager', 'admin']],
+        'returns' => ['Đổi trả', 'ĐT', ['warehouse', 'delivery', 'accounting', 'manager', 'admin']],
         'inventory' => ['Tồn kho', 'TK', ['warehouse', 'manager', 'admin']],
     ];
 @endphp
@@ -85,5 +85,6 @@
 <script src="{{ asset('store/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('store/components.js') }}" defer></script>
 <script src="{{ asset('store/theme.js') }}?v={{ filemtime(public_path('store/theme.js')) }}" defer></script>
+<script src="{{ asset('store/staff-ui-tools.js') }}?v={{ filemtime(public_path('store/staff-ui-tools.js')) }}" defer></script>
 </body>
 </html>

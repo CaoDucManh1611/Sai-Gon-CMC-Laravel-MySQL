@@ -34,6 +34,8 @@ class ManagementController extends Controller
             'category_id' => ['required', 'exists:categories,id'], 'unit' => ['required', 'string', 'max:30'],
             'specification' => ['nullable', 'string', 'max:200'],
             'price' => ['required', 'numeric', 'min:0'], 'minimum_stock' => ['nullable', 'numeric', 'min:0'],
+            'weight_kg' => ['nullable', 'numeric', 'gt:0'],
+            'volume_m3' => ['nullable', 'numeric', 'gt:0'],
             'description' => ['nullable', 'string', 'max:5000'], 'active' => ['required', 'boolean'],
         ]);
         $id = $data['product_id'] ?? null;
@@ -150,6 +152,16 @@ class ManagementController extends Controller
         ]);
 
         return back()->with('success', 'Đã đặt lại mật khẩu.');
+    }
+
+    public function unlockUser(int $id): RedirectResponse
+    {
+        $changed = DB::table('users')->where('id', $id)->whereNotNull('locked_until')->update([
+            'failed_logins' => 0, 'locked_until' => null, 'updated_at' => now(),
+        ]);
+        abort_unless($changed, 422);
+
+        return back()->with('success', 'Đã mở khóa tài khoản.');
     }
 
     public function creditLimit(Request $request, int $customerId): RedirectResponse

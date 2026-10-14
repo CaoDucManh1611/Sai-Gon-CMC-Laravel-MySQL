@@ -126,8 +126,11 @@ class StorefrontTest extends TestCase
             ['warehouse_id' => $firstWarehouse, 'product_id' => $product, 'quantity' => 5],
             ['warehouse_id' => $secondWarehouse, 'product_id' => $product, 'quantity' => 2],
         ]);
-        app(CommerceWorkflow::class)->placePickupOrder($customer->id, [$product => 5], $firstWarehouse);
+        $order = app(CommerceWorkflow::class)->placePickupOrder($customer->id, [$product => 5], $firstWarehouse);
 
+        $this->get('/products')->assertOk()->assertSee('Tồn kho: 7 bao');
+        $this->get('/products/'.$product)->assertOk()->assertSee('>5 bao</strong>', false);
+        app(CommerceWorkflow::class)->reviewOrder($order, $customer->id, true);
         $this->get('/products')->assertOk()->assertSee('Tồn kho: 2 bao');
         $this->get('/products/'.$product)->assertOk()
             ->assertSee('Kho A</span><strong class="is-unavailable">Hết hàng', false)

@@ -11,6 +11,64 @@ class ReportWorkflowTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_sales_report_filters_orders_by_category_customer_and_reviewing_staff(): void
+    {
+        $manager = User::factory()->create(['role' => 'manager', 'status' => 'active']);
+        $sales = User::factory()->create(['role' => 'sales', 'status' => 'active']);
+        $customer = User::factory()->create(['role' => 'customer', 'status' => 'active']);
+        $otherCustomer = User::factory()->create(['role' => 'customer', 'status' => 'active']);
+        $category = DB::table('categories')->insertGetId(['code' => 'CAT-R', 'name' => 'Gạch']);
+        $product = DB::table('products')->insertGetId(['code' => 'G-R', 'name' => 'Gạch lọc', 'category_id' => $category, 'unit' => 'viên']);
+        $otherProduct = DB::table('products')->insertGetId(['code' => 'X-R', 'name' => 'Xi măng lọc', 'unit' => 'bao']);
+        foreach ([[$customer->id, $product, $sales->id], [$otherCustomer->id, $otherProduct, $sales->id]] as $index => [$customerId, $productId, $staffId]) {
+            $order = DB::table('orders')->insertGetId([
+                'code' => 'DH-R-'.$index, 'customer_id' => $customerId,
+                'reviewed_by' => $staffId, 'delivery_address' => 'Công trình', 'total' => 100,
+                'created_at' => now(), 'updated_at' => now(),
+            ]);
+            DB::table('order_items')->insert(['order_id' => $order, 'product_id' => $productId, 'quantity' => 1, 'unit_price' => 100, 'line_total' => 100]);
+        }
+
+        $this->actingAs($manager)->post('/staff/reports', [
+            'type' => 'sales', 'from_date' => now()->toDateString(), 'to_date' => now()->toDateString(),
+            'category_id' => $category, 'customer_id' => $customer->id, 'staff_id' => $sales->id,
+        ])->assertRedirect('/staff/reports');
+        $report = DB::table('reports')->first();
+        $snapshot = json_decode($report->snapshot, true);
+        $this->assertCount(1, $snapshot['orders']);
+        $this->assertSame('DH-R-0', $snapshot['orders'][0]['code']);
+        $this->assertSame($category, json_decode($report->filters, true)['category_id']);
+        $this->actingAs($manager)->post('/staff/reports/'.$report->id.'/review', ['decision' => 'approved'])->assertRedirect();
+        $this->get('/staff/reports/'.$report->id.'/print')->assertOk()->assertSee('Biểu đồ Đơn hàng');
+    }
+
+    public function test_inventory_report_filters_products_by_supplier_purchase_history(): void
+    {
+        $manager = User::factory()->create(['role' => 'manager', 'status' => 'active']);
+        $warehouse = DB::table('warehouses')->insertGetId(['code' => 'K-RPT', 'name' => 'Kho']);
+        $supplier = DB::table('suppliers')->insertGetId(['code' => 'N-RPT', 'name' => 'Nhà cung cấp A']);
+        $wanted = DB::table('products')->insertGetId(['code' => 'P-RPT-A', 'name' => 'Vật liệu A', 'unit' => 'viên']);
+        $other = DB::table('products')->insertGetId(['code' => 'P-RPT-B', 'name' => 'Vật liệu B', 'unit' => 'viên']);
+        DB::table('inventory')->insert([
+            ['warehouse_id' => $warehouse, 'product_id' => $wanted, 'quantity' => 8, 'created_at' => now(), 'updated_at' => now()],
+            ['warehouse_id' => $warehouse, 'product_id' => $other, 'quantity' => 5, 'created_at' => now(), 'updated_at' => now()],
+        ]);
+        $purchase = DB::table('purchase_orders')->insertGetId([
+            'code' => 'MH-RPT', 'supplier_id' => $supplier, 'warehouse_id' => $warehouse,
+            'requested_by' => $manager->id, 'status' => 'received',
+        ]);
+        DB::table('purchase_items')->insert(['purchase_order_id' => $purchase, 'product_id' => $wanted,
+            'quantity' => 8, 'received_quantity' => 8, 'unit_price' => 1]);
+
+        $this->actingAs($manager)->post('/staff/reports', [
+            'type' => 'inventory', 'from_date' => now()->toDateString(), 'to_date' => now()->toDateString(),
+            'supplier_id' => $supplier,
+        ])->assertRedirect('/staff/reports');
+        $snapshot = json_decode(DB::table('reports')->first()->snapshot, true);
+        $this->assertCount(1, $snapshot['stock']);
+        $this->assertSame('P-RPT-A', $snapshot['stock'][0]['product']);
+    }
+
     public function test_report_requires_approval_and_respects_department_scope(): void
     {
         $accountant = User::factory()->create(['role' => 'accounting', 'status' => 'active']);
@@ -34,7 +92,13 @@ class ReportWorkflowTest extends TestCase
         $this->actingAs($sales)->get('/staff/reports/'.$report->id.'/export')->assertForbidden();
         $this->actingAs($sales)->get('/staff/reports/'.$report->id.'/print')->assertForbidden();
         $this->actingAs($accountant)->get('/staff/reports/'.$report->id.'/print')->assertOk()->assertSee($report->code);
-        $this->actingAs($accountant)->get('/staff/reports/'.$report->id.'/export')->assertOk()->assertDownload($report->code.'.csv');
+        $export = $this->actingAs($accountant)->get('/staff/reports/'.$report->id.'/export')
+            ->assertOk()->assertDownload($report->code.'.xlsx');
+        $this->assertStringContainsString('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', $export->headers->get('Content-Type'));
+        $this->assertStringStartsWith('PK', $export->streamedContent());
+        $pdf = $this->actingAs($accountant)->get('/staff/reports/'.$report->id.'/pdf')
+            ->assertOk()->assertDownload($report->code.'.pdf');
+        $this->assertStringStartsWith('%PDF', $pdf->streamedContent());
     }
 
     public function test_past_reports_exclude_later_payments_and_stock_changes(): void
@@ -79,6 +143,32 @@ class ReportWorkflowTest extends TestCase
         $this->assertEquals(100, $finance['debts'][0]['amount']);
         $this->assertEquals(20, $finance['debts'][0]['paid']);
         $this->assertEquals(5, $inventory['stock'][0]['quantity']);
+        $financeReport = DB::table('reports')->where('type', 'finance')->first();
+        $this->actingAs($manager)->post('/staff/reports/'.$financeReport->id.'/review', ['decision' => 'approved'])->assertRedirect();
+        $excel = $this->actingAs($accountant)->get('/staff/reports/'.$financeReport->id.'/export')->assertOk()->streamedContent();
+        $this->assertStringStartsWith('PK', $excel);
+    }
+
+    public function test_finance_snapshot_does_not_count_unsigned_order_as_receivable(): void
+    {
+        $accountant = User::factory()->create(['role' => 'accounting', 'status' => 'active']);
+        $customer = User::factory()->create(['role' => 'customer', 'status' => 'active']);
+        $order = DB::table('orders')->insertGetId([
+            'code' => 'DH-DRAFT', 'customer_id' => $customer->id, 'status' => 'awaiting_confirmation',
+            'total' => 100, 'delivery_address' => 'Công trình A', 'requires_contract' => true,
+            'created_at' => '2026-01-05 12:00:00', 'updated_at' => '2026-01-05 12:00:00',
+        ]);
+        DB::table('debts')->insert([
+            'code' => 'CN-DRAFT', 'direction' => 'receivable', 'customer_id' => $customer->id,
+            'order_id' => $order, 'amount' => 100, 'status' => 'open',
+            'created_at' => '2026-01-05 12:00:00', 'updated_at' => '2026-01-05 12:00:00',
+        ]);
+
+        $this->actingAs($accountant)->post('/staff/reports', [
+            'type' => 'finance', 'from_date' => '2026-01-01', 'to_date' => '2026-01-31',
+        ])->assertRedirect('/staff/reports');
+        $finance = json_decode(DB::table('reports')->where('type', 'finance')->value('snapshot'), true);
+        $this->assertSame([], $finance['debts']);
     }
 
     public function test_finance_report_caps_collected_amount_after_return_credit(): void
