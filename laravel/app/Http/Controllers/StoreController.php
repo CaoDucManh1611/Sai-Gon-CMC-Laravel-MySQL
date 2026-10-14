@@ -372,7 +372,8 @@ class StoreController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:150'],
-            'phone' => ['required', 'regex:/^[0-9+() .-]{9,20}$/', Rule::unique('users', 'phone')->ignore($request->user()->id)],
+            'phone' => ['nullable', 'regex:/^[0-9+() .-]{9,20}$/', Rule::unique('users', 'phone')->ignore($request->user()->id)],
+            'email' => ['nullable', 'email', 'max:254', Rule::unique('users', 'email')->ignore($request->user()->id)],
             'address' => ['required', 'string', 'max:1000'],
         ]);
         $request->user()->update($data);

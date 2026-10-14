@@ -9,7 +9,7 @@
         </div>
         <div class="account-identity">
             <span class="account-avatar">{{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span>
-            <div><strong>{{ auth()->user()->name }}</strong><small>{{ auth()->user()->phone }}</small></div>
+            <div><strong>{{ auth()->user()->name }}</strong><small>{{ auth()->user()->email ?? auth()->user()->phone }}</small></div>
         </div>
     </header>
 
@@ -17,14 +17,16 @@
         <section class="account-card account-form-card">
             <span class="eyebrow muted">HỒ SƠ</span>
             <h2>Thông tin cá nhân</h2>
-            <p class="account-card-intro">Thông tin này giúp chúng tôi liên hệ khi xác nhận báo giá và giao hàng.</p>
+            <p class="account-card-intro">Thông tin này giúp chúng tôi liên hệ khi xác nhận báo giá và giao hàng. Email có thể dùng để khôi phục mật khẩu.</p>
             <form method="post" action="{{ route('profile.update') }}">
                 @csrf
                 @method('put')
                 <label class="form-label" for="name">Họ và tên</label>
                 <input class="form-control" id="name" name="name" value="{{ old('name', auth()->user()->name) }}" required oninvalid="this.setCustomValidity('Vui lòng nhập họ và tên.')" oninput="this.setCustomValidity('')">
-                <label class="form-label" for="phone">Số điện thoại</label>
-                <input class="form-control" id="phone" name="phone" value="{{ old('phone', auth()->user()->phone) }}" required oninvalid="this.setCustomValidity('Vui lòng nhập số điện thoại liên hệ.')" oninput="this.setCustomValidity('')">
+                <label class="form-label" for="phone">Số điện thoại liên hệ (không bắt buộc)</label>
+                <input class="form-control" id="phone" name="phone" value="{{ old('phone', auth()->user()->phone) }}" oninput="this.setCustomValidity('')">
+                <label class="form-label" for="email">Email đăng nhập / khôi phục</label>
+                <input class="form-control" id="email" name="email" type="email" value="{{ old('email', auth()->user()->email) }}" autocomplete="email">
                 <label class="form-label" for="address">Địa chỉ</label>
                 <textarea class="form-control" id="address" name="address" required oninvalid="this.setCustomValidity('Vui lòng nhập địa chỉ liên hệ.')" oninput="this.setCustomValidity('')">{{ old('address', auth()->user()->address) }}</textarea>
                 <button class="btn-editorial dark" type="submit">Lưu thông tin</button>
@@ -84,4 +86,3 @@
     </div>
 </div>
 @endsection
-

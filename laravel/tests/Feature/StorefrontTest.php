@@ -6,27 +6,131 @@ use App\Models\User;
 use App\Services\CommerceWorkflow;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class StorefrontTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_customer_logs_back_in_with_registered_phone_not_full_name(): void
+    public function test_registration_form_uses_email_and_otp_fields_without_phone(): void
     {
+        $this->get('/register')->assertOk()
+            ->assertSee('Email đăng nhập')
+            ->assertSee('Gửi mã OTP')
+            ->assertSee('name="otp"', false)
+            ->assertDontSee('Xác nhận OTP')
+            ->assertDontSee('verifyRegistrationOtp')
+            ->assertDontSee('name="phone"', false);
+    }
+
+    public function test_customer_registers_with_correct_otp_and_logs_back_in(): void
+    {
+        $this->withSession(['registration_otp' => [
+            'email' => 'customer@example.com', 'hash' => Hash::make('123456'),
+            'expires_at' => now()->addMinutes(5)->timestamp, 'attempts' => 0,
+        ]]);
+
         $this->post('/register', [
-            'name' => 'Khách Hàng Thử', 'phone' => '090 123 4568', 'address' => 'Địa chỉ thử',
-            'password' => 'StrongPass123', 'password_confirmation' => 'StrongPass123',
+            'name' => 'Khách Hàng Thử', 'email' => 'customer@example.com', 'address' => 'Địa chỉ thử',
+            'otp' => '123456', 'password' => 'StrongPass123', 'password_confirmation' => 'StrongPass123',
         ])->assertRedirect('/products');
         $this->assertAuthenticated();
-        $this->assertDatabaseHas('users', ['phone' => '0901234568', 'username' => '0901234568']);
+        $this->assertDatabaseHas('users', ['phone' => null, 'email' => 'customer@example.com', 'username' => 'customer@example.com']);
+        $this->assertNotNull(auth()->user()->email_verified_at);
         $this->post('/logout')->assertRedirect('/');
         $this->assertGuest();
         $this->post('/login', ['login' => 'Khách Hàng Thử', 'password' => 'StrongPass123'])
             ->assertSessionHasErrors('login');
-        $this->post('/login', ['login' => '0901234568', 'password' => 'StrongPass123'])
+        $this->post('/login', ['login' => 'CUSTOMER@EXAMPLE.COM', 'password' => 'StrongPass123'])
             ->assertRedirect('/products');
         $this->assertAuthenticated();
+    }
+
+    public function test_registration_rejects_missing_or_wrong_otp(): void
+    {
+        $data = ['name' => 'Nguyễn Văn B', 'email' => 'guest@example.com', 'address' => 'Công trình B',
+            'password' => 'StrongPass123', 'password_confirmation' => 'StrongPass123'];
+        $this->post('/register', $data)->assertSessionHasErrors('otp');
+        $this->assertDatabaseMissing('users', ['email' => 'guest@example.com']);
+
+        $this->withSession(['registration_otp' => [
+            'email' => 'guest@example.com', 'hash' => Hash::make('123456'),
+            'expires_at' => now()->addMinutes(5)->timestamp, 'attempts' => 0,
+        ]]);
+        $this->post('/register', [...$data, 'otp' => '999999'])
+            ->assertSessionHasErrors(['otp' => 'Mã OTP không hợp lệ. Vui lòng kiểm tra và thử lại.']);
+        $this->assertDatabaseMissing('users', ['email' => 'guest@example.com']);
+        $this->assertSame(1, session('registration_otp.attempts'));
+
+        $this->post('/register', [...$data, 'otp' => '12345'])->assertSessionHasErrors('otp');
+        $this->assertDatabaseMissing('users', ['email' => 'guest@example.com']);
+    }
+
+    public function test_registration_rejects_expired_otp(): void
+    {
+        $this->withSession(['registration_otp' => [
+            'email' => 'guest@example.com', 'hash' => Hash::make('123456'),
+            'expires_at' => now()->subSecond()->timestamp, 'attempts' => 0,
+        ]])->post('/register', [
+            'name' => 'Nguyễn Văn B', 'email' => 'guest@example.com', 'otp' => '123456',
+            'address' => 'Công trình B', 'password' => 'StrongPass123', 'password_confirmation' => 'StrongPass123',
+        ])->assertSessionHasErrors('otp');
+        $this->assertDatabaseMissing('users', ['email' => 'guest@example.com']);
+    }
+
+    public function test_registration_can_send_otp_and_limits_repeat_requests(): void
+    {
+        $sentCode = null;
+        Mail::shouldReceive('raw')->once()->andReturnUsing(function (string $message) use (&$sentCode): void {
+            preg_match('/\b[0-9]{6}\b/', $message, $matches);
+            $sentCode = $matches[0] ?? null;
+        });
+        $this->postJson('/register/send-otp', ['email' => 'guest@example.com'])->assertOk();
+        $this->assertNotNull($sentCode);
+        $this->assertSame('guest@example.com', session('registration_otp.email'));
+        $this->assertTrue(Hash::check($sentCode, session('registration_otp.hash')));
+        $this->postJson('/register/send-otp', ['email' => 'guest@example.com'])
+            ->assertUnprocessable()->assertJsonValidationErrors('email');
+    }
+
+    public function test_registration_rejects_invalid_email_before_sending_otp(): void
+    {
+        Mail::fake();
+        $this->postJson('/register/send-otp', ['email' => 'not-an-email'])
+            ->assertUnprocessable()->assertJsonValidationErrors('email');
+        Mail::assertNothingSent();
+    }
+
+    public function test_registration_rejects_otp_for_a_different_email(): void
+    {
+        $this->withSession(['registration_otp' => [
+            'email' => 'first@example.com', 'hash' => Hash::make('123456'),
+            'expires_at' => now()->addMinutes(5)->timestamp, 'attempts' => 0,
+        ]])->post('/register', [
+            'name' => 'Nguyễn Văn C', 'email' => 'second@example.com', 'otp' => '123456',
+            'address' => 'Công trình C', 'password' => 'StrongPass123', 'password_confirmation' => 'StrongPass123',
+        ])->assertSessionHasErrors('otp');
+        $this->assertDatabaseMissing('users', ['email' => 'second@example.com']);
+    }
+
+    public function test_registration_requires_new_code_after_five_wrong_attempts(): void
+    {
+        $data = ['name' => 'Nguyễn Văn B', 'email' => 'guest@example.com', 'otp' => '999999',
+            'address' => 'Công trình B', 'password' => 'StrongPass123', 'password_confirmation' => 'StrongPass123'];
+        $this->withSession(['registration_otp' => [
+            'email' => 'guest@example.com', 'hash' => Hash::make('123456'),
+            'expires_at' => now()->addMinutes(5)->timestamp, 'attempts' => 0,
+        ]]);
+
+        for ($attempt = 0; $attempt < 5; $attempt++) {
+            $this->post('/register', $data)->assertSessionHasErrors('otp');
+        }
+
+        $this->assertNull(session('registration_otp'));
+        $this->post('/register', [...$data, 'otp' => '123456'])->assertSessionHasErrors('otp');
+        $this->assertDatabaseMissing('users', ['email' => 'guest@example.com']);
     }
 
     public function test_storefront_displays_styled_success_notice_and_select_enhancement(): void
@@ -42,9 +146,13 @@ class StorefrontTest extends TestCase
     public function test_customer_can_register_and_send_cart_as_quote_request(): void
     {
         $product = DB::table('products')->insertGetId(['code' => 'G1', 'name' => 'Gạch', 'unit' => 'viên', 'price' => 100]);
+        $this->withSession(['registration_otp' => [
+            'email' => 'buyer@example.com', 'hash' => Hash::make('123456'),
+            'expires_at' => now()->addMinutes(5)->timestamp, 'attempts' => 0,
+        ]]);
         $response = $this->post('/register', [
-            'name' => 'Nguyễn Văn A', 'phone' => '0901234567', 'address' => 'Công trình A',
-            'password' => 'StrongPass123', 'password_confirmation' => 'StrongPass123',
+            'name' => 'Nguyễn Văn A', 'email' => 'buyer@example.com', 'address' => 'Công trình A',
+            'otp' => '123456', 'password' => 'StrongPass123', 'password_confirmation' => 'StrongPass123',
         ]);
         $response->assertRedirect('/products');
         $this->assertAuthenticated();

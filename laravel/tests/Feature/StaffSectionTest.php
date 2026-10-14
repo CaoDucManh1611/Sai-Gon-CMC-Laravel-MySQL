@@ -134,6 +134,9 @@ class StaffSectionTest extends TestCase
 
         $this->actingAs($warehouse)->get('/staff')->assertOk()->assertSee('warehouse-metrics');
         $this->actingAs($warehouse)->get('/staff/work/inventory')->assertOk()
+            ->assertSee('Tồn kho thực tế')->assertDontSee('Lịch sử nhập, xuất và điều chỉnh')
+            ->assertDontSee('Lập phiếu kiểm kê');
+        $this->actingAs($warehouse)->get('/staff/work/inventory?view=stocktakes')->assertOk()
             ->assertSee('Lập phiếu kiểm kê')->assertDontSee('Lịch sử nhập, xuất và điều chỉnh');
         $this->actingAs($warehouse)->get('/staff/work/inventory?view=movements')->assertOk()
             ->assertSee('Lịch sử nhập, xuất và điều chỉnh')->assertDontSee('Lập phiếu kiểm kê');
