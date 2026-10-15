@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "locale": "vi",
+  "audience": "customer",
+  "chunks": [
+    {
+      "id": "store.overview",
+      "topic": "store",
+      "title": "Xem cửa hàng và danh mục",
+      "content": "Khách hàng có thể xem sản phẩm đang được cửa hàng đăng bán trong danh mục. Hãy mở trang sản phẩm để xem quy cách, đơn vị và thông tin hiện được cung cấp. Giá hiển thị là giá tham khảo; nhân viên xác nhận giá cuối cùng khi xử lý yêu cầu.",
+      "sources": [
+        "laravel/routes/web.php",
+        "laravel/resources/views/store/home.blade.php",
+        "laravel/resources/views/store/catalog.blade.php",
+        "laravel/resources/views/store/product.blade.php"
+      ]
+    },
+    {
+      "id": "catalog.selection",
+      "topic": "catalog",
+      "title": "Làm rõ nhu cầu chọn vật liệu",
+      "content": "Khi chưa rõ sản phẩm, hãy hỏi khách về hạng mục thi công, loại vật liệu, quy cách đang cần và số lượng dự kiến. Chỉ mô tả sản phẩm theo thông tin trong danh mục; không khẳng định một vật liệu phù hợp về kỹ thuật nếu danh mục không có căn cứ.",
+      "sources": [
+        "laravel/resources/views/store/catalog.blade.php",
+        "laravel/resources/views/store/product.blade.php",
+        "laravel/app/Http/Controllers/StoreController.php"
+      ]
+    },
+    {
+      "id": "estimate.scope",
+      "topic": "estimate",
+      "title": "Giới hạn của công cụ dự toán",
+      "content": "Công cụ dự toán giúp tham khảo khối lượng theo thông tin khách nhập. Kết quả không thay thế dự toán chính thức hoặc kiểm tra công trình. Hãy đối chiếu bản vẽ và hiện trạng với người có chuyên môn; không coi định mức minh họa trong công cụ là xác nhận kỹ thuật.",
+      "sources": [
+        "laravel/resources/views/store/estimate.blade.php",
+        "laravel/app/Http/Controllers/EstimateController.php"
+      ]
+    },
+    {
+      "id": "account.registration",
+      "topic": "account",
+      "title": "Tạo tài khoản và đăng nhập",
+      "content": "Khách hàng có thể tạo tài khoản hoặc đăng nhập tại các trang tương ứng của cửa hàng. Sau khi đăng nhập, khách hàng dùng các mục trong tài khoản để gửi yêu cầu và xem hồ sơ mua hàng của chính mình.",
+      "sources": [
+        "laravel/resources/views/auth/register.blade.php",
+        "laravel/resources/views/auth/login.blade.php",
+        "laravel/routes/web.php"
+      ]
+    },
+    {
+      "id": "orders.quote-request",
+      "topic": "orders",
+      "title": "Gửi yêu cầu báo giá",
+      "content": "Khách hàng thêm sản phẩm và số lượng vào giỏ, đăng nhập rồi gửi yêu cầu báo giá. Yêu cầu báo giá chưa phải giá cuối cùng hay đơn hàng đã xác nhận. Khách hàng theo dõi phản hồi trong tài khoản.",
+      "sources": [
+        "laravel/resources/views/store/cart.blade.php",
+        "laravel/resources/views/store/quotes.blade.php",
+        "laravel/routes/web.php",
+        "laravel/app/Http/Controllers/StoreController.php"
+      ]
+    },
+    {
+      "id": "orders.pickup",
+      "topic": "orders",
+      "title": "Đặt hàng nhận tại kho",
+      "content": "Nếu giỏ hàng đáp ứng điều kiện của ứng dụng, khách có thể chọn đặt hàng nhận tại kho. Việc đặt phụ thuộc mặt hàng có hỗ trợ, kho có đủ số lượng và thanh toán tại quầy theo hướng dẫn trong ứng dụng. Nếu lựa chọn này không xuất hiện hoặc đơn bị từ chối, hãy gửi yêu cầu báo giá để nhân viên kiểm tra.",
+      "sources": [
+        "laravel/resources/views/store/cart.blade.php",
+        "laravel/resources/views/store/orders.blade.php",
+        "laravel/routes/web.php",
+        "laravel/app/Http/Controllers/StoreController.php"
+      ]
+    },
+    {
+      "id": "orders.lifecycle",
+      "topic": "orders",
+      "title": "Theo dõi báo giá, hợp đồng và giao nhận",
+      "content": "Sau khi gửi yêu cầu, khách hàng xem báo giá trong tài khoản và kiểm tra nội dung trước khi phản hồi. Nếu có hợp đồng, khách hàng xem và phản hồi nội dung trên trang hợp đồng. Thông tin tiếp theo về thanh toán và giao hoặc nhận hàng được xem trong các mục tương ứng của tài khoản. Trợ lý không xác nhận thay cửa hàng rằng báo giá, hợp đồng hay lịch giao đã được chốt.",
+      "sources": [
+        "laravel/resources/views/store/quote.blade.php",
+        "laravel/resources/views/store/quotes.blade.php",
+        "laravel/resources/views/store/contracts.blade.php",
+        "laravel/resources/views/store/orders.blade.php",
+        "laravel/routes/web.php",
+        "laravel/app/Http/Controllers/StoreController.php"
+      ]
+    },
+    {
+      "id": "account.records",
+      "topic": "account",
+      "title": "Xem hồ sơ mua hàng",
+      "content": "Đăng nhập để xem báo giá, hợp đồng, đơn hàng và công nợ trong tài khoản. Hóa đơn và các khoản hoàn hoặc cấn trừ được xem trong những mục tương ứng khi ứng dụng có ghi nhận.",
+      "sources": [
+        "laravel/resources/views/store/profile.blade.php",
+        "laravel/resources/views/store/quotes.blade.php",
+        "laravel/resources/views/store/contracts.blade.php",
+        "laravel/resources/views/store/orders.blade.php",
+        "laravel/resources/views/store/invoice.blade.php",
+        "laravel/routes/web.php",
+        "laravel/app/Http/Controllers/StoreController.php"
+      ]
+    },
+    {
+      "id": "orders.returns",
+      "topic": "orders",
+      "title": "Gửi yêu cầu trả hoặc đổi hàng",
+      "content": "Khách hàng có thể gửi yêu cầu trả hoặc đổi từ đơn hàng khi ứng dụng cho phép, chẳng hạn đơn đã giao hoặc có sự cố. Gửi yêu cầu chưa đồng nghĩa yêu cầu được chấp thuận hay khoản tiền đã được hoàn. Kho cần kiểm tra trước khi có kết quả xử lý. Hãy xem trạng thái yêu cầu trong tài khoản.",
+      "sources": [
+        "laravel/resources/views/store/orders.blade.php",
+        "laravel/routes/web.php",
+        "laravel/app/Http/Controllers/StoreController.php",
+        "laravel/app/Services/FulfillmentWorkflow.php"
+      ]
+    },
+    {
+      "id": "assistant.limits",
+      "topic": "assistant",
+      "title": "Thông tin trợ lý không thể xác nhận",
+      "content": "Trợ lý không truy vấn báo giá, hợp đồng, thanh toán, công nợ hoặc đơn hàng riêng của khách; hãy đăng nhập để xem hồ sơ tương ứng. Trợ lý chỉ được cung cấp thông tin xuất hiện trong danh mục và hướng dẫn của cửa hàng. Nếu ứng dụng chưa nêu thông tin như giờ làm việc, địa chỉ liên hệ, bảo hành, điều kiện hoặc thời hạn trả đổi, cước phí hay thời gian giao hàng, hãy nói rõ chưa có dữ liệu và khuyên khách trao đổi với nhân viên.",
+      "sources": [
+        "laravel/app/Http/Controllers/AssistantController.php",
+        "laravel/routes/web.php",
+        "laravel/resources/views/store/profile.blade.php"
+      ]
+    }
+  ]
+}
