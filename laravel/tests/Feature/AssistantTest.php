@@ -45,31 +45,36 @@ class AssistantTest extends TestCase
         }
     }
 
-    public function test_assistant_uses_configured_gemini_without_exposing_key(): void
+    public function test_assistant_uses_configured_groq_without_exposing_key(): void
     {
         $this->seed();
         DB::table('products')->where('code', 'PCB40')->update(['price' => 123456]);
-        config(['services.gemini.key' => 'test-secret', 'services.gemini.model' => 'gemini-2.5-flash']);
-        Http::fake(['generativelanguage.googleapis.com/*' => Http::response([
-            'candidates' => [['content' => ['parts' => [['text' => 'Hãy xem xi măng PCB40.']]]]],
+        config(['services.groq.key' => 'test-secret', 'services.groq.model' => 'openai/gpt-oss-20b']);
+        Http::preventStrayRequests();
+        Http::fake(['https://api.groq.com/openai/v1/chat/completions' => Http::response([
+            'choices' => [['message' => ['content' => 'Hãy xem xi măng PCB40.']]],
         ])]);
         $response = $this->post('/assistant', ['question' => 'Nên chọn xi măng nào cho công trình?']);
         $response->assertOk()->assertSee('Hãy xem xi măng PCB40.')->assertDontSee('test-secret');
         Http::assertSent(function ($request): bool {
-            $prompt = $request['contents'][0]['parts'][0]['text'] ?? '';
+            $prompt = $request['messages'][0]['content'] ?? '';
 
-            return $request->hasHeader('x-goog-api-key', 'test-secret')
-                && str_contains($request->url(), 'gemini-2.5-flash:generateContent')
+            return $request->hasHeader('Authorization', 'Bearer test-secret')
+                && $request->url() === 'https://api.groq.com/openai/v1/chat/completions'
+                && ($request['model'] ?? null) === 'openai/gpt-oss-20b'
                 && str_contains($prompt, 'Đăng nhập để xem báo giá, hợp đồng, đơn hàng và công nợ trong tài khoản.')
                 && str_contains($prompt, 'Nếu chưa đủ thông tin về công trình, hãy hỏi thêm câu hỏi làm rõ trước khi gợi ý.')
+                && str_contains($prompt, 'Hãy trò chuyện bằng tiếng Việt tự nhiên, thân thiện như một tư vấn viên; trả lời ngắn gọn bằng câu văn liền mạch.')
+                && str_contains($prompt, 'Tránh dùng ngoặc kép không cần thiết và không trình bày bằng bảng Markdown hay danh sách gạch đầu dòng; khi cần liệt kê, chỉ dùng danh sách đánh số ngắn.')
                 && str_contains($prompt, 'Xi măng PCB40')
                 && str_contains($prompt, '123.456 đồng/bao');
         });
     }
 
-    public function test_assistant_returns_fallback_when_gemini_key_is_missing(): void
+    public function test_assistant_returns_fallback_when_groq_key_is_missing(): void
     {
-        config(['services.gemini.key' => null]);
+        config(['services.groq.key' => null]);
+        Http::preventStrayRequests();
 
         $this->postJson('/assistant', ['question' => 'Tôi xem báo giá ở đâu?'])
             ->assertOk()
@@ -80,10 +85,23 @@ class AssistantTest extends TestCase
         Http::assertNothingSent();
     }
 
-    public function test_assistant_returns_fallback_when_gemini_request_fails(): void
+    public function test_assistant_rejects_short_questions_without_calling_groq(): void
     {
-        config(['services.gemini.key' => 'test-secret']);
-        Http::fake(['generativelanguage.googleapis.com/*' => Http::response([], 503)]);
+        config(['services.groq.key' => 'test-secret']);
+        Http::preventStrayRequests();
+
+        $this->postJson('/assistant', ['question' => 'AI'])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('question');
+
+        Http::assertNothingSent();
+    }
+
+    public function test_assistant_returns_fallback_when_groq_request_fails(): void
+    {
+        config(['services.groq.key' => 'test-secret']);
+        Http::preventStrayRequests();
+        Http::fake(['https://api.groq.com/openai/v1/chat/completions' => Http::response([], 503)]);
 
         $this->postJson('/assistant', ['question' => 'Tôi xem báo giá ở đâu?'])
             ->assertOk()

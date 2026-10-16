@@ -1,17 +1,17 @@
-# Thiết kế kho tri thức cho trợ lý Gemini
+# Thiết kế kho tri thức cho trợ lý Groq
 
 Ngày: 2026-10-15
-Trạng thái: chờ người dùng duyệt spec
+Trạng thái: đã duyệt; provider đã chuyển sang Groq
 
 ## Mục tiêu
 
-Tạo nguồn tri thức tiếng Việt dành cho khách hàng và đưa nguồn này vào ngữ cảnh của trợ lý Gemini hiện có trong ứng dụng Laravel. Trợ lý có thể giải thích các bước mua vật liệu và giới hạn của ứng dụng, đồng thời tiếp tục dùng danh mục hoạt động lấy từ MySQL cho tên hàng, quy cách, đơn vị và giá tham khảo.
+Tạo nguồn tri thức tiếng Việt dành cho khách hàng và đưa nguồn này vào ngữ cảnh của trợ lý Groq trong ứng dụng Laravel. Trợ lý có thể giải thích các bước mua vật liệu và giới hạn của ứng dụng, đồng thời tiếp tục dùng danh mục hoạt động lấy từ MySQL cho tên hàng, quy cách, đơn vị và giá tham khảo.
 
 ## Hiện trạng đã khảo sát
 
-- `laravel/app/Http/Controllers/AssistantController.php` kiểm tra câu hỏi dài 3–1000 ký tự, lấy tối đa 50 sản phẩm đang hoạt động từ MySQL, rồi gửi nội dung cùng câu hỏi đến Gemini. API key lấy từ cấu hình, không gửi lại cho trình duyệt.
+- `laravel/app/Http/Controllers/AssistantController.php` kiểm tra câu hỏi dài 3–1000 ký tự, lấy tối đa 50 sản phẩm đang hoạt động từ MySQL, rồi gửi nội dung cùng câu hỏi đến Groq. API key lấy từ cấu hình, không gửi lại cho trình duyệt.
 - `laravel/routes/web.php` công khai trợ lý và giới hạn yêu cầu ở 10 lần mỗi phút. Widget tại `laravel/resources/views/layouts/store.blade.php` mong đợi phản hồi JSON có trường `reply`.
-- Nếu chưa cấu hình API key hoặc Gemini gặp lỗi, ứng dụng đã có thông báo dự phòng.
+- Nếu chưa cấu hình API key hoặc Groq gặp lỗi, ứng dụng đã có thông báo dự phòng.
 - Trang cửa hàng mô tả quy trình khách hàng gồm xem hàng, lập giỏ, yêu cầu báo giá, xem/chấp nhận báo giá, xác nhận nội dung hợp đồng, thanh toán, nhận/giao hàng và gửi yêu cầu trả/đổi hàng.
 - Giá và định mức trong dữ liệu seed được ghi rõ là minh họa; tồn kho và giá cuối cùng cần nhân viên xác nhận. `customer-prototype/` là bản mẫu An Thành với dữ liệu minh họa, không phải nguồn nghiệp vụ đang chạy.
 - Mã nguồn không xác định giờ làm việc, địa chỉ liên hệ, chính sách bảo hành, thời hạn/điều kiện đổi trả hay thời gian giao hàng cố định.
@@ -54,7 +54,7 @@ Ví dụ cấu trúc:
 }
 ```
 
-Các đoạn được ghép thành một phần ngữ cảnh ngắn trước khi gửi câu hỏi đến Gemini. Với quy mô corpus ban đầu, nạp toàn bộ các đoạn thay vì thêm tìm kiếm vector, embedding, bảng cơ sở dữ liệu hay dịch vụ bên ngoài. Danh mục sản phẩm tiếp tục được lấy động từ MySQL ở mỗi yêu cầu; không sao chép sản phẩm, giá hoặc tồn kho vào tệp tri thức tĩnh.
+Các đoạn được ghép thành một phần ngữ cảnh ngắn trước khi gửi câu hỏi đến Groq. Với quy mô corpus ban đầu, nạp toàn bộ các đoạn thay vì thêm tìm kiếm vector, embedding, bảng cơ sở dữ liệu hay dịch vụ bên ngoài. Danh mục sản phẩm tiếp tục được lấy động từ MySQL ở mỗi yêu cầu; không sao chép sản phẩm, giá hoặc tồn kho vào tệp tri thức tĩnh.
 
 ## Hành vi trợ lý
 
@@ -64,15 +64,15 @@ Các đoạn được ghép thành một phần ngữ cảnh ngắn trước khi
 - Không đưa ra định mức thi công như một tư vấn kỹ thuật đã xác nhận. Hướng khách dùng trang dự toán như công cụ tham khảo và cần kiểm tra bản vẽ/hiện trạng với người có chuyên môn.
 - Không tuyên bố biết trạng thái báo giá, hợp đồng, thanh toán, công nợ hoặc đơn hàng cụ thể vì trợ lý không truy vấn hồ sơ cá nhân. Hướng khách đăng nhập để xem các mục tương ứng trong tài khoản.
 - Không tự tạo chính sách bảo hành, thời hạn/điều kiện trả đổi, thông tin liên hệ hoặc cam kết khác chưa được mã nguồn ghi nhận. Nếu dữ liệu không có, nói rõ chưa có thông tin và khuyên khách trao đổi với nhân viên xử lý yêu cầu.
-- Giữ nguyên hành vi khi thiếu API key, giới hạn tốc độ, định dạng JSON và thông báo dự phòng khi Gemini không phản hồi.
+- Giữ nguyên hành vi khi thiếu API key, giới hạn tốc độ, định dạng JSON và thông báo dự phòng khi Groq không phản hồi.
 
 ## Thành phần dự kiến thay đổi
 
 - Thêm `laravel/resources/ai/chatbot_knowledge.vi.json`.
-- Cập nhật `laravel/app/Http/Controllers/AssistantController.php` để đọc/giải mã các đoạn, ghép với danh mục động và câu hỏi. Nếu tệp không đọc/giải mã được, ghi lỗi vào log và trả thông báo dự phòng an toàn.
+- Cập nhật `laravel/app/Http/Controllers/AssistantController.php` để đọc/giải mã các đoạn, ghép với danh mục động và câu hỏi rồi gọi Groq Chat Completions. API key lấy từ `GROQ_API_KEY`; model lấy từ `GROQ_MODEL`, mặc định `openai/gpt-oss-20b`. Nếu tệp không đọc/giải mã được, ghi lỗi vào log và trả thông báo dự phòng an toàn.
 - Cập nhật kiểm tra trợ lý hiện có tại `laravel/tests/Feature/AssistantTest.php` để xác nhận ngữ cảnh gửi lên bao gồm tri thức tĩnh và danh mục động, đồng thời tiếp tục bảo đảm API key không lộ trong phản hồi.
 
-Không thay đổi schema cơ sở dữ liệu, route, giao diện, cấu trúc quyền, phiên bản Gemini, dependency hoặc luồng đặt hàng.
+Không thay đổi schema cơ sở dữ liệu, route, giao diện, cấu trúc quyền, dependency hoặc luồng đặt hàng.
 
 ## Cập nhật và kiểm tra nội dung
 
@@ -80,4 +80,4 @@ Khi quy tắc nghiệp vụ hoặc giao diện khách hàng đổi, người b�
 
 ## Kiểm thử dự kiến
 
-Kiểm tra tích hợp trợ lý bằng HTTP fake để xác nhận prompt có chứa đoạn tri thức và danh mục hiện hành; xác nhận API key chỉ nằm trong header gửi Gemini; đồng thời giữ các trường hợp thiếu key và lỗi kết nối hiện có. Không cần gọi API Gemini thật.
+Kiểm tra tích hợp trợ lý bằng HTTP fake để xác nhận prompt có chứa đoạn tri thức và danh mục hiện hành; xác nhận API key chỉ nằm trong Bearer header gửi Groq; đồng thời giữ các trường hợp thiếu key và lỗi kết nối hiện có. Không cần gọi API Groq thật.

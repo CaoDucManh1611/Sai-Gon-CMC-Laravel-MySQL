@@ -1,6 +1,6 @@
 # Sài Gòn CMC — Quản lý vật liệu xây dựng
 
-Ứng dụng chính trong repo này là **Laravel 13 + MySQL** tại [`laravel/`](laravel/). Hệ thống có cửa hàng cho khách, bảng làm việc theo vai trò, quy trình báo giá → hợp đồng → thanh toán → xuất kho → giao nhận, đổi trả và báo cáo. Trợ lý Gemini là tính năng tùy chọn khi có API key.
+Ứng dụng chính trong repo này là **Laravel 13 + MySQL** tại [`laravel/`](laravel/). Hệ thống có cửa hàng cho khách, bảng làm việc theo vai trò, quy trình báo giá → hợp đồng → thanh toán → xuất kho → giao nhận, đổi trả và báo cáo. Trợ lý Groq là tính năng tùy chọn khi có API key.
 
 ## Giao diện
 
@@ -30,7 +30,7 @@ php artisan cmms:create-admin admin
 php artisan serve
 ```
 
-Mở địa chỉ do `artisan serve` in ra. Lệnh tạo quản trị viên hỏi mật khẩu tương tác. Điền `GEMINI_API_KEY` trong `.env` nếu dùng trợ lý AI. Không đưa `.env` lên Git.
+Mở địa chỉ do `artisan serve` in ra. Lệnh tạo quản trị viên hỏi mật khẩu tương tác. Điền `GROQ_API_KEY` trong `.env` nếu dùng trợ lý AI. Không đưa `.env` lên Git.
 
 Xem [hướng dẫn Laravel chi tiết](laravel/README.md) để biết nghiệp vụ, giới hạn hiện tại và các tài khoản kiểm thử đã tạo **trên database của máy phát triển**. Những tài khoản đó không được tạo lại bởi `migrate --seed`.
 
