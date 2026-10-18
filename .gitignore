@@ -16,3 +16,4 @@
 **/storage/framework/views/**
 **/public/storage/
 **/public/build/
+.worktrees/
