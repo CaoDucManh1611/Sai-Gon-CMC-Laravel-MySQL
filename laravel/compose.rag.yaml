@@ -1,0 +1,19 @@
+name: cmc-rag
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    restart: unless-stopped
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "127.0.0.1:6333:6333"
+    volumes:
+      - qdrant:/qdrant/storage
+    restart: unless-stopped
+volumes:
+  ollama:
+  qdrant:

@@ -54,7 +54,12 @@
                 @endforeach
                 <span class="staff-nav-label">HỆ THỐNG</span>
                 @if(in_array($staffRole, ['sales', 'warehouse', 'manager', 'admin'], true))
-                    <a href="{{ route('management.index') }}" @class(['is-active' => request()->routeIs('management.*')]) @if(request()->routeIs('management.*')) aria-current="page" @endif>@include('staff.nav-icon', ['name' => 'management'])Danh mục & quản trị</a>
+                    <a href="{{ route('management.index') }}" @class(['is-active' => request()->routeIs('management.index')]) @if(request()->routeIs('management.index')) aria-current="page" @endif>@include('staff.nav-icon', ['name' => 'management'])Danh mục & quản trị</a>
+                @endif
+                @if($staffRole === 'admin')
+                    <a href="{{ route('management.backups.index') }}" @class(['is-active' => request()->routeIs('management.backups.*')]) @if(request()->routeIs('management.backups.*')) aria-current="page" @endif>@include('staff.nav-icon', ['name' => 'management'])Sao lưu & khôi phục</a>
+                    <a href="{{ route('management.ai-setup') }}" @class(['is-active' => request()->routeIs('management.ai-setup*')]) @if(request()->routeIs('management.ai-setup*')) aria-current="page" @endif>@include('staff.nav-icon', ['name' => 'management'])Cấu hình AI</a>
+                    <a href="{{ route('management.documents.index') }}" @class(['is-active' => request()->routeIs('management.knowledge*', 'management.documents.*')]) @if(request()->routeIs('management.knowledge*', 'management.documents.*')) aria-current="page" @endif>@include('staff.nav-icon', ['name' => 'management'])Kho tri thức</a>
                 @endif
                 <a href="{{ route('staff.reports.index') }}" @class(['is-active' => request()->routeIs('staff.reports.*')]) @if(request()->routeIs('staff.reports.*')) aria-current="page" @endif>@include('staff.nav-icon', ['name' => 'reports'])Báo cáo thống kê</a>
             </nav>

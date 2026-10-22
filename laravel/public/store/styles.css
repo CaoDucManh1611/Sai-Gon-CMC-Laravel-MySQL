@@ -311,3 +311,26 @@
 .quote-actions .btn,.order-manage .btn,.order-manage summary{min-height:44px}
 .quote-card .quote-view{min-height:42px;align-items:center;justify-content:center;padding:8px 13px;border:1px solid #4c8665;text-decoration:none}
 .quote-card .quote-view:hover{background:#e2f1e7;border-color:#276344}
+
+/* Readable assistant messages and compact source references. */
+.chat-widget,.chat-widget textarea,.chat-widget button{font-family:'Segoe UI',Arial,sans-serif;font-style:normal;letter-spacing:normal}
+.chat-message{max-width:94%;font-family:'Segoe UI',Arial,sans-serif;font-size:14px;font-style:normal;font-weight:400;line-height:1.7;white-space:pre-line;word-break:normal;overflow-wrap:break-word;font-variant-numeric:tabular-nums}
+.chat-message.user{max-width:88%}
+.chat-form textarea{font-size:14px;line-height:1.55}
+.chat-sources{max-width:94%;padding:0 4px;font-size:12px;line-height:1.6;color:var(--muted);overflow-wrap:break-word}
+.chat-sources summary{cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.chat-sources a{display:block;margin-top:8px;text-decoration:underline;text-underline-offset:3px}
+.chat-message.is-pending{animation:chatPending 1.4s ease-in-out infinite}
+@keyframes chatPending{50%{opacity:.55}}
+@media(prefers-reduced-motion:reduce){.chat-message.is-pending{animation:none}}
+.chat-price{white-space:nowrap;font:inherit;font-variant-numeric:tabular-nums}
+.chat-products{width:94%;display:grid;gap:12px}
+.chat-product-card{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--paper);color:var(--ink);font-family:'Segoe UI',Arial,sans-serif}
+.chat-product-card .material-image{width:100%;aspect-ratio:16/10}
+.chat-product-body{padding:14px;display:grid;gap:8px}
+.chat-product-body h3{margin:0;font:600 16px/1.4 'Segoe UI',Arial,sans-serif}
+.chat-product-body p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+.chat-product-body strong{font-size:16px;line-height:1.5}
+.chat-product-body small{font-size:11px;color:var(--muted)}
+.chat-product-link{display:block;padding:10px 12px;border:1px solid var(--line);border-radius:8px;text-align:center;font-size:13px;font-weight:600}
+.chat-product-link:hover{background:var(--deep);color:#fff}

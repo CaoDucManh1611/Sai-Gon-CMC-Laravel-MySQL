@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Controllers\AiSetupController;
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\EstimateController;
+use App\Http\Controllers\KnowledgeBaseController;
+use App\Http\Controllers\KnowledgeDocumentController;
 use App\Http\Controllers\ManagementController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StaffController;
@@ -16,6 +20,7 @@ Route::get('/cart', [StoreController::class, 'cart'])->name('cart');
 Route::get('/estimate', [EstimateController::class, 'index'])->name('estimate');
 Route::get('/assistant', [AssistantController::class, 'index'])->name('assistant');
 Route::post('/assistant', [AssistantController::class, 'ask'])->middleware('throttle:10,1')->name('assistant.ask');
+Route::get('/assistant/sources/{id}', [KnowledgeDocumentController::class, 'source'])->whereUuid('id')->name('assistant.source');
 Route::post('/cart/add', [StoreController::class, 'addToCart'])->name('cart.add');
 Route::post('/cart/update', [StoreController::class, 'updateCart'])->name('cart.update');
 Route::middleware('guest')->group(function () {
@@ -116,6 +121,23 @@ Route::middleware(['auth', 'role:warehouse,admin'])->prefix('management')->name(
     Route::post('/warehouses', [ManagementController::class, 'warehouse'])->name('warehouses.save');
 });
 Route::middleware(['auth', 'role:admin'])->prefix('management')->name('management.')->group(function () {
+    Route::get('/backups', [BackupController::class, 'index'])->name('backups.index');
+    Route::post('/backups', [BackupController::class, 'store'])->middleware('throttle:5,1')->name('backups.store');
+    Route::post('/backups/upload', [BackupController::class, 'upload'])->middleware('throttle:5,1')->name('backups.upload');
+    Route::get('/backups/{id}', [BackupController::class, 'show'])->whereUuid('id')->name('backups.show');
+    Route::get('/backups/{id}/download', [BackupController::class, 'download'])->whereUuid('id')->name('backups.download');
+    Route::post('/backups/{id}/restore', [BackupController::class, 'restore'])->whereUuid('id')->middleware('throttle:3,1')->name('backups.restore');
+    Route::get('/ai/setup', [AiSetupController::class, 'index'])->name('ai-setup');
+    Route::put('/ai/setup', [AiSetupController::class, 'update'])->middleware('throttle:10,1')->name('ai-setup.update');
+    Route::get('/knowledge', [KnowledgeBaseController::class, 'index'])->name('knowledge');
+    Route::put('/knowledge', [KnowledgeBaseController::class, 'update'])->name('knowledge.update');
+    Route::get('/knowledge/documents', [KnowledgeDocumentController::class, 'index'])->name('documents.index');
+    Route::post('/knowledge/documents', [KnowledgeDocumentController::class, 'store'])->name('documents.store');
+    Route::post('/knowledge/documents/search', [KnowledgeDocumentController::class, 'search'])->name('documents.search');
+    Route::get('/knowledge/documents/{id}', [KnowledgeDocumentController::class, 'show'])->whereUuid('id')->name('documents.show');
+    Route::put('/knowledge/documents/{id}', [KnowledgeDocumentController::class, 'update'])->whereUuid('id')->name('documents.update');
+    Route::patch('/knowledge/documents/{id}/toggle', [KnowledgeDocumentController::class, 'toggle'])->whereUuid('id')->name('documents.toggle');
+    Route::delete('/knowledge/documents/{id}', [KnowledgeDocumentController::class, 'destroy'])->whereUuid('id')->name('documents.destroy');
     Route::post('/users', [ManagementController::class, 'createUser'])->name('users.create');
     Route::put('/users/{id}', [ManagementController::class, 'updateUser'])->name('users.update');
     Route::post('/users/{id}/reset-password', [ManagementController::class, 'resetPassword'])->name('users.reset');

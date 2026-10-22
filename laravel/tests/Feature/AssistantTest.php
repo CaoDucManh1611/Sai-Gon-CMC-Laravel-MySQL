@@ -2,14 +2,35 @@
 
 namespace Tests\Feature;
 
+use App\Services\RagService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class AssistantTest extends TestCase
 {
     use RefreshDatabase;
+
+    private function fakeRetrievedKnowledge(): void
+    {
+        $id = (string) Str::uuid();
+        $version = (string) Str::uuid();
+        DB::table('knowledge_documents')->insert([
+            'id' => $id, 'title' => 'Hồ sơ mua hàng', 'filename' => 'ho-so.md',
+            'markdown' => '# Hồ sơ mua hàng',
+            'chunks' => json_encode([['title' => 'Tra cứu', 'content' => 'Đăng nhập để xem báo giá, hợp đồng, đơn hàng và công nợ trong tài khoản.', 'line' => 3]], JSON_UNESCAPED_UNICODE),
+            'status' => 'ready', 'active' => true, 'index_version' => $version,
+            'embedding_model' => config('rag.embedding_model'), 'created_at' => now(), 'updated_at' => now(),
+        ]);
+        Http::fake([
+            config('rag.ollama_url').'/api/embed' => Http::response(['embeddings' => [[0.3, 0.4, 0.5]]]),
+            config('rag.qdrant_url').'/collections/'.app(RagService::class)->collection().'/points/query' => Http::response([
+                'result' => ['points' => [['score' => 0.9, 'payload' => ['document_id' => $id, 'version' => $version, 'chunk_index' => 0]]]],
+            ]),
+        ]);
+    }
 
     public function test_customer_knowledge_file_has_the_expected_schema(): void
     {
@@ -54,18 +75,19 @@ class AssistantTest extends TestCase
         Http::fake(['https://api.groq.com/openai/v1/chat/completions' => Http::response([
             'choices' => [['message' => ['content' => 'Hãy xem xi măng PCB40.']]],
         ])]);
-        $response = $this->post('/assistant', ['question' => 'Nên chọn xi măng nào cho công trình?']);
+        $this->fakeRetrievedKnowledge();
+        $response = $this->post('/assistant', ['question' => 'Nên chọn xi măng nào cho công trình, cho tôi xem giá và tư vấn kỹ thuật?']);
         $response->assertOk()->assertSee('Hãy xem xi măng PCB40.')->assertDontSee('test-secret');
         Http::assertSent(function ($request): bool {
-            $prompt = $request['messages'][0]['content'] ?? '';
+            $prompt = ($request['messages'][0]['content'] ?? '').($request['messages'][1]['content'] ?? '');
 
             return $request->hasHeader('Authorization', 'Bearer test-secret')
                 && $request->url() === 'https://api.groq.com/openai/v1/chat/completions'
                 && ($request['model'] ?? null) === 'openai/gpt-oss-20b'
                 && str_contains($prompt, 'Đăng nhập để xem báo giá, hợp đồng, đơn hàng và công nợ trong tài khoản.')
-                && str_contains($prompt, 'Nếu chưa đủ thông tin về công trình, hãy hỏi thêm câu hỏi làm rõ trước khi gợi ý.')
-                && str_contains($prompt, 'Hãy trò chuyện bằng tiếng Việt tự nhiên, thân thiện như một tư vấn viên; trả lời ngắn gọn bằng câu văn liền mạch.')
-                && str_contains($prompt, 'Tránh dùng ngoặc kép không cần thiết và không trình bày bằng bảng Markdown hay danh sách gạch đầu dòng; khi cần liệt kê, chỉ dùng danh sách đánh số ngắn.')
+                && str_contains($prompt, 'hỏi một câu làm rõ nếu cần')
+                && str_contains($prompt, 'Xưng hô mình/bạn')
+                && str_contains($prompt, 'Không chào lại ở mỗi lượt')
                 && str_contains($prompt, 'Xi măng PCB40')
                 && str_contains($prompt, '123.456 đồng/bao');
         });
@@ -104,7 +126,7 @@ class AssistantTest extends TestCase
 
         $this->postJson('/assistant', ['question' => 'Xin chào!'])
             ->assertOk()
-            ->assertJsonPath('reply', fn (string $reply): bool => str_contains($reply, 'Xin chào!'));
+            ->assertJsonPath('reply', fn (string $reply): bool => str_contains($reply, 'Chào bạn'));
 
         Http::assertNothingSent();
     }
@@ -116,6 +138,7 @@ class AssistantTest extends TestCase
         Http::fake(['https://api.groq.com/openai/v1/chat/completions' => Http::response([
             'choices' => [['message' => ['content' => 'Hãy mở mục tương ứng trong tài khoản cửa hàng.']]],
         ])]);
+        $this->fakeRetrievedKnowledge();
 
         foreach ([
             'Làm sao tạo tài khoản?',
@@ -125,10 +148,11 @@ class AssistantTest extends TestCase
         ] as $question) {
             $this->postJson('/assistant', ['question' => $question])
                 ->assertOk()
-                ->assertExactJson(['reply' => 'Hãy mở mục tương ứng trong tài khoản cửa hàng.']);
+                ->assertJsonPath('reply', 'Hãy mở mục tương ứng trong tài khoản cửa hàng.')
+                ->assertJsonPath('sources.0.title', 'Hồ sơ mua hàng');
         }
 
-        Http::assertSentCount(4);
+        Http::assertSentCount(12);
     }
 
     public function test_assistant_rejects_short_questions_without_calling_groq(): void
@@ -148,13 +172,13 @@ class AssistantTest extends TestCase
         config(['services.groq.key' => 'test-secret']);
         Http::preventStrayRequests();
         Http::fake(['https://api.groq.com/openai/v1/chat/completions' => Http::response([], 503)]);
+        $this->fakeRetrievedKnowledge();
 
         $this->postJson('/assistant', ['question' => 'Tôi xem báo giá ở đâu?'])
             ->assertOk()
-            ->assertExactJson([
-                'reply' => 'Hiện chưa kết nối được trợ lý AI. Vui lòng thử lại hoặc liên hệ nhân viên.',
-            ]);
+            ->assertJsonPath('reply', fn ($reply) => str_contains($reply, 'Đăng nhập để xem báo giá'))
+            ->assertJsonPath('sources.0.title', 'Hồ sơ mua hàng');
 
-        Http::assertSentCount(1);
+        Http::assertSentCount(3);
     }
 }

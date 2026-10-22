@@ -96,6 +96,71 @@ const chatForm = document.querySelector('#chatForm');
 if (chatPanel && chatLauncher && chatForm) {
     const question = chatForm.querySelector('textarea');
     const messages = document.querySelector('#chatMessages');
+    const conversation = [];
+    const transcript = [];
+    const storageKey = 'cmc-chat-session-v1';
+    const persistChat = () => {
+        try {
+            localStorage.setItem(storageKey, JSON.stringify({
+                updatedAt: Date.now(), open: !chatPanel.hidden,
+                conversation: conversation.slice(-6), transcript: transcript.slice(-30),
+            }));
+        } catch { /* Chat continues when storage is unavailable. */ }
+    };
+    const renderReply = (element, text) => {
+        element.replaceChildren();
+        const prices = /\d[\d.,]* (?:đồng|VNĐ|VND|đ)(?:\/[\p{L}\p{N}³²]+)?/gu;
+        let position = 0;
+        for (const match of text.matchAll(prices)) {
+            element.append(document.createTextNode(text.slice(position, match.index)));
+            const price = document.createElement('span');
+            price.className = 'chat-price';
+            price.textContent = match[0];
+            element.append(price);
+            position = match.index + match[0].length;
+        }
+        element.append(document.createTextNode(text.slice(position)));
+    };
+    const renderProducts = (products) => {
+                const cards = document.createElement('div');
+                cards.className = 'chat-products';
+                for (const product of products.slice(0, 3)) {
+                    if (!/^\/products\/\d+$/.test(product.url)) continue;
+                    const card = document.createElement('article');
+                    card.className = 'chat-product-card';
+                    const photoLink = document.createElement('a');
+                    photoLink.href = product.url;
+                    photoLink.addEventListener('click', persistChat);
+                    photoLink.rel = 'noopener';
+                    photoLink.setAttribute('aria-label', 'Xem ' + product.name);
+                    const image = document.createElement('span');
+                    image.className = 'material-image' + (/^mat-[a-z0-9-]+$/.test(product.image_class) ? ' ' + product.image_class : '');
+                    image.setAttribute('role', 'img');
+                    image.setAttribute('aria-label', 'Hình minh họa ' + product.name);
+                    photoLink.append(image);
+                    const body = document.createElement('div');
+                    body.className = 'chat-product-body';
+                    const title = document.createElement('h3');
+                    title.textContent = product.name;
+                    const spec = document.createElement('p');
+                    spec.textContent = product.specification || 'Liên hệ để biết quy cách';
+                    const price = document.createElement('strong');
+                    price.className = 'chat-price';
+                    price.textContent = product.price;
+                    const note = document.createElement('small');
+                    note.textContent = 'Giá tham khảo · Hình minh họa';
+                    const link = document.createElement('a');
+                    link.href = product.url;
+                    link.addEventListener('click', persistChat);
+                    link.rel = 'noopener';
+                    link.className = 'chat-product-link';
+                    link.textContent = 'Xem chi tiết sản phẩm →';
+                    body.append(title, spec, price, note, link);
+                    card.append(photoLink, body);
+                    cards.append(card);
+                }
+                if (cards.childElementCount) messages.append(cards);
+    };
     const chatWidget = chatLauncher.closest('.chat-widget');
     const clamp = (value, size, viewport) => Math.min(Math.max(value, 12), Math.max(12, viewport - size - 12));
     const placeChat = (x, y) => {
@@ -121,6 +186,7 @@ if (chatPanel && chatLauncher && chatForm) {
         if (open) positionPanel();
         chatLauncher.setAttribute('aria-expanded', String(open));
         chatLauncher.setAttribute('aria-label', open ? 'Đóng trợ lý AI' : 'Mở trợ lý AI');
+        persistChat();
         if (open) question.focus();
         else chatLauncher.focus();
     };
@@ -132,6 +198,31 @@ if (chatPanel && chatLauncher && chatForm) {
         messages.scrollTop = messages.scrollHeight;
         return message;
     };
+    try {
+        const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
+        if (saved && Date.now() - saved.updatedAt < 24 * 60 * 60 * 1000 && Array.isArray(saved.transcript)) {
+            for (const turn of saved.transcript.slice(-30)) {
+                if (!['user', 'assistant'].includes(turn.role) || typeof turn.content !== 'string') continue;
+                const content = turn.content.slice(0, 10000);
+                const element = addMessage(content, turn.role);
+                if (turn.role === 'assistant') renderReply(element, content);
+                const products = Array.isArray(turn.products) ? turn.products.slice(0, 3).filter(product => product && typeof product.name === 'string' && typeof product.url === 'string') : [];
+                if (products.length) renderProducts(products);
+                transcript.push({ role: turn.role, content, products });
+            }
+            if (Array.isArray(saved.conversation)) {
+                conversation.push(...saved.conversation.slice(-6).filter(turn => turn && ['user', 'assistant'].includes(turn.role) && typeof turn.content === 'string' && Array.from(turn.content).length <= 2000));
+            }
+            if (saved.open) {
+                chatPanel.hidden = false;
+                positionPanel();
+                chatLauncher.setAttribute('aria-expanded', 'true');
+                chatLauncher.setAttribute('aria-label', 'Đóng trợ lý AI');
+            }
+            messages.scrollTop = messages.scrollHeight;
+        }
+    } catch { /* Invalid stored data is ignored. */ }
+    window.addEventListener('pagehide', persistChat);
     let dragStart = null;
     let suppressClick = false;
     chatLauncher.addEventListener('pointerdown', event => {
@@ -186,23 +277,41 @@ if (chatPanel && chatLauncher && chatForm) {
         const prompt = question.value.trim();
         if (prompt.length < 3) return;
         const button = chatForm.querySelector('button[type="submit"]');
+        if (button.disabled) return;
         addMessage(prompt, 'user');
+        transcript.push({ role: 'user', content: prompt });
         question.value = '';
         button.disabled = true;
-        const pending = addMessage('Đang tìm câu trả lời…', 'assistant');
+        const pending = addMessage('Mình đang xem thông tin…', 'assistant is-pending');
         try {
             const data = new FormData(chatForm);
             data.set('question', prompt);
+            conversation.slice(-6).forEach((turn, index) => {
+                data.set(`history[${index}][role]`, turn.role);
+                data.set(`history[${index}][content]`, turn.content);
+            });
             const response = await fetch(chatForm.action, {
                 method: 'POST',
                 headers: { Accept: 'application/json' },
                 body: data,
             });
             const result = await response.json();
-            pending.textContent = response.ok ? result.reply : (result.message || 'Không gửi được câu hỏi. Vui lòng thử lại.');
+            if (response.ok && typeof result.reply === 'string') renderReply(pending, result.reply);
+            else pending.textContent = result.message || 'Không gửi được câu hỏi. Vui lòng thử lại.';
+            if (response.ok && typeof result.reply === 'string') {
+                const productNames = Array.isArray(result.products) ? result.products.map(product => product.name).join(', ') : '';
+                conversation.push({ role: 'user', content: prompt }, { role: 'assistant', content: Array.from(result.reply + (productNames ? ' Sản phẩm: ' + productNames : '')).slice(0, 2000).join('') });
+                if (conversation.length > 6) conversation.splice(0, conversation.length - 6);
+            }
+            transcript.push({ role: 'assistant', content: pending.textContent, products: response.ok && Array.isArray(result.products) ? result.products.slice(0, 3) : [] });
+            if (response.ok && Array.isArray(result.products)) {
+                renderProducts(result.products);
+            }
         } catch {
             pending.textContent = 'Không kết nối được trợ lý. Vui lòng thử lại.';
         } finally {
+            pending.classList.remove('is-pending');
+            persistChat();
             button.disabled = false;
             messages.scrollTop = messages.scrollHeight;
         }
