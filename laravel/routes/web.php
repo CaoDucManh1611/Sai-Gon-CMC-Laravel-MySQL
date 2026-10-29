@@ -75,6 +75,7 @@ Route::middleware(['auth', 'permission:contracts.create'])->prefix('staff')->nam
     Route::put('/contracts/{id}', [StaffController::class, 'updateContract'])->name('contracts.update');
     Route::post('/contracts/{id}/submit', [StaffController::class, 'submitContract'])->name('contracts.submit');
     Route::post('/contracts/{id}/sign', [StaffController::class, 'signContract'])->name('contracts.sign');
+    Route::get('/contracts/{id}/pdf', [StaffController::class, 'downloadContractPdf'])->name('contracts.pdf');
 });
 Route::middleware(['auth', 'permission:contracts.review'])->prefix('staff')->name('staff.')->group(function () {
     Route::post('/contracts/{id}/review', [StaffController::class, 'reviewContract'])->name('contracts.review');

@@ -178,10 +178,10 @@ class StoreController extends Controller
         if (($data['action'] ?? null) === 'remove' || $data['quantity'] == 0 && ! isset($data['action'])) {
             unset($cart[$data['product_id']]);
         } elseif ($product) {
-            $step = $product->unit === 'm³' ? '0.1' : '1';
+            $step = '1';
             $quantity = match ($data['action'] ?? null) {
                 'increase' => rtrim(rtrim(bcadd((string) $data['quantity'], $step, 3), '0'), '.'),
-                'decrease' => max(in_array($product->unit, ['m³', 'kg'], true) ? 0.001 : 1,
+                'decrease' => max(1,
                     (float) bcsub((string) $data['quantity'], $step, 3)),
                 default => $data['quantity'],
             };

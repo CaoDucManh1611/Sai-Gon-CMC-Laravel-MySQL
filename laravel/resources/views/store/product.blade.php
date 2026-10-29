@@ -60,7 +60,7 @@
                 <div class="product-purchase-row">
                     <div class="product-quantity-stepper" data-product-stepper>
                         <button type="button" data-step="down" aria-label="Giảm số lượng {{ $product->name }}">−</button>
-                        <input class="form-control" id="quantity" type="number" name="quantity" min="{{ $fractional ? '0.001' : '1' }}" max="1000000" step="{{ $fractional ? '0.001' : '1' }}" value="{{ old('quantity', session('cart', [])[$product->id] ?? 1) }}" required aria-label="Số lượng {{ $product->name }}">
+                        <input class="form-control" id="quantity" type="number" name="quantity" min="1" max="1000000" step="1" value="{{ old('quantity', session('cart', [])[$product->id] ?? 1) }}" required aria-label="Số lượng {{ $product->name }}">
                         <button type="button" data-step="up" aria-label="Tăng số lượng {{ $product->name }}">+</button>
                     </div>
                 </div>

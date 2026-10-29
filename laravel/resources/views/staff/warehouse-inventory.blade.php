@@ -29,7 +29,7 @@
                 <form method="post" action="{{ route('staff.stocktakes.create') }}" class="warehouse-stocktake-form">@csrf
                     <label class="form-label">Kho<select class="form-select" name="warehouse_id">@foreach($warehouses as $warehouse)<option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>@endforeach</select></label>
                     <label class="form-label">Vật liệu<select class="form-select" name="product_id">@foreach($products as $product)<option value="{{ $product->id }}">{{ $product->name }}</option>@endforeach</select></label>
-                    <label class="form-label">Đếm thực tế<input class="form-control" name="quantity" type="number" min="0" step="0.001" required></label>
+                    <label class="form-label">Đếm thực tế<input class="form-control" name="quantity" type="number" min="0" step="1" required></label>
                     <label class="form-label">Lý do chênh lệch<input class="form-control" name="reason" required></label>
                     <button class="btn btn-dark" type="submit">Trình kiểm kê</button>
                 </form>

@@ -18,7 +18,7 @@
                     <label>Loại sự vụ
                         <select class="form-select" name="type"><option value="shortage">Giao thiếu</option><option value="damaged">Hàng hỏng / sai quy cách</option></select>
                     </label>
-                    <label>Số lượng<input class="form-control" type="number" name="quantity" min="0.001" step="0.001" required></label>
+                    <label>Số lượng<input class="form-control" type="number" name="quantity" min="1" step="1" required></label>
                     <label>Biên bản / ghi chú<input class="form-control" name="note" maxlength="2000" required></label>
                     <button class="btn btn-dark">Lưu sự vụ</button>
                 </form>
