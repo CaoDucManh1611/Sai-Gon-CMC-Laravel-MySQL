@@ -23,7 +23,7 @@
             <form method="post" action="{{ route('my.quote.update',$quote->id) }}" class="mt-3">@csrf @method('put')
                 <label class="form-label" for="quoteAddress">Địa chỉ công trình</label><textarea class="form-control" id="quoteAddress" name="delivery_address" required>{{ old('delivery_address', $quote->delivery_address) }}</textarea>
                 <label class="form-label mt-3" for="quoteNote">Ghi chú thêm</label><textarea class="form-control" id="quoteNote" name="note">{{ old('note', $quote->customer_note) }}</textarea>
-                <div class="mt-3">@foreach($items as $item)<label class="form-label d-flex align-items-center gap-3 mb-2">{{ str_replace('Ø', 'phi ', $item->name) }} ({{ $item->unit }})<input class="form-control quote-quantity" type="number" name="quantities[{{ $item->id }}]" value="{{ \App\Support\UiFormat::inputQuantity(old('quantities.'.$item->id, $item->quantity)) }}" min="{{ in_array($item->unit, ['m³','kg'], true) ? '0.001' : '1' }}" step="{{ in_array($item->unit, ['m³','kg'], true) ? '0.001' : '1' }}" max="1000000" required></label>@endforeach</div>
+                <div class="mt-3">@foreach($items as $item)<label class="form-label d-flex align-items-center gap-3 mb-2">{{ str_replace('Ø', 'phi ', $item->name) }} ({{ $item->unit }})<input class="form-control quote-quantity" type="number" name="quantities[{{ $item->id }}]" value="{{ \App\Support\UiFormat::inputQuantity(old('quantities.'.$item->id, $item->quantity)) }}" min="1" step="1" max="1000000" required></label>@endforeach</div>
                 <button class="btn-editorial dark mt-3" type="submit">Lưu thay đổi</button>
             </form>
         </details>

@@ -252,13 +252,15 @@ class StorefrontTest extends TestCase
         $sand = DB::table('products')->insertGetId(['code' => 'C1', 'name' => 'Cát thử', 'unit' => 'm³', 'price' => 100]);
 
         $this->get('/products/'.$brick)->assertOk()->assertSee('step="1"', false);
-        $this->get('/products/'.$sand)->assertOk()->assertSee('step="0.001"', false);
+        $this->get('/products/'.$sand)->assertOk()->assertSee('step="1"', false);
         $this->post('/cart/add', ['product_id' => $brick, 'quantity' => 1.002])->assertSessionHasErrors('quantity');
         $this->post('/cart/add', ['product_id' => $brick, 'quantity' => 2])->assertRedirect();
         $this->post('/cart/update', ['product_id' => $brick, 'quantity' => 2.5])->assertSessionHasErrors('quantity');
         $this->post('/cart/add', ['product_id' => $sand, 'quantity' => 0.5])->assertRedirect();
-        $this->get('/cart')->assertOk()->assertSee('step="0.001"', false);
+        $this->get('/cart')->assertOk()->assertSee('step="1"', false);
         $this->assertEquals(2, session('cart')[$brick]);
         $this->assertEquals(0.5, session('cart')[$sand]);
+        $this->post('/cart/update', ['product_id' => $sand, 'quantity' => 0.5, 'action' => 'increase'])->assertRedirect('/cart');
+        $this->assertEquals(1.5, session('cart')[$sand]);
     }
 }

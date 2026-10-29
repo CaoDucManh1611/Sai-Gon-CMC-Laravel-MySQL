@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Services\CommerceWorkflow;
 use App\Services\FulfillmentWorkflow;
+use Dompdf\Dompdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class StaffController extends Controller
 {
@@ -206,6 +208,28 @@ class StaffController extends Controller
         $workflow->reviewContract($id, $request->user()->id, $data['decision'] === 'approve', $data['note'] ?? null);
 
         return back()->with('success', 'Đã xử lý phê duyệt hợp đồng.');
+    }
+
+    public function downloadContractPdf(int $id): StreamedResponse
+    {
+        $contract = DB::table('contracts')->where('id', $id)->firstOrFail();
+        abort_unless(in_array($contract->status, ['approved', 'signed'], true) && $contract->customer_confirmed_at, 409, 'Hợp đồng cần được quản lý duyệt và khách hàng xác nhận trước khi xuất.');
+        $order = $contract->order_id ? DB::table('orders')->find($contract->order_id) : null;
+        $quote = DB::table('quotes')->find($contract->quote_id);
+        $customer = DB::table('users')->find($order?->customer_id ?? $quote?->customer_id);
+        abort_unless($customer, 404);
+        $items = DB::table($order ? 'order_items' : 'quote_items')
+            ->join('products', 'products.id', '=', 'product_id')
+            ->where($order ? 'order_id' : 'quote_id', $order?->id ?? $quote?->id)
+            ->select('products.name', 'products.unit', 'products.specification', 'quantity', 'unit_price', 'line_total')->get();
+        $pdf = new Dompdf;
+        $pdf->loadHtml(view('staff.contract-pdf', compact('contract', 'order', 'quote', 'customer', 'items'))->render(), 'UTF-8');
+        $pdf->setPaper('A4');
+        $pdf->render();
+
+        return response()->streamDownload(static function () use ($pdf): void {
+            echo $pdf->output();
+        }, $contract->code.'.pdf', ['Content-Type' => 'application/pdf', 'Cache-Control' => 'private, no-store']);
     }
 
     public function signContract(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
