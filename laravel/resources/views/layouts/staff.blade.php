@@ -19,14 +19,14 @@
     $staffRole = auth()->user()->role;
     $staffRoleName = ['sales' => 'Kinh doanh', 'warehouse' => 'Kho', 'accounting' => 'Kế toán', 'manager' => 'Quản lý', 'admin' => 'Quản trị viên', 'delivery' => 'Giao nhận'][$staffRole] ?? $staffRole;
     $staffSections = [
-        'quotes' => ['Báo giá', 'BG', ['sales', 'manager', 'admin']],
-        'contracts' => ['Hợp đồng', 'HĐ', ['sales', 'manager', 'admin']],
-        'sales_orders' => ['Đơn hàng', 'DH', ['sales', 'manager', 'admin']],
-        'finance' => ['Tài chính & công nợ', 'TC', ['accounting', 'manager', 'admin']],
-        'purchases' => ['Nhập hàng', 'NH', ['warehouse', 'manager', 'admin']],
-        'orders' => ['Xuất kho & giao nhận', 'GN', ['warehouse', 'delivery', 'accounting', 'manager', 'admin']],
-        'returns' => ['Đổi trả', 'ĐT', ['warehouse', 'delivery', 'accounting', 'manager', 'admin']],
-        'inventory' => ['Tồn kho', 'TK', ['warehouse', 'manager', 'admin']],
+        'quotes' => ['Báo giá', 'BG', ['quotes.view']],
+        'contracts' => ['Hợp đồng', 'HĐ', ['contracts.view']],
+        'sales_orders' => ['Đơn hàng', 'DH', ['sales.orders.view']],
+        'finance' => ['Tài chính & công nợ', 'TC', ['finance.view']],
+        'purchases' => ['Nhập hàng', 'NH', ['purchases.view']],
+        'orders' => ['Xuất kho & giao nhận', 'GN', ['orders.view']],
+        'returns' => ['Đổi trả', 'ĐT', ['returns.view']],
+        'inventory' => ['Tồn kho', 'TK', ['inventory.view']],
     ];
 @endphp
 <body class="staff-app">
@@ -47,21 +47,27 @@
                 <span class="staff-nav-label">TỔNG QUAN</span>
                 <a href="{{ route('staff.dashboard') }}" @class(['is-active' => request()->routeIs('staff.dashboard')]) @if(request()->routeIs('staff.dashboard')) aria-current="page" @endif>@include('staff.nav-icon', ['name' => 'overview'])Tổng quan</a>
                 <span class="staff-nav-label">NGHIỆP VỤ</span>
-                @foreach($staffSections as $key => [$label, $icon, $roles])
-                    @if(in_array($staffRole, $roles, true))
+                @foreach($staffSections as $key => [$label, $icon, $permissions])
+                    @if(collect($permissions)->contains(fn ($permission) => auth()->user()->hasPermission($permission)))
                         <a href="{{ route('staff.section', $key) }}" @class(['is-active' => request()->routeIs('staff.section') && request()->route('section') === $key]) @if(request()->routeIs('staff.section') && request()->route('section') === $key) aria-current="page" @endif>@include('staff.nav-icon', ['name' => $key]){{ $label }}</a>
                     @endif
                 @endforeach
                 <span class="staff-nav-label">HỆ THỐNG</span>
-                @if(in_array($staffRole, ['sales', 'warehouse', 'manager', 'admin'], true))
+                @if(auth()->user()->hasPermission('management.view'))
                     <a href="{{ route('management.index') }}" @class(['is-active' => request()->routeIs('management.index')]) @if(request()->routeIs('management.index')) aria-current="page" @endif>@include('staff.nav-icon', ['name' => 'management'])Danh mục & quản trị</a>
                 @endif
-                @if($staffRole === 'admin')
+                @if(auth()->user()->hasPermission('backups.manage'))
                     <a href="{{ route('management.backups.index') }}" @class(['is-active' => request()->routeIs('management.backups.*')]) @if(request()->routeIs('management.backups.*')) aria-current="page" @endif>@include('staff.nav-icon', ['name' => 'management'])Sao lưu & khôi phục</a>
+                @endif
+                @if(auth()->user()->hasPermission('ai.manage'))
                     <a href="{{ route('management.ai-setup') }}" @class(['is-active' => request()->routeIs('management.ai-setup*')]) @if(request()->routeIs('management.ai-setup*')) aria-current="page" @endif>@include('staff.nav-icon', ['name' => 'management'])Cấu hình AI</a>
+                @endif
+                @if(auth()->user()->hasPermission('knowledge.manage'))
                     <a href="{{ route('management.documents.index') }}" @class(['is-active' => request()->routeIs('management.knowledge*', 'management.documents.*')]) @if(request()->routeIs('management.knowledge*', 'management.documents.*')) aria-current="page" @endif>@include('staff.nav-icon', ['name' => 'management'])Kho tri thức</a>
                 @endif
-                <a href="{{ route('staff.reports.index') }}" @class(['is-active' => request()->routeIs('staff.reports.*')]) @if(request()->routeIs('staff.reports.*')) aria-current="page" @endif>@include('staff.nav-icon', ['name' => 'reports'])Báo cáo thống kê</a>
+                @if(auth()->user()->hasPermission('reports.view'))
+                    <a href="{{ route('staff.reports.index') }}" @class(['is-active' => request()->routeIs('staff.reports.*')]) @if(request()->routeIs('staff.reports.*')) aria-current="page" @endif>@include('staff.nav-icon', ['name' => 'reports'])Báo cáo thống kê</a>
+                @endif
             </nav>
         </div>
         <div class="staff-sidebar-bottom">

@@ -55,13 +55,22 @@
                         <thead><tr><th>Mã</th><th>Giá trị</th><th>Đã thanh toán</th><th>Còn lại</th><th>Hẹn quyết toán</th></tr></thead>
                         <tbody>
                             @foreach($debts as $debt)
-                                <tr><td>{{ $debt->code }}</td><td>{{ number_format($debt->amount, 0, ',', '.') }} ₫</td><td>{{ number_format($debt->paid, 0, ',', '.') }} ₫</td><td>{{ number_format(max(0, $debt->amount - $debt->paid), 0, ',', '.') }} ₫</td><td>{{ $debt->due_on ?: 'Chưa hẹn' }} @if($debt->settlement_note)<small class="d-block">{{ $debt->settlement_note }}</small>@endif</td></tr>
+                                <tr><td>{{ $debt->code }}</td><td>{{ number_format($debt->amount, 0, ',', '.') }} ₫</td><td>{{ number_format($debt->paid, 0, ',', '.') }} ₫</td><td>{{ number_format(max(0, $debt->amount - $debt->paid), 0, ',', '.') }} ₫</td><td>{{ $debt->due_on ?: 'Xem lịch từng đợt' }} @if($debt->settlement_note)<small class="d-block">{{ $debt->settlement_note }}</small>@endif</td></tr>
+                                @if(!empty($paymentSchedules[$debt->id]))<tr><td colspan="5"><details><summary>Chi tiết các đợt thanh toán</summary>@include('shared.payment-schedule-table', ['scheduleRows' => $paymentSchedules[$debt->id]])</details></td></tr>@endif
                             @endforeach
                         </tbody>
                     </table>
                 </div>
                 <p class="customer-debt-empty" hidden>Không có khoản công nợ phù hợp.</p>
             @endif
+        </section>
+
+        <section class="account-card">
+            <span class="eyebrow muted">ĐỐI CHIẾU CÔNG NỢ</span>
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-2"><h2>Bản đối chiếu kế toán gửi</h2><a href="{{ route('my.debt-reconciliations.index') }}">Xem tất cả</a></div>
+            @forelse($debtReconciliations as $reconciliation)
+                <div class="border-bottom py-3"><strong>Kỳ {{ $reconciliation->period_start }} – {{ $reconciliation->as_of_date }}</strong><small class="d-block">v{{ $reconciliation->version_number }} · {{ \App\Support\UiFormat::status($reconciliation->status) }} · Dư cuối kỳ {{ number_format($reconciliation->closing_balance, 0, ',', '.') }} ₫</small><a href="{{ route('my.debt-reconciliations.show', $reconciliation->id) }}">Xem và phản hồi</a></div>
+            @empty<div class="account-empty compact"><span aria-hidden="true">✓</span><strong>Chưa có bản đối chiếu được gửi.</strong><p>Khi kế toán gửi, bạn có thể xem chi tiết và xác nhận hoặc báo chênh lệch tại đây.</p></div>@endforelse
         </section>
 
         <section class="account-card account-credit-card">

@@ -1,8 +1,8 @@
-@if($deliveryRuns->isNotEmpty() || (in_array($role, ['warehouse', 'admin']) && $shipments->where('status', 'planned')->whereNull('delivery_run_id')->whereNull('return_id')->count() >= 2))
+@if($deliveryRuns->isNotEmpty() || (auth()->user()->hasPermission('delivery-runs.manage') && $shipments->where('status', 'planned')->whereNull('delivery_run_id')->whereNull('return_id')->count() >= 2))
 <section class="mb-5" aria-labelledby="delivery-runs-heading">
     <h2 id="delivery-runs-heading">Gom đơn giao cùng chuyến</h2>
     <p class="warehouse-section-note">Gộp các điểm giao gần nhau, đặt thứ tự dừng theo tuyến đường thực tế và kiểm tra tổng khối lượng với tải trọng xe.</p>
-    @if(in_array($role, ['warehouse', 'admin']) && $shipments->where('status', 'planned')->whereNull('delivery_run_id')->whereNull('return_id')->count() >= 2)
+    @if(auth()->user()->hasPermission('delivery-runs.manage') && $shipments->where('status', 'planned')->whereNull('delivery_run_id')->whereNull('return_id')->count() >= 2)
         <details class="order-card">
             <summary>Gom các đơn vào một chuyến xe</summary>
             <form method="post" action="{{ route('staff.delivery-runs.create') }}" class="pt-3">
@@ -42,5 +42,6 @@
             </ul>
         </article>
     @endforeach
+    @if(method_exists($deliveryRuns, 'links')){{ $deliveryRuns->links() }}@endif
 </section>
 @endif

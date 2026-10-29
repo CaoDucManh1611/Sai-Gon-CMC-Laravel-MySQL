@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Support\UiFormat;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class CommerceWorkflow
@@ -33,8 +34,13 @@ class CommerceWorkflow
             $total = '0.00';
             foreach ($items as $productId => $quantity) {
                 $product = DB::table('products')->where('id', $productId)->where('active', true)->first();
-                if (! $product || ! is_numeric($quantity) || bccomp((string) $quantity, '0', 3) <= 0) {
+                if (! $product || ! is_numeric($quantity) || ! preg_match('/^\d+(?:\.\d{1,3})?$/', (string) $quantity)
+                    || bccomp((string) $quantity, '0', 3) <= 0) {
                     $this->fail('Sản phẩm hoặc số lượng không hợp lệ.');
+                }
+                if (bccomp((string) $quantity, '1000000', 3) > 0
+                    || (! in_array($product->unit, ['m³', 'kg'], true) && floor((float) $quantity) !== (float) $quantity)) {
+                    $this->fail('Số lượng vật liệu không hợp lệ.');
                 }
                 $line = bcmul((string) $product->price, (string) $quantity, 2);
                 $total = bcadd($total, $line, 2);
@@ -96,6 +102,7 @@ class CommerceWorkflow
                 || bccomp((string) $order->paid, '0', 2) !== 0) {
                 $this->fail('Chỉ có thể sửa đơn nhận tại kho chưa thanh toán.');
             }
+            DB::table('warehouses')->where('id', $order->pickup_warehouse_id)->lockForUpdate()->first();
             $items = DB::table('order_items')->join('products', 'products.id', '=', 'order_items.product_id')
                 ->where('order_id', $orderId)->select('order_items.*', 'products.unit', 'products.name as product_name')->get();
             $total = '0.00';
@@ -136,12 +143,32 @@ class CommerceWorkflow
                 'status' => 'awaiting_confirmation', 'reviewed_by' => null, 'reviewed_at' => null,
             ] : []));
             DB::table('debts')->where('order_id', $orderId)->update(['amount' => $total, 'updated_at' => now()]);
+            $debtId = DB::table('debts')->where('order_id', $orderId)->where('direction', 'receivable')->value('id');
+            if ($debtId && bccomp($total, '0', 2) > 0) {
+                app(PaymentScheduleWorkflow::class)->replaceDraftSchedule((int) $debtId, [[
+                    'sequence' => 1, 'label' => 'Thanh toán đủ trước khi nhận hàng', 'amount' => $total,
+                    'due_on' => null, 'trigger' => 'before_issue', 'days_after_trigger' => null,
+                    'required_before_issue' => true,
+                ]], $customerId);
+            }
         });
     }
 
-    public function placePickupOrder(int $customerId, array $items, int $warehouseId): int
+    public function placePickupOrder(int $customerId, array $items, int $warehouseId, ?string $idempotencyKey = null): int
     {
-        return DB::transaction(function () use ($customerId, $items, $warehouseId) {
+        return DB::transaction(function () use ($customerId, $items, $warehouseId, $idempotencyKey) {
+            if ($idempotencyKey !== null) {
+                $customer = DB::table('users')->where('id', $customerId)->where('role', 'customer')->lockForUpdate()->first();
+                if (! $customer) {
+                    $this->fail('Tài khoản khách hàng không hợp lệ.');
+                }
+                $existing = DB::table('orders')->where('customer_id', $customerId)
+                    ->where('idempotency_key', $idempotencyKey)->first();
+                if ($existing) {
+                    return (int) $existing->id;
+                }
+            }
+
             $warehouse = DB::table('warehouses')->where('id', $warehouseId)->where('active', true)->lockForUpdate()->first();
             if (! $warehouse || $items === []) {
                 $this->fail('Cần chọn kho nhận hàng và ít nhất một vật liệu.');
@@ -152,7 +179,8 @@ class CommerceWorkflow
             foreach ($items as $productId => $quantity) {
                 $product = DB::table('products')->where('id', $productId)->where('active', true)->first();
                 if (! $product || ! $product->direct_purchase_allowed || bccomp((string) ($product->price ?? 0), '0', 2) <= 0
-                    || ! is_numeric($quantity) || bccomp((string) $quantity, '0', 3) <= 0
+                    || ! is_numeric($quantity) || ! preg_match('/^\d+(?:\.\d{1,3})?$/', (string) $quantity)
+                    || bccomp((string) $quantity, '0', 3) <= 0
                     || bccomp((string) $quantity, '1000000', 3) > 0
                     || (! in_array($product->unit, ['m³', 'kg'], true) && floor((float) $quantity) !== (float) $quantity)) {
                     $this->fail('Vật liệu hoặc số lượng trong giỏ không hợp lệ.');
@@ -174,10 +202,11 @@ class CommerceWorkflow
             }
             $id = DB::table('orders')->insertGetId([
                 'code' => 'TEMP-'.uniqid(), 'customer_id' => $customerId, 'contract_id' => null,
-                'status' => 'awaiting_confirmation', 'total' => $total, 'fulfillment_method' => 'pickup', 'requires_contract' => true,
+                'status' => 'awaiting_confirmation', 'total' => $total, 'fulfillment_method' => 'pickup', 'requires_contract' => false,
                 'pickup_warehouse_id' => $warehouseId, 'delivery_address' => $warehouse->address ?: $warehouse->name,
                 'stock_shortage_note' => $shortages ? implode('; ', $shortages) : null,
                 'estimated_available_on' => $shortages ? now()->addDays(14)->toDateString() : null,
+                'idempotency_key' => $idempotencyKey,
                 'created_at' => now(), 'updated_at' => now(),
             ]);
             DB::table('orders')->where('id', $id)->update(['code' => $this->code('DH', $id)]);
@@ -190,6 +219,7 @@ class CommerceWorkflow
                 'created_at' => now(), 'updated_at' => now(),
             ]);
             DB::table('debts')->where('id', $debtId)->update(['code' => $this->code('CN', $debtId)]);
+            app(PaymentScheduleWorkflow::class)->ensureLegacySchedule($debtId);
 
             return $id;
         });
@@ -202,7 +232,11 @@ class CommerceWorkflow
             if (! $order || $order->fulfillment_method !== 'pickup' || ! in_array($order->status, ['awaiting_confirmation', 'awaiting_payment'], true) || bccomp((string) $order->paid, '0', 2) !== 0) {
                 $this->fail('Chỉ có thể hủy đơn nhận tại kho khi chưa thanh toán.');
             }
-            DB::table('orders')->where('id', $orderId)->update(['status' => 'cancelled', 'updated_at' => now()]);
+            DB::table('warehouses')->where('id', $order->pickup_warehouse_id)->lockForUpdate()->first();
+            $cancelledAt = now();
+            DB::table('orders')->where('id', $orderId)->update([
+                'status' => 'cancelled', 'cancelled_at' => $cancelledAt, 'updated_at' => $cancelledAt,
+            ]);
             DB::table('debts')->where('order_id', $orderId)->update(['amount' => 0, 'status' => 'settled', 'updated_at' => now()]);
         });
     }
@@ -218,6 +252,7 @@ class CommerceWorkflow
                 $this->fail('Cần ghi lý do từ chối đơn hàng.');
             }
             if ($confirmed && $order->fulfillment_method === 'pickup') {
+                DB::table('warehouses')->where('id', $order->pickup_warehouse_id)->lockForUpdate()->first();
                 foreach (DB::table('order_items')->join('products', 'products.id', '=', 'order_items.product_id')
                     ->where('order_items.order_id', $orderId)->select('order_items.*', 'products.name as product_name')->get() as $item) {
                     $stock = DB::table('inventory')->where('warehouse_id', $order->pickup_warehouse_id)
@@ -233,7 +268,9 @@ class CommerceWorkflow
                 }
             }
             DB::table('orders')->where('id', $orderId)->update([
-                'status' => $confirmed ? 'awaiting_contract' : 'rejected',
+                'status' => $confirmed
+                    ? ($order->requires_contract ? 'awaiting_contract' : 'awaiting_payment')
+                    : 'rejected',
                 'stock_shortage_note' => $confirmed ? null : $order->stock_shortage_note,
                 'estimated_available_on' => $confirmed ? null : $order->estimated_available_on,
                 'reviewed_by' => $salespersonId, 'reviewed_at' => now(),
@@ -295,14 +332,39 @@ class CommerceWorkflow
 
     public function reviewQuoteDiscount(int $quoteId, int $managerId, bool $approve, ?string $note = null): void
     {
-        $changed = DB::table('quotes')->where('id', $quoteId)->where('status', 'pending_discount_approval')
-            ->update([
-                'status' => $approve ? 'sent' : 'draft', 'discount_approved_by' => $approve ? $managerId : null,
-                'discount_review_note' => $note, 'sent_at' => $approve ? now() : null, 'updated_at' => now(),
-            ]);
-        if (! $changed) {
-            $this->fail('Báo giá không chờ duyệt chiết khấu.');
-        }
+        DB::transaction(function () use ($quoteId, $managerId, $approve, $note) {
+            $quote = DB::table('quotes')->where('id', $quoteId)->lockForUpdate()->first();
+            if (! $quote || $quote->status !== 'pending_discount_approval') {
+                $this->fail('Báo giá không chờ duyệt chiết khấu.');
+            }
+            app(ApprovalWorkflow::class)->assertIndependent($quote->salesperson_id ? (int) $quote->salesperson_id : null,
+                $managerId, 'chiết khấu báo giá');
+            if (! $approve && trim((string) $note) === '') {
+                $this->fail('Cần nêu lý do từ chối đề xuất chiết khấu.');
+            }
+
+            $content = [
+                'quote' => array_intersect_key((array) $quote, array_flip([
+                    'id', 'code', 'customer_id', 'salesperson_id', 'delivery_address', 'total', 'valid_until',
+                ])),
+                'items' => DB::table('quote_items')->where('quote_id', $quoteId)->orderBy('id')->get([
+                    'id', 'product_id', 'quantity', 'unit_price', 'line_total', 'specification',
+                ])->map(fn ($item) => (array) $item)->all(),
+            ];
+            $statusTo = $approve ? 'sent' : 'draft';
+            $changed = DB::table('quotes')->where('id', $quoteId)->where('status', 'pending_discount_approval')
+                ->update([
+                    'status' => $statusTo, 'discount_approved_by' => $approve ? $managerId : null,
+                    'discount_review_note' => trim((string) $note) !== '' ? trim($note) : null,
+                    'sent_at' => $approve ? now() : null, 'updated_at' => now(),
+                ]);
+            if (! $changed) {
+                $this->fail('Báo giá không chờ duyệt chiết khấu.');
+            }
+
+            app(ApprovalWorkflow::class)->recordDecision('quote_discount', $quoteId, $approve ? 'approved' : 'rejected',
+                'pending_discount_approval', $statusTo, $managerId, trim((string) $note) !== '' ? trim($note) : null, $content);
+        });
     }
 
     public function acceptQuote(int $quoteId, int $customerId): int
@@ -341,11 +403,13 @@ class CommerceWorkflow
         });
     }
 
-    public function createContract(int $orderId, int $staffId, string $deposit, string $paymentTerms, string $deliveryTerms): int
+    public function createContract(int $orderId, int $staffId, string $deposit, string $paymentTerms, string $deliveryTerms, ?array $installments = null): int
     {
-        return DB::transaction(function () use ($orderId, $staffId, $deposit, $paymentTerms, $deliveryTerms) {
+        return DB::transaction(function () use ($orderId, $staffId, $deposit, $paymentTerms, $deliveryTerms, $installments) {
+            $allowUndatedLegacyTerms = $installments === null;
             $order = DB::table('orders')->where('id', $orderId)->lockForUpdate()->first();
-            if (! $order || $order->status !== 'awaiting_contract' || DB::table('contracts')->where('order_id', $orderId)->exists()) {
+            if (! $order || ! $order->requires_contract || $order->status !== 'awaiting_contract'
+                || DB::table('contracts')->where('order_id', $orderId)->exists()) {
                 $this->fail('Đơn chưa được xác nhận hoặc đã có hợp đồng.');
             }
             if (! is_numeric($deposit) || bccomp($deposit, '0', 2) < 0 || bccomp($deposit, (string) $order->total, 2) > 0) {
@@ -353,20 +417,55 @@ class CommerceWorkflow
             }
             $id = DB::table('contracts')->insertGetId([
                 'code' => 'TEMP-'.uniqid(), 'order_id' => $orderId, 'quote_id' => $order->quote_id,
-                'created_by' => $staffId, 'status' => 'draft', 'total' => $order->total, 'deposit_required' => $deposit,
+                'created_by' => $staffId, 'last_edited_by' => $staffId, 'last_submitted_by' => null,
+                'status' => 'draft', 'total' => $order->total, 'deposit_required' => $deposit,
                 'payment_terms' => $paymentTerms, 'delivery_terms' => $deliveryTerms,
                 'created_at' => now(), 'updated_at' => now(),
             ]);
             DB::table('contracts')->where('id', $id)->update(['code' => $this->code('HD', $id)]);
+            $debt = DB::table('debts')->where('order_id', $orderId)->where('direction', 'receivable')->first();
+            if ($debt) {
+                $installments ??= $this->defaultContractSchedule((string) $order->total, $deposit);
+                app(PaymentScheduleWorkflow::class)->replaceDraftSchedule(
+                    (int) $debt->id, $installments, $staffId, $allowUndatedLegacyTerms
+                );
+            } else {
+                $installments ??= $this->defaultContractSchedule((string) $order->total, $deposit);
+                app(PaymentScheduleWorkflow::class)->saveContractDraftSchedule(
+                    $id, $installments, $staffId, $deposit, $allowUndatedLegacyTerms
+                );
+            }
 
             return $id;
         });
     }
 
-    public function submitContract(int $contractId): void
+    private function defaultContractSchedule(string $total, string $deposit): array
+    {
+        $rows = [];
+        if (bccomp($deposit, '0', 2) > 0) {
+            $rows[] = [
+                'sequence' => 1, 'label' => 'Thanh toán trước khi xuất hàng', 'amount' => $deposit,
+                'due_on' => null, 'trigger' => 'before_issue', 'days_after_trigger' => null,
+                'required_before_issue' => true,
+            ];
+        }
+        $remaining = bcsub($total, $deposit, 2);
+        if (bccomp($remaining, '0', 2) > 0) {
+            $rows[] = [
+                'sequence' => count($rows) + 1, 'label' => 'Thanh toán còn lại theo hợp đồng', 'amount' => $remaining,
+                'due_on' => null, 'trigger' => 'after_handover', 'days_after_trigger' => null,
+                'required_before_issue' => false,
+            ];
+        }
+
+        return $rows;
+    }
+
+    public function submitContract(int $contractId, int $submitterId): void
     {
         $changed = DB::table('contracts')->where('id', $contractId)->whereIn('status', ['draft', 'changes_requested'])
-            ->update(['status' => 'pending_approval', 'updated_at' => now()]);
+            ->update(['status' => 'pending_approval', 'last_submitted_by' => $submitterId, 'updated_at' => now()]);
         if (! $changed) {
             $this->fail('Hợp đồng không thể trình duyệt.');
         }
@@ -374,14 +473,39 @@ class CommerceWorkflow
 
     public function reviewContract(int $contractId, int $managerId, bool $approve, ?string $note = null): void
     {
-        $changed = DB::table('contracts')->where('id', $contractId)->where('status', 'pending_approval')->update([
-            'status' => $approve ? 'approved' : 'changes_requested',
-            'approved_by' => $approve ? $managerId : null, 'approval_note' => $note,
-            'customer_confirmed_at' => null, 'customer_note' => null, 'updated_at' => now(),
-        ]);
-        if (! $changed) {
-            $this->fail('Hợp đồng không ở trạng thái chờ duyệt.');
-        }
+        DB::transaction(function () use ($contractId, $managerId, $approve, $note) {
+            $contract = DB::table('contracts')->where('id', $contractId)->lockForUpdate()->first();
+            if (! $contract || $contract->status !== 'pending_approval') {
+                $this->fail('Hợp đồng không ở trạng thái chờ duyệt.');
+            }
+            $independentApproval = app(ApprovalWorkflow::class);
+            $requesters = array_unique(array_map('intval', array_filter([
+                $contract->created_by,
+                $contract->last_edited_by ?? $contract->created_by,
+                $contract->last_submitted_by,
+            ], fn ($requesterId) => $requesterId !== null)));
+            foreach ($requesters as $requesterId) {
+                $independentApproval->assertIndependent($requesterId, $managerId, 'hợp đồng');
+            }
+            if (! $approve && trim((string) $note) === '') {
+                $this->fail('Cần nêu lý do yêu cầu sửa hợp đồng.');
+            }
+
+            $content = $this->contractApprovalSnapshot($contract);
+            $statusTo = $approve ? 'approved' : 'changes_requested';
+            $changed = DB::table('contracts')->where('id', $contractId)->where('status', 'pending_approval')->update([
+                'status' => $statusTo,
+                'approved_by' => $approve ? $managerId : null,
+                'approval_note' => trim((string) $note) !== '' ? trim($note) : null,
+                'customer_confirmed_at' => null, 'customer_note' => null, 'updated_at' => now(),
+            ]);
+            if (! $changed) {
+                $this->fail('Hợp đồng không ở trạng thái chờ duyệt.');
+            }
+
+            app(ApprovalWorkflow::class)->recordDecision('contract', $contractId, $approve ? 'approved' : 'changes_requested',
+                'pending_approval', $statusTo, $managerId, trim((string) $note) !== '' ? trim($note) : null, $content);
+        });
     }
 
     public function respondToContract(int $contractId, int $customerId, bool $accept, ?string $note = null): void
@@ -403,7 +527,42 @@ class CommerceWorkflow
                 'customer_note' => $accept ? null : trim($note),
                 'updated_at' => now(),
             ]);
+            if (! $accept) {
+                $content = $this->contractApprovalSnapshot($contract);
+                $content['customer_response'] = ['decision' => 'changes_requested', 'note' => trim((string) $note)];
+                app(ApprovalWorkflow::class)->recordDecision(
+                    'contract', $contractId, 'customer_changes_requested', 'approved', 'changes_requested',
+                    $customerId, trim((string) $note), $content
+                );
+            }
         });
+    }
+
+    private function contractApprovalSnapshot(object $contract): array
+    {
+        $debtId = $contract->order_id
+            ? DB::table('debts')->where('order_id', $contract->order_id)->where('direction', 'receivable')->value('id')
+            : null;
+
+        return [
+            'contract' => array_intersect_key((array) $contract, array_flip([
+                'id', 'code', 'quote_id', 'order_id', 'created_by', 'last_edited_by', 'last_submitted_by',
+                'total', 'deposit_required', 'payment_terms', 'delivery_terms', 'payment_schedule_draft',
+            ])),
+            'payment_installments' => $debtId
+                ? DB::table('payment_installments')->where('debt_id', $debtId)->orderBy('sequence')->get([
+                    'sequence', 'label', 'amount', 'due_on', 'trigger', 'days_after_trigger', 'required_before_issue',
+                ])->map(fn ($row) => (array) $row)->all()
+                : [],
+            'order_items' => $contract->order_id
+                ? DB::table('order_items')->join('products', 'products.id', '=', 'order_items.product_id')
+                    ->where('order_items.order_id', $contract->order_id)->orderBy('order_items.id')->get([
+                        'order_items.id', 'order_items.product_id', 'products.name as product_name',
+                        'products.specification as product_specification', 'products.unit as product_unit',
+                        'order_items.quantity', 'order_items.unit_price', 'order_items.line_total',
+                    ])->map(fn ($row) => (array) $row)->all()
+                : [],
+        ];
     }
 
     public function cancelContract(int $contractId, int $managerId, string $reason): void
@@ -421,8 +580,9 @@ class CommerceWorkflow
                 'cancelled_at' => now(), 'cancellation_note' => trim($reason), 'updated_at' => now(),
             ]);
             if ($contract->order_id) {
+                $cancelledAt = now();
                 DB::table('orders')->where('id', $contract->order_id)->where('status', 'awaiting_contract')
-                    ->update(['status' => 'cancelled', 'updated_at' => now()]);
+                    ->update(['status' => 'cancelled', 'cancelled_at' => $cancelledAt, 'updated_at' => $cancelledAt]);
                 DB::table('debts')->where('order_id', $contract->order_id)->update([
                     'amount' => 0, 'status' => 'settled', 'updated_at' => now(),
                 ]);
@@ -430,9 +590,9 @@ class CommerceWorkflow
         });
     }
 
-    public function signContract(int $contractId, string $documentPath): int
+    public function signContract(int $contractId, string $documentPath, ?int $signingStaffId = null): int
     {
-        return DB::transaction(function () use ($contractId, $documentPath) {
+        return DB::transaction(function () use ($contractId, $documentPath, $signingStaffId) {
             $contract = DB::table('contracts')->where('id', $contractId)->lockForUpdate()->first();
             if (! $contract || $contract->status !== 'approved' || ! $contract->customer_confirmed_at) {
                 $this->fail('Hợp đồng phải được quản lý và khách hàng xác nhận trước khi ký.');
@@ -473,23 +633,52 @@ class CommerceWorkflow
             }
             DB::table('orders')->where('id', $order->id)->update([
                 'contract_id' => $contractId,
-                'status' => bccomp((string) $contract->deposit_required, '0', 2) === 0 ? 'ready_to_issue' : 'awaiting_payment',
+                'status' => 'awaiting_payment',
                 'updated_at' => now(),
             ]);
+            $debt = DB::table('debts')->where('order_id', $order->id)->where('direction', 'receivable')->first();
+            $schedule = app(PaymentScheduleWorkflow::class);
+            if ($debt && ! $schedule->applyContractDraftSchedule(
+                $contractId, (int) $debt->id, $signingStaffId ?? (int) $contract->created_by
+            )) {
+                $schedule->ensureLegacySchedule((int) $debt->id);
+            }
             DB::table('contracts')->where('id', $contractId)->update([
                 'status' => 'signed', 'document_path' => $documentPath,
                 'signed_at' => now(), 'updated_at' => now(),
             ]);
+            if ($debt) {
+                $schedule->activateSigningTerms((int) $order->id);
+                DB::table('orders')->where('id', $order->id)->update([
+                    'status' => $schedule->isReleaseEligible((int) $order->id) ? 'ready_to_issue' : 'awaiting_payment',
+                    'updated_at' => now(),
+                ]);
+            }
 
             return $order->id;
         });
     }
 
-    public function recordPayment(int $debtId, int $accountantId, string $amount, string $method, ?string $reference = null): int
+    public function recordPayment(int $debtId, int $accountantId, string $amount, string $method, ?string $reference = null, ?string $idempotencyKey = null): int
     {
-        return DB::transaction(function () use ($debtId, $accountantId, $amount, $method, $reference) {
+        return DB::transaction(function () use ($debtId, $accountantId, $amount, $method, $reference, $idempotencyKey) {
             $debt = DB::table('debts')->where('id', $debtId)->lockForUpdate()->first();
-            if (! $debt || ! is_numeric($amount) || bccomp($amount, '0', 2) <= 0 ||
+            if (! preg_match('/^\d+(?:\.\d{1,2})?$/', $amount)) {
+                $this->fail('Số tiền phải là số dương với tối đa hai chữ số thập phân.');
+            }
+            if ($idempotencyKey !== null) {
+                $prior = DB::table('payments')->where('idempotency_key', $idempotencyKey)->first();
+                if ($prior) {
+                    if ((int) $prior->debt_id !== $debtId
+                        || bccomp((string) $prior->amount, $amount, 2) !== 0 || $prior->method !== $method
+                        || (string) ($prior->reference ?? '') !== (string) ($reference ?? '')) {
+                        $this->fail('Mã gửi lại đã được dùng cho một giao dịch thanh toán khác.');
+                    }
+
+                    return (int) $prior->id;
+                }
+            }
+            if (! $debt || bccomp($amount, '0', 2) <= 0 ||
                 bccomp($amount, bcsub((string) $debt->amount, (string) $debt->paid, 2), 2) > 0) {
                 $this->fail('Số tiền thanh toán vượt số dư hoặc không hợp lệ.');
             }
@@ -507,9 +696,13 @@ class CommerceWorkflow
             $id = DB::table('payments')->insertGetId([
                 'code' => 'TEMP-'.uniqid(), 'debt_id' => $debtId, 'recorded_by' => $accountantId,
                 'amount' => $amount, 'method' => $method, 'reference' => $reference,
+                'idempotency_key' => $idempotencyKey,
                 'paid_at' => now(), 'created_at' => now(), 'updated_at' => now(),
             ]);
             DB::table('payments')->where('id', $id)->update(['code' => $this->code('TT', $id)]);
+            if ($debt->direction === 'receivable') {
+                app(PaymentScheduleWorkflow::class)->allocatePayment($id);
+            }
             $paid = bcadd((string) $debt->paid, $amount, 2);
             DB::table('debts')->where('id', $debtId)->update([
                 'paid' => $paid, 'status' => bccomp($paid, (string) $debt->amount, 2) >= 0 ? 'settled' : 'open',
@@ -517,10 +710,9 @@ class CommerceWorkflow
             ]);
             if ($debt->order_id) {
                 $order = DB::table('orders')->where('id', $debt->order_id)->lockForUpdate()->first();
-                $contract = DB::table('contracts')->where('id', $order->contract_id)->first();
                 $changes = ['paid' => $paid, 'updated_at' => now()];
-                $required = $contract?->deposit_required ?? $order->total;
-                if ($order->status === 'awaiting_payment' && bccomp($paid, (string) $required, 2) >= 0) {
+                if ($order->status === 'awaiting_payment'
+                    && app(PaymentScheduleWorkflow::class)->isReleaseEligible((int) $order->id)) {
                     $changes['status'] = 'ready_to_issue';
                 }
                 DB::table('orders')->where('id', $order->id)->update($changes);
@@ -530,12 +722,29 @@ class CommerceWorkflow
         });
     }
 
-    public function useCustomerCredit(int $creditId, int $accountantId, string $amount, string $type, ?int $debtId = null, ?string $method = null, ?string $reference = null): int
+    public function useCustomerCredit(int $creditId, int $accountantId, string $amount, string $type, ?int $debtId = null, ?string $method = null, ?string $reference = null, ?string $idempotencyKey = null): int
     {
-        return DB::transaction(function () use ($creditId, $accountantId, $amount, $type, $debtId, $method, $reference) {
+        return DB::transaction(function () use ($creditId, $accountantId, $amount, $type, $debtId, $method, $reference, $idempotencyKey) {
             $credit = DB::table('customer_credits')->where('id', $creditId)->lockForUpdate()->first();
-            if (! $credit || $credit->status !== 'open' || ! preg_match('/^\d+(\.\d{1,2})?$/', $amount)
+            if (! $credit || ! Str::isUuid($idempotencyKey) || ! preg_match('/^\d+(\.\d{1,2})?$/', $amount)
                 || bccomp($amount, '0', 2) <= 0 || ! in_array($type, ['refund', 'offset'], true)) {
+                $this->fail('Khoản ghi có hoặc số tiền xử lý không hợp lệ.');
+            }
+            $existing = DB::table('customer_credit_movements')->where('idempotency_key', $idempotencyKey)->first();
+            if ($existing) {
+                $sameRequest = (int) $existing->customer_credit_id === $creditId
+                    && (int) $existing->recorded_by === $accountantId
+                    && $existing->type === $type && bccomp((string) $existing->amount, $amount, 2) === 0
+                    && (int) ($existing->debt_id ?? 0) === (int) ($debtId ?? 0)
+                    && $existing->method === ($type === 'refund' ? $method : null)
+                    && $existing->reference === $reference;
+                if (! $sameRequest) {
+                    $this->fail('Mã thao tác đã được dùng cho một yêu cầu hoàn tiền hoặc cấn trừ khác.');
+                }
+
+                return (int) $existing->id;
+            }
+            if ($credit->status !== 'open') {
                 $this->fail('Khoản ghi có hoặc số tiền xử lý không hợp lệ.');
             }
             $used = (string) DB::table('customer_credit_movements')->where('customer_credit_id', $creditId)->sum('amount');
@@ -543,6 +752,7 @@ class CommerceWorkflow
             if (bccomp($amount, $remaining, 2) > 0) {
                 $this->fail('Số tiền vượt số dư được hoàn hoặc cấn trừ.');
             }
+            $offsetDebt = null;
             if ($type === 'refund') {
                 if ($debtId || ! in_array($method, ['cash', 'bank_transfer'], true)) {
                     $this->fail('Cần chọn phương thức hoàn tiền hợp lệ.');
@@ -566,24 +776,29 @@ class CommerceWorkflow
                     'paid' => $paid, 'status' => bccomp($paid, (string) $debt->amount, 2) >= 0 ? 'settled' : 'open',
                     'updated_at' => now(),
                 ]);
-                if ($debt->order_id) {
-                    $order = DB::table('orders')->where('id', $debt->order_id)->lockForUpdate()->first();
-                    $contract = DB::table('contracts')->where('id', $order->contract_id)->first();
-                    $required = $contract?->deposit_required ?? $order->total;
-                    DB::table('orders')->where('id', $order->id)->update([
-                        'paid' => $paid,
-                        'status' => $order->status === 'awaiting_payment' && bccomp($paid, (string) $required, 2) >= 0
-                            ? 'ready_to_issue' : $order->status,
-                        'updated_at' => now(),
-                    ]);
-                }
+                $offsetDebt = $debt;
             }
             $id = DB::table('customer_credit_movements')->insertGetId([
                 'customer_credit_id' => $creditId, 'debt_id' => $type === 'offset' ? $debtId : null,
                 'recorded_by' => $accountantId, 'type' => $type, 'amount' => $amount,
                 'method' => $type === 'refund' ? $method : null, 'reference' => $reference,
+                'idempotency_key' => $idempotencyKey,
                 'created_at' => now(), 'updated_at' => now(),
             ]);
+            if ($type === 'offset') {
+                app(PaymentScheduleWorkflow::class)->allocateCustomerCredit($id);
+                if ($offsetDebt?->order_id) {
+                    $order = DB::table('orders')->where('id', $offsetDebt->order_id)->lockForUpdate()->first();
+                    $changes = ['paid' => bcadd((string) $offsetDebt->paid, $amount, 2), 'updated_at' => now()];
+                    if ($order?->status === 'awaiting_payment'
+                        && app(PaymentScheduleWorkflow::class)->isReleaseEligible((int) $order->id)) {
+                        $changes['status'] = 'ready_to_issue';
+                    }
+                    if ($order) {
+                        DB::table('orders')->where('id', $order->id)->update($changes);
+                    }
+                }
+            }
             if (bccomp($amount, $remaining, 2) === 0) {
                 DB::table('customer_credits')->where('id', $creditId)->update(['status' => 'settled', 'updated_at' => now()]);
             }
@@ -603,7 +818,7 @@ class CommerceWorkflow
             if ($order->requires_contract && $contract?->status !== 'signed') {
                 $this->fail('Cần có hợp đồng đã ký trước khi lập hóa đơn.');
             }
-            if (bccomp((string) $order->paid, (string) ($contract?->deposit_required ?? $order->total), 2) < 0) {
+            if (! app(PaymentScheduleWorkflow::class)->isReleaseEligible($orderId)) {
                 $this->fail('Đơn hàng chưa được thanh toán đủ theo điều kiện xuất hàng.');
             }
             if (DB::table('invoices')->where('order_id', $orderId)->exists()) {
@@ -666,6 +881,9 @@ class CommerceWorkflow
     {
         if (! DB::table('invoices')->where('order_id', $orderId)->exists()) {
             $this->fail('Cần lập hóa đơn trước khi phát lệnh xuất hàng.');
+        }
+        if (! app(PaymentScheduleWorkflow::class)->isReleaseEligible($orderId)) {
+            $this->fail('Các đợt thanh toán bắt buộc trước khi xuất chưa được thanh toán đủ.');
         }
         $changed = DB::table('orders')->where('id', $orderId)->where('status', 'ready_to_issue')
             ->whereNull('released_by')->update([

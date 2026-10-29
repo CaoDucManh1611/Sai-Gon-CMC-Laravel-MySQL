@@ -1,5 +1,5 @@
 @php
-    $openReceivables = $debts->filter(fn ($debt) => $debt->direction === 'receivable' && $debt->status === 'open' && $debt->paid < $debt->amount && !in_array($debt->order_status, ['rejected', 'cancelled'], true) && (!$debt->requires_contract || $debt->contract_status === 'signed'));
+    $openReceivables = $debts->filter(fn ($debt) => $debt->direction === 'receivable' && $debt->status === 'open' && $debt->paid < $debt->amount && !in_array($debt->order_status, ['awaiting_confirmation', 'awaiting_contract', 'rejected', 'cancelled'], true) && (!$debt->requires_contract || $debt->contract_status === 'signed'));
     $openPayables = $debts->filter(fn ($debt) => $debt->direction === 'payable' && $debt->status === 'open' && $debt->paid < $debt->amount);
     $pendingInvoices = $orders->filter(fn ($order) => $order->status === 'ready_to_issue' && !isset($invoices[$order->id]));
     $openCredits = $customerCredits->filter(fn ($credit) => $credit->status === 'open' && (float) $credit->amount > (float) ($creditUsed[$credit->id] ?? 0));
@@ -12,6 +12,10 @@
         <a href="{{ route('staff.section', 'finance') }}" class="accounting-metric"><span>Phải trả chưa tất toán</span><strong>{{ $openPayables->count() }}</strong><small>Xem công nợ →</small></a>
         <a href="{{ route('staff.section', 'orders') }}" class="accounting-metric"><span>Hóa đơn cần lập</span><strong>{{ $pendingInvoices->count() }}</strong><small>Xem đơn hàng →</small></a>
         <a href="{{ route('staff.section', 'finance') }}" class="accounting-metric"><span>Khoản cần hoàn / cấn trừ</span><strong>{{ $openCredits->count() }}</strong><small>Xem khoản cần xử lý →</small></a>
+    </div>
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        @if(auth()->user()->hasPermission('debts.manage'))<a class="btn btn-outline-dark btn-sm" href="{{ route('staff.debt-reconciliations.index') }}">Lập / xem đối chiếu công nợ khách</a>@endif
+        @if(auth()->user()->hasPermission('supplier.confirmations.manage'))<a class="btn btn-outline-dark btn-sm" href="{{ route('staff.supplier-debt-confirmations.index') }}">Chứng từ xác nhận NCC</a>@endif
     </div>
     <div class="accounting-lower">
         <section class="accounting-card"><div class="accounting-card-heading"><div><span class="accounting-kicker">CÔNG NỢ</span><h2>Khoản chưa tất toán</h2></div><a href="{{ route('staff.section', 'finance') }}">Xem tất cả →</a></div>

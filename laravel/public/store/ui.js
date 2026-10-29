@@ -18,44 +18,115 @@ if (cartScroll !== null) {
     sessionStorage.removeItem('cartScrollY');
     window.scrollTo(0, Number(cartScroll));
 }
+const pendingCartUpdates = new Set();
+let cartUpdateQueue = Promise.resolve();
+let checkoutWaiting = false;
+let cartActionSubmitted = false;
+const cartActionButtons = [...document.querySelectorAll('[data-cart-submit] button[type="submit"]')];
+const initialCartActionButtonStates = new Map(cartActionButtons.map(button => [button, button.disabled]));
+const setCartControlsDisabled = disabled => {
+    document.querySelectorAll('[data-cart-update-form]').forEach(form => {
+        const input = form.querySelector('input[name="quantity"][type="number"]');
+        const decrease = form.querySelector('button[value="decrease"]');
+        const increase = form.querySelector('button[value="increase"]');
+        const remove = form.querySelector('button[value="remove"]');
+        if (input) input.disabled = disabled;
+        if (decrease) decrease.disabled = disabled || Number(input.value) <= Number(input.min);
+        if (increase) increase.disabled = disabled || Number(input.value) >= Number(input.max);
+        if (remove) remove.disabled = disabled;
+    });
+};
+window.addEventListener('pageshow', event => {
+    if (!event.persisted) return;
+    checkoutWaiting = false;
+    cartActionSubmitted = false;
+    setCartControlsDisabled(false);
+    cartActionButtons.forEach(button => { button.disabled = initialCartActionButtonStates.get(button); });
+});
 document.querySelectorAll('[data-cart-update-form]').forEach(form => {
     const input = form.querySelector('input[name="quantity"][type="number"]');
     let submitting = false;
     form.addEventListener('submit', async event => {
-        if (input && window.fetch) {
+        if (checkoutWaiting || cartActionSubmitted) {
             event.preventDefault();
-            if (submitting || !input.reportValidity()) return;
+            return;
+        }
+        if (window.fetch) {
+            event.preventDefault();
+            if (submitting || (input && !input.reportValidity())) return;
             submitting = true;
+            const removing = !input;
+            const actionButtonStates = cartActionButtons.map(button => button.disabled);
+            if (removing) {
+                checkoutWaiting = true;
+                setCartControlsDisabled(true);
+                cartActionButtons.forEach(button => { button.disabled = true; });
+            }
             const data = new FormData(form);
             if (event.submitter?.name) data.set(event.submitter.name, event.submitter.value);
             const buttons = [...form.querySelectorAll('button')];
             const disabledBefore = buttons.map(button => button.disabled);
             buttons.forEach(button => { button.disabled = true; });
+            if (input) input.disabled = true;
             const actions = form.closest('.cart-actions');
             let error = actions.querySelector('.cart-save-error');
             if (error) error.remove();
-            try {
+            const request = cartUpdateQueue.then(async () => {
                 const response = await fetch(form.getAttribute('action'), {
                     method: 'POST', body: data, credentials: 'same-origin',
                     headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                 });
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.errors?.quantity?.[0] || result.message || 'Không thể cập nhật số lượng.');
-                input.value = result.quantity;
-                form.closest('.cart-row').querySelector('.cart-price').textContent = result.lineTotal;
-                document.querySelector('.summary-line.total strong').textContent = result.total;
-                form.querySelector('button[value="decrease"]').disabled = !result.canDecrease;
-                form.querySelector('button[value="increase"]').disabled = Number(result.quantity) >= Number(input.max);
-            } catch (cause) {
+                const productId = form.querySelector('input[name="product_id"]').value;
+                const total = document.querySelector('.summary-line.total strong');
+                if (total) total.textContent = result.total;
+                if (result.removed) {
+                    form.closest('.cart-row').remove();
+                    document.querySelectorAll(`[data-checkout-quantity="${productId}"]`).forEach(field => field.remove());
+                    if (!document.querySelector('.cart-row')) {
+                        const grid = document.querySelector('[data-cart-grid]');
+                        const empty = document.createElement('div');
+                        empty.className = 'empty-state mb-5';
+                        const title = document.createElement('h2');
+                        title.textContent = 'Giỏ hàng đang trống';
+                        const catalogLink = document.createElement('a');
+                        catalogLink.className = 'btn-editorial dark';
+                        catalogLink.href = grid?.dataset.cartCatalogUrl || '/products';
+                        catalogLink.textContent = 'Xem sản phẩm';
+                        empty.append(title, catalogLink);
+                        grid?.replaceWith(empty);
+                    }
+                } else {
+                    input.value = result.quantity;
+                    form.closest('.cart-row').querySelector('.cart-price').textContent = result.lineTotal;
+                    document.querySelectorAll(`[data-checkout-quantity="${productId}"]`).forEach(field => { field.value = result.quantity; });
+                    form.querySelector('button[value="decrease"]').disabled = !result.canDecrease;
+                    form.querySelector('button[value="increase"]').disabled = Number(result.quantity) >= Number(input.max);
+                }
+                document.querySelectorAll('[data-cart-key]').forEach(field => { field.value = result.idempotencyKey; });
+                return { ok: true, removed: result.removed };
+            }).catch(cause => {
                 error = document.createElement('span');
                 error.className = 'cart-save-error';
                 error.setAttribute('role', 'alert');
                 error.textContent = cause.message || 'Không thể cập nhật số lượng.';
                 actions.append(error);
                 buttons.forEach((button, index) => { button.disabled = disabledBefore[index]; });
-            } finally {
+                return false;
+            }).finally(() => {
+                if (checkoutWaiting) setCartControlsDisabled(true);
+                else if (input) input.disabled = false;
+                if (removing) {
+                    checkoutWaiting = false;
+                    setCartControlsDisabled(false);
+                    cartActionButtons.forEach((button, index) => { button.disabled = actionButtonStates[index]; });
+                }
                 submitting = false;
-            }
+            });
+            cartUpdateQueue = request;
+            pendingCartUpdates.add(request);
+            request.then(() => pendingCartUpdates.delete(request));
             return;
         }
         submitting = true;
@@ -63,8 +134,71 @@ document.querySelectorAll('[data-cart-update-form]').forEach(form => {
     });
     input?.addEventListener('change', () => {
         setTimeout(() => {
+            if (document.activeElement?.closest('[data-cart-submit]')) return;
             if (!submitting && input.reportValidity()) form.requestSubmit();
         }, 0);
+    });
+});
+document.querySelectorAll('[data-cart-submit]').forEach(form => {
+    let waitingForCart = false;
+    let resubmitting = false;
+    const synchronizeQuantities = () => {
+        const inputs = [...document.querySelectorAll('[data-cart-product-quantity]')];
+        if (inputs.length === 0) return false;
+        for (const input of inputs) {
+            if (!input.reportValidity()) return false;
+            const hidden = [...form.querySelectorAll('[data-checkout-quantity]')]
+                .find(field => field.dataset.checkoutQuantity === input.dataset.cartProductQuantity);
+            if (hidden) hidden.value = input.value;
+        }
+
+        return true;
+    };
+
+    form.addEventListener('submit', async event => {
+        if (resubmitting) {
+            resubmitting = false;
+            return;
+        }
+        if (checkoutWaiting || cartActionSubmitted) {
+            event.preventDefault();
+            return;
+        }
+        if (waitingForCart) {
+            event.preventDefault();
+            return;
+        }
+        if (!synchronizeQuantities()) {
+            event.preventDefault();
+            document.querySelector('[data-cart-product-quantity]:invalid')?.focus();
+            return;
+        }
+        const buttons = [...document.querySelectorAll('[data-cart-submit] button[type="submit"]')];
+        const disabledBefore = buttons.map(button => button.disabled);
+        cartActionSubmitted = true;
+        if (pendingCartUpdates.size === 0) {
+            buttons.forEach(button => { button.disabled = true; });
+            return;
+        }
+
+        event.preventDefault();
+        waitingForCart = true;
+        checkoutWaiting = true;
+        const submitter = event.submitter;
+        setCartControlsDisabled(true);
+        buttons.forEach(button => { button.disabled = true; });
+        const results = await Promise.all([...pendingCartUpdates]);
+        waitingForCart = false;
+        checkoutWaiting = false;
+        setCartControlsDisabled(false);
+        if (results.some(result => !result) || !synchronizeQuantities() || !form.reportValidity()) {
+            cartActionSubmitted = false;
+            buttons.forEach((button, index) => { button.disabled = disabledBefore[index]; });
+            return;
+        }
+
+        resubmitting = true;
+        submitter ? form.requestSubmit(submitter) : form.requestSubmit();
     });
 });
 const header = document.querySelector('#siteHeader');

@@ -1,5 +1,5 @@
 <h3 class="h5 mt-4">Hàng giao thiếu hoặc hỏng</h3>
-@if(in_array($role, ['warehouse', 'admin']))
+@if(auth()->user()->hasPermission('suppliers.manage'))
     @foreach($purchases as $purchase)
         @if(in_array($purchase->status, ['approved', 'received']))
             <details class="order-card">
@@ -31,7 +31,7 @@
         <strong>{{ $incident->product_name }}</strong> · {{ $incident->type === 'shortage' ? 'Giao thiếu' : 'Hàng hỏng / sai quy cách' }} · {{ \App\Support\UiFormat::quantity($incident->quantity) }} · {{ $incident->status === 'open' ? 'Đang xử lý' : 'Đã xử lý' }}
         <p class="mb-1">{{ $incident->note }}</p>
         @if($incident->resolution_note)<p class="mb-1">Kết quả: {{ $incident->resolution_note }}</p>@endif
-        @if($incident->status === 'open' && in_array($role, ['warehouse', 'admin']))
+        @if($incident->status === 'open' && auth()->user()->hasPermission('suppliers.manage'))
             <form method="post" action="{{ route('staff.supplier-incidents.resolve', $incident->id) }}" class="d-flex gap-2 flex-wrap">
                 @csrf
                 <input class="form-control" style="max-width:420px" name="resolution_note" placeholder="Đổi hàng, giao bù hoặc trả nhà cung cấp" maxlength="2000" required>
@@ -40,3 +40,4 @@
         @endif
     </article>
 @endforeach
+@if(method_exists($supplierIncidents, 'links')){{ $supplierIncidents->links() }}@endif

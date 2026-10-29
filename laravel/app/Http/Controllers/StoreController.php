@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Services\CommerceWorkflow;
 use App\Services\FulfillmentWorkflow;
+use App\Services\PaymentScheduleWorkflow;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -141,12 +143,18 @@ class StoreController extends Controller
             }
         }
 
-        return view('store.cart', compact('cart', 'products', 'total', 'warehouses', 'canPickup', 'availability'));
+        $pickupOrderKey = $request->session()->get('pickup_order_key');
+        if (! $pickupOrderKey) {
+            $pickupOrderKey = (string) Str::uuid();
+            $request->session()->put('pickup_order_key', $pickupOrderKey);
+        }
+
+        return view('store.cart', compact('cart', 'products', 'total', 'warehouses', 'canPickup', 'availability', 'pickupOrderKey'));
     }
 
     public function addToCart(Request $request): RedirectResponse
     {
-        $data = $request->validate(['product_id' => ['required', 'integer', 'exists:products,id'], 'quantity' => ['required', 'numeric', 'gt:0', 'lte:1000000'], 'replace' => ['sometimes', 'boolean']]);
+        $data = $request->validate(['product_id' => ['required', 'integer', 'exists:products,id'], 'quantity' => ['required', 'regex:/^\d+(?:\.\d{1,3})?$/', 'numeric', 'gt:0', 'lte:1000000'], 'replace' => ['sometimes', 'boolean']]);
         $product = DB::table('products')->where('id', $data['product_id'])->where('active', true)->first(['id', 'name', 'unit', 'image_path']);
         abort_unless($product, 404);
         $cart = $request->session()->get('cart', []);
@@ -156,6 +164,7 @@ class StoreController extends Controller
         $this->validateQuantityUnit($quantity, $product->unit);
         $cart[$id] = $quantity;
         $request->session()->put('cart', $cart);
+        $request->session()->put('pickup_order_key', (string) Str::uuid());
 
         return ($request->input('next') === 'cart' ? redirect()->route('cart') : back())
             ->with('cart_added', ['name' => $product->name, 'unit' => $product->unit, 'image' => $product->image_path, 'quantity' => $quantity, 'replaced' => $replaced]);
@@ -163,7 +172,7 @@ class StoreController extends Controller
 
     public function updateCart(Request $request): JsonResponse|RedirectResponse
     {
-        $data = $request->validate(['product_id' => ['required', 'integer'], 'quantity' => ['required', 'numeric', 'min:0', 'lte:1000000'], 'action' => ['sometimes', 'in:increase,decrease,remove']]);
+        $data = $request->validate(['product_id' => ['required', 'integer'], 'quantity' => ['required', 'regex:/^\d+(?:\.\d{1,3})?$/', 'numeric', 'min:0', 'lte:1000000'], 'action' => ['sometimes', 'in:increase,decrease,remove']]);
         $cart = $request->session()->get('cart', []);
         $product = DB::table('products')->where('id', $data['product_id'])->where('active', true)->first(['id', 'unit']);
         if (($data['action'] ?? null) === 'remove' || $data['quantity'] == 0 && ! isset($data['action'])) {
@@ -171,9 +180,9 @@ class StoreController extends Controller
         } elseif ($product) {
             $step = $product->unit === 'm³' ? '0.1' : '1';
             $quantity = match ($data['action'] ?? null) {
-                'increase' => rtrim(rtrim(bcadd((string) ($cart[$data['product_id']] ?? 0), $step, 3), '0'), '.'),
+                'increase' => rtrim(rtrim(bcadd((string) $data['quantity'], $step, 3), '0'), '.'),
                 'decrease' => max(in_array($product->unit, ['m³', 'kg'], true) ? 0.001 : 1,
-                    (float) bcsub((string) ($cart[$data['product_id']] ?? 0), $step, 3)),
+                    (float) bcsub((string) $data['quantity'], $step, 3)),
                 default => $data['quantity'],
             };
             if (bccomp((string) $quantity, '1000000', 3) > 0) {
@@ -183,8 +192,10 @@ class StoreController extends Controller
             $cart[$data['product_id']] = $quantity;
         }
         $request->session()->put('cart', $cart);
+        $pickupOrderKey = (string) Str::uuid();
+        $request->session()->put('pickup_order_key', $pickupOrderKey);
 
-        if ($request->expectsJson() && $product && isset($cart[$data['product_id']])) {
+        if ($request->expectsJson()) {
             $prices = DB::table('products')->whereIn('id', array_keys($cart))->pluck('price', 'id');
             $total = '0.00';
             foreach ($prices as $id => $price) {
@@ -192,10 +203,14 @@ class StoreController extends Controller
             }
 
             return response()->json([
-                'quantity' => (string) $cart[$data['product_id']],
-                'lineTotal' => number_format((float) bcmul((string) $prices[$data['product_id']], (string) $cart[$data['product_id']], 2), 0, ',', '.').' ₫',
+                'quantity' => isset($cart[$data['product_id']]) ? (string) $cart[$data['product_id']] : null,
+                'lineTotal' => isset($cart[$data['product_id']], $prices[$data['product_id']])
+                    ? number_format((float) bcmul((string) $prices[$data['product_id']], (string) $cart[$data['product_id']], 2), 0, ',', '.').' ₫' : null,
                 'total' => number_format((float) $total, 0, ',', '.').' ₫',
-                'canDecrease' => (float) $cart[$data['product_id']] > (in_array($product->unit, ['m³', 'kg'], true) ? 0.001 : 1),
+                'canDecrease' => isset($cart[$data['product_id']]) && $product
+                    && (float) $cart[$data['product_id']] > (in_array($product->unit, ['m³', 'kg'], true) ? 0.001 : 1),
+                'removed' => ! isset($cart[$data['product_id']]),
+                'idempotencyKey' => $pickupOrderKey,
             ]);
         }
 
@@ -211,21 +226,46 @@ class StoreController extends Controller
 
     public function requestQuote(Request $request, CommerceWorkflow $workflow): RedirectResponse
     {
-        $data = $request->validate(['delivery_address' => ['required', 'string', 'max:1000'], 'note' => ['nullable', 'string', 'max:2000']]);
-        $cart = $request->session()->get('cart', []);
+        $data = $request->validate([
+            'delivery_address' => ['required', 'string', 'max:1000'], 'note' => ['nullable', 'string', 'max:2000'],
+            'cart_key' => ['sometimes', 'nullable', 'uuid'], 'quantities' => ['sometimes', 'array', 'min:1'],
+            'quantities.*' => ['required', 'numeric', 'gt:0', 'lte:1000000'],
+        ]);
+        $cart = $data['quantities'] ?? $request->session()->get('cart', []);
         $id = $workflow->requestQuote($request->user()->id, $cart, $data['delivery_address'], $data['note'] ?? null);
-        $request->session()->forget('cart');
+        $currentCartKey = $request->session()->get('pickup_order_key');
+        $submittedCartKey = $data['cart_key'] ?? null;
+        if (! $currentCartKey || $submittedCartKey && hash_equals((string) $currentCartKey, $submittedCartKey)) {
+            $request->session()->forget(['cart', 'pickup_order_key']);
+        }
 
         return redirect()->route('my.quotes')->with('success', 'Đã gửi yêu cầu báo giá '.DB::table('quotes')->find($id)->code.'.');
     }
 
     public function placePickupOrder(Request $request, CommerceWorkflow $workflow): RedirectResponse
     {
-        $data = $request->validate(['warehouse_id' => ['required', 'integer', 'exists:warehouses,id']]);
-        $id = $workflow->placePickupOrder($request->user()->id, $request->session()->get('cart', []), $data['warehouse_id']);
-        $request->session()->forget('cart');
+        $data = $request->validate([
+            'warehouse_id' => ['required', 'integer', 'exists:warehouses,id'],
+            'idempotency_key' => ['sometimes', 'nullable', 'uuid'],
+            'quantities' => ['sometimes', 'array', 'min:1'],
+            'quantities.*' => ['required', 'numeric', 'gt:0', 'lte:1000000'],
+        ]);
+        $items = $data['quantities'] ?? $request->session()->get('cart', []);
+        $currentCartKey = $request->session()->get('pickup_order_key');
+        if ($currentCartKey && empty($data['idempotency_key'])) {
+            throw ValidationException::withMessages(['workflow' => 'Giỏ hàng đã thay đổi; vui lòng tải lại trang trước khi đặt hàng.']);
+        }
+        $idempotencyKey = $data['idempotency_key'] ?? $currentCartKey ?? (string) Str::uuid();
+        $ownsCurrentCart = ! $currentCartKey || hash_equals((string) $currentCartKey, $idempotencyKey);
+        if (! $currentCartKey) {
+            $request->session()->put('pickup_order_key', $idempotencyKey);
+        }
+        $id = $workflow->placePickupOrder($request->user()->id, $items, $data['warehouse_id'], $idempotencyKey);
+        if ($ownsCurrentCart) {
+            $request->session()->forget(['cart', 'pickup_order_key']);
+        }
 
-        return redirect()->route('my.orders')->with('success', 'Đã đặt đơn '.DB::table('orders')->find($id)->code.'. Nhân viên Kinh doanh sẽ xác nhận và lập hợp đồng trước khi thanh toán.');
+        return redirect()->route('my.orders')->with('success', 'Đã đặt đơn '.DB::table('orders')->find($id)->code.'. Nhân viên Kinh doanh sẽ kiểm tra đơn và tồn kho; bạn thanh toán đủ sau khi đơn được xác nhận.');
     }
 
     public function cancelPickupOrder(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
@@ -302,8 +342,14 @@ class StoreController extends Controller
             ->whereIn('order_items.order_id', $contracts->pluck('order_id')->filter())
             ->select('order_items.*', 'products.name as product_name', 'products.unit', 'products.specification')
             ->get()->groupBy('order_id');
+        $contractDebtIds = DB::table('debts')->whereIn('order_id', $contracts->pluck('order_id')->filter())
+            ->where('direction', 'receivable')->pluck('id', 'order_id');
+        $contracts->each(function ($contract) use ($contractDebtIds) {
+            $contract->debt_id = $contractDebtIds[$contract->order_id] ?? null;
+        });
+        $paymentSchedules = app(PaymentScheduleWorkflow::class)->summariesForDebts($contractDebtIds->values()->all());
 
-        return view('store.contracts', compact('contracts', 'contractItems'));
+        return view('store.contracts', compact('contracts', 'contractItems', 'paymentSchedules'));
     }
 
     public function respondToContract(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
@@ -356,7 +402,7 @@ class StoreController extends Controller
         $debts = DB::table('debts')->join('orders', 'orders.id', '=', 'debts.order_id')
             ->leftJoin('contracts', 'contracts.id', '=', 'orders.contract_id')
             ->where('debts.customer_id', $request->user()->id)->where('debts.direction', 'receivable')
-            ->whereNotIn('orders.status', ['rejected', 'cancelled'])
+            ->whereNotIn('orders.status', ['awaiting_confirmation', 'awaiting_contract', 'rejected', 'cancelled'])
             ->where(fn ($query) => $query->where('orders.requires_contract', false)->orWhere('contracts.status', 'signed'))
             ->select('debts.*')->orderByDesc('debts.id')->get();
         $credits = DB::table('customer_credits')->where('customer_id', $request->user()->id)
@@ -364,8 +410,11 @@ class StoreController extends Controller
         $creditUsed = DB::table('customer_credit_movements')->whereIn('customer_credit_id', $credits->pluck('id'))
             ->select('customer_credit_id')->selectRaw('SUM(amount) as total')
             ->groupBy('customer_credit_id')->pluck('total', 'customer_credit_id');
+        $paymentSchedules = app(PaymentScheduleWorkflow::class)->summariesForDebts($debts->pluck('id')->all());
+        $debtReconciliations = DB::table('debt_reconciliations')->where('customer_id', $request->user()->id)
+            ->where('status', '!=', 'draft')->orderByDesc('as_of_date')->orderByDesc('id')->limit(5)->get();
 
-        return view('store.profile', compact('debts', 'credits', 'creditUsed'));
+        return view('store.profile', compact('debts', 'credits', 'creditUsed', 'paymentSchedules', 'debtReconciliations'));
     }
 
     public function updateProfile(Request $request): RedirectResponse

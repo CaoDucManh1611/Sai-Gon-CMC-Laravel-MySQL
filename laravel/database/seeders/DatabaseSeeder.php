@@ -9,6 +9,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call(RolePermissionSeeder::class);
+
         $categories = [
             ['XI-MANG', 'Xi măng'], ['GACH', 'Gạch xây dựng'], ['THEP', 'Sắt thép'],
             ['CAT-DA', 'Cát & đá'], ['VAT-TU-PHU', 'Vật tư phụ'],

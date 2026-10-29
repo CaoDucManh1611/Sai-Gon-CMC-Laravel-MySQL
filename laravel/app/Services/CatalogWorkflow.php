@@ -31,6 +31,12 @@ class CatalogWorkflow
             if (! $change || $change->status !== 'pending') {
                 throw ValidationException::withMessages(['workflow' => 'Đề xuất không còn chờ duyệt.']);
             }
+            app(ApprovalWorkflow::class)->assertIndependent((int) $change->requested_by, $managerId, 'thay đổi danh mục');
+            $content = [
+                'type' => $change->type,
+                'product_id' => $change->product_id,
+                'proposed_data' => json_decode($change->proposed_data, true, flags: JSON_THROW_ON_ERROR),
+            ];
             if ($approve) {
                 $data = json_decode($change->proposed_data, true, flags: JSON_THROW_ON_ERROR);
                 if ($change->type === 'product_create') {
@@ -70,6 +76,9 @@ class CatalogWorkflow
                 'status' => $approve ? 'approved' : 'rejected', 'reviewed_by' => $managerId,
                 'review_note' => $note, 'updated_at' => now(),
             ]);
+            app(ApprovalWorkflow::class)->recordDecision('catalog_change', $changeId, $approve ? 'approved' : 'rejected',
+                'pending', $approve ? 'approved' : 'rejected', $managerId,
+                trim((string) $note) !== '' ? trim($note) : null, $content);
         });
     }
 }

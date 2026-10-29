@@ -128,6 +128,83 @@ class StaffSectionTest extends TestCase
         $response->assertOk()->assertSeeInOrder(['BG-TEST-01', 'BG-TEST-02', 'BG-TEST-03']);
     }
 
+    public function test_contract_search_paginates_all_matches_and_keeps_the_search_term(): void
+    {
+        $sales = User::factory()->create(['role' => 'sales', 'status' => 'active']);
+        $customer = User::factory()->create(['role' => 'customer', 'status' => 'active']);
+        foreach (range(1, 35) as $number) {
+            $quoteId = DB::table('quotes')->insertGetId([
+                'code' => sprintf('BG-CONTRACT-PAGE-%03d', $number), 'customer_id' => $customer->id,
+                'status' => 'accepted', 'delivery_address' => 'Công trình thử',
+            ]);
+            DB::table('contracts')->insert([
+                'code' => sprintf('HD-PAGE-%03d', $number), 'quote_id' => $quoteId, 'created_by' => $sales->id,
+                'status' => 'signed', 'total' => '100.00', 'deposit_required' => '0.00',
+                'payment_terms' => 'Thanh toán theo thỏa thuận', 'delivery_terms' => 'Nhận tại kho',
+            ]);
+        }
+
+        $url = '/staff/work/contracts?contract=HD-PAGE';
+        $this->actingAs($sales)->get($url)->assertOk()->assertSee('HD-PAGE-035')->assertDontSee('HD-PAGE-001')
+            ->assertSee('page=2', false)->assertSee('contract=HD-PAGE', false);
+        $this->actingAs($sales)->get($url.'&page=2')->assertOk()
+            ->assertSee('HD-PAGE-001')->assertDontSee('HD-PAGE-035');
+    }
+
+    public function test_finance_debt_list_paginates_past_the_old_thirty_row_limit(): void
+    {
+        $accounting = User::factory()->create(['role' => 'accounting', 'status' => 'active']);
+        $customer = User::factory()->create(['role' => 'customer', 'status' => 'active']);
+        foreach (range(1, 35) as $number) {
+            DB::table('debts')->insert([
+                'code' => sprintf('CN-FINANCE-%03d', $number), 'direction' => 'receivable',
+                'customer_id' => $customer->id, 'amount' => '100.00', 'paid' => '0.00', 'status' => 'open',
+            ]);
+        }
+
+        $this->actingAs($accounting)->get('/staff/work/finance')->assertOk()
+            ->assertSee('CN-FINANCE-035')->assertDontSee('CN-FINANCE-005')->assertSee('debts_page=2', false);
+        $this->actingAs($accounting)->get('/staff/work/finance?debts_page=2')->assertOk()
+            ->assertSee('CN-FINANCE-005')->assertDontSee('CN-FINANCE-035');
+    }
+
+    public function test_warehouse_order_queue_paginates_past_the_old_thirty_row_limit(): void
+    {
+        $warehouse = User::factory()->create(['role' => 'warehouse', 'status' => 'active']);
+        $customer = User::factory()->create(['role' => 'customer', 'status' => 'active']);
+        foreach (range(1, 35) as $number) {
+            DB::table('orders')->insert([
+                'code' => sprintf('DH-QUEUE-%03d', $number), 'customer_id' => $customer->id,
+                'contract_id' => null, 'status' => 'ready_to_issue', 'total' => '100.00', 'paid' => '100.00',
+                'delivery_address' => 'Nhận tại kho', 'fulfillment_method' => 'pickup', 'requires_contract' => false,
+            ]);
+        }
+
+        $this->actingAs($warehouse)->get('/staff/work/orders')->assertOk()
+            ->assertSee('DH-QUEUE-035')->assertDontSee('DH-QUEUE-005')->assertSee('orders_page=2', false);
+        $this->actingAs($warehouse)->get('/staff/work/orders?orders_page=2')->assertOk()
+            ->assertSee('DH-QUEUE-005')->assertDontSee('DH-QUEUE-035');
+    }
+
+    public function test_sales_quote_search_paginates_all_matches_and_keeps_filters_on_later_pages(): void
+    {
+        $sales = User::factory()->create(['role' => 'sales', 'status' => 'active']);
+        $customer = User::factory()->create(['role' => 'customer', 'status' => 'active', 'name' => 'Khách phân trang']);
+        foreach (range(1, 35) as $number) {
+            DB::table('quotes')->insert([
+                'code' => sprintf('BG-PAGE-%03d', $number), 'customer_id' => $customer->id,
+                'status' => 'requested', 'delivery_address' => 'Công trình thử',
+            ]);
+        }
+
+        $url = '/staff/work/quotes?q=BG-PAGE&status=requested';
+        $this->actingAs($sales)->get($url)->assertOk()->assertSee('35 hồ sơ')
+            ->assertSee('page=2', false)->assertSee('q=BG-PAGE', false)->assertSee('status=requested', false);
+        $this->actingAs($sales)->get($url.'&page=2')->assertOk()
+            ->assertSee('BG-PAGE-001')->assertDontSee('BG-PAGE-035')
+            ->assertSee('value="requested" selected', false);
+    }
+
     public function test_warehouse_inventory_separates_current_stock_from_movement_history(): void
     {
         $warehouse = User::factory()->create(['role' => 'warehouse', 'status' => 'active']);

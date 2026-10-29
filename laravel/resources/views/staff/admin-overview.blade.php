@@ -26,3 +26,4 @@
         </section>
     </div>
 </section>
+@include('staff.partials.approval-history')

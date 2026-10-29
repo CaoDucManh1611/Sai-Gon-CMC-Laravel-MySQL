@@ -9,6 +9,7 @@ use App\Support\UiFormat;
 use Database\Seeders\DemoOpeningStockSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
@@ -21,6 +22,43 @@ class CommerceWorkflowTest extends TestCase
         $this->assertSame('3', UiFormat::inputQuantity('3.000'));
         $this->assertSame('1000', UiFormat::inputQuantity('1000.000'));
         $this->assertSame('1.25', UiFormat::inputQuantity('1.250'));
+    }
+
+    public function test_checkout_and_quote_reject_quantity_precision_the_database_cannot_store(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer', 'status' => 'active']);
+        $warehouse = DB::table('warehouses')->insertGetId(['code' => 'K-PRECISION', 'name' => 'Kho']);
+        $product = DB::table('products')->insertGetId(['code' => 'BULK-PRECISION', 'name' => 'Cát', 'unit' => 'm³', 'price' => 100, 'direct_purchase_allowed' => true]);
+        $workflow = app(CommerceWorkflow::class);
+
+        try {
+            $workflow->requestQuote($customer->id, [$product => '1.0009'], 'Công trình A');
+            $this->fail('Báo giá không được nhận độ chính xác vượt quá ba chữ số thập phân.');
+        } catch (ValidationException) {
+            $this->assertDatabaseCount('quotes', 0);
+        }
+
+        try {
+            $workflow->placePickupOrder($customer->id, [$product => '1.0009'], $warehouse);
+            $this->fail('Đơn nhận tại kho không được nhận độ chính xác vượt quá ba chữ số thập phân.');
+        } catch (ValidationException) {
+            $this->assertDatabaseCount('orders', 0);
+        }
+
+        $wholeUnitProduct = DB::table('products')->insertGetId(['code' => 'BRICK-FRACTION', 'name' => 'Gạch', 'unit' => 'viên', 'price' => 100]);
+        try {
+            $workflow->requestQuote($customer->id, [$wholeUnitProduct => '1.5'], 'Công trình B');
+            $this->fail('Báo giá không được nhận số lẻ cho đơn vị tính nguyên.');
+        } catch (ValidationException) {
+            $this->assertDatabaseCount('quotes', 0);
+        }
+
+        $quote = $workflow->requestQuote($customer->id, [$product => '1.001'], 'Công trình C');
+        $order = $workflow->placePickupOrder($customer->id, [$product => '1.001'], $warehouse);
+        $this->assertDatabaseHas('quote_items', ['quote_id' => $quote, 'product_id' => $product, 'quantity' => '1.001']);
+        $this->assertDatabaseHas('quotes', ['id' => $quote, 'total' => '100.10']);
+        $this->assertDatabaseHas('order_items', ['order_id' => $order, 'product_id' => $product, 'quantity' => '1.001']);
+        $this->assertDatabaseHas('orders', ['id' => $order, 'total' => '100.10']);
     }
 
     public function test_customer_edits_and_withdraws_only_unprocessed_quote(): void
@@ -96,7 +134,7 @@ class CommerceWorkflowTest extends TestCase
         }
         DB::table('inventory')->where('warehouse_id', $warehouse)->where('product_id', $product)->update(['quantity' => 5]);
         app(CommerceWorkflow::class)->reviewOrder($order, $sales->id, true);
-        $this->assertDatabaseHas('orders', ['id' => $order, 'status' => 'awaiting_contract', 'stock_shortage_note' => null]);
+        $this->assertDatabaseHas('orders', ['id' => $order, 'status' => 'awaiting_payment', 'stock_shortage_note' => null]);
     }
 
     public function test_shortage_is_shown_to_staff_on_requested_quote(): void
@@ -134,12 +172,12 @@ class CommerceWorkflowTest extends TestCase
 
         $url = '/staff/debts/'.$debt.'/payments';
         $this->actingAs($sales)->post($url, ['amount' => 40, 'method' => 'bank_transfer'])->assertForbidden();
-        $this->actingAs($accountant)->post($url, ['amount' => 40, 'method' => 'bank_transfer', 'reference' => 'BANK-001'])->assertRedirect();
+        $this->actingAs($accountant)->post($url, ['amount' => 40, 'method' => 'bank_transfer', 'reference' => 'BANK-001', 'idempotency_key' => (string) Str::uuid()])->assertRedirect();
         $this->assertDatabaseHas('debts', ['id' => $debt, 'paid' => 40, 'status' => 'open']);
         $this->assertDatabaseHas('payments', ['debt_id' => $debt, 'amount' => 40, 'reference' => 'BANK-001']);
-        $this->post($url, ['amount' => 61, 'method' => 'cash'])->assertSessionHasErrors('workflow');
+        $this->post($url, ['amount' => 61, 'method' => 'cash', 'idempotency_key' => (string) Str::uuid()])->assertSessionHasErrors('workflow');
         $this->assertDatabaseCount('payments', 1);
-        $this->post($url, ['amount' => 60, 'method' => 'cash'])->assertRedirect();
+        $this->post($url, ['amount' => 60, 'method' => 'cash', 'idempotency_key' => (string) Str::uuid()])->assertRedirect();
         $this->assertDatabaseHas('debts', ['id' => $debt, 'paid' => 100, 'status' => 'settled']);
     }
 
@@ -147,6 +185,7 @@ class CommerceWorkflowTest extends TestCase
     {
         $customer = User::factory()->create(['role' => 'customer', 'status' => 'active']);
         $staff = User::factory()->create(['role' => 'warehouse', 'status' => 'active']);
+        $manager = User::factory()->create(['role' => 'manager', 'status' => 'active']);
         $warehouse = DB::table('warehouses')->insertGetId(['code' => 'K-DOI', 'name' => 'Kho đổi hàng']);
         $product = DB::table('products')->insertGetId(['code' => 'G-DOI', 'name' => 'Gạch đổi', 'unit' => 'viên', 'price' => 100]);
         $supplier = DB::table('suppliers')->insertGetId(['code' => 'NCC-DOI', 'name' => 'Nhà cung cấp đổi']);
@@ -168,8 +207,8 @@ class CommerceWorkflowTest extends TestCase
             ->assertViewHas('debts', fn ($debts) => ! $debts->contains('id', $debtId));
         $commerce->reviewOrder($order, $staff->id, true);
         $contract = $commerce->createContract($order, $staff->id, '0', 'Thanh toán sau', 'Giao công trình');
-        $commerce->submitContract($contract);
-        $commerce->reviewContract($contract, $staff->id, true);
+        $commerce->submitContract($contract, $staff->id);
+        $commerce->reviewContract($contract, $manager->id, true);
         $commerce->respondToContract($contract, $customer->id, true);
         $order = $commerce->signContract($contract, 'contracts/signed.pdf');
         $this->actingAs($customer)->get('/my/profile')->assertOk()
@@ -218,7 +257,7 @@ class CommerceWorkflowTest extends TestCase
             $this->assertDatabaseCount('stock_documents', 0);
         }
 
-        $fulfillment->approvePurchaseOrder($restock, $staff->id);
+        $fulfillment->approvePurchaseOrder($restock, $manager->id);
         $purchaseLine = DB::table('purchase_items')->where('purchase_order_id', $restock)->first();
         $fulfillment->receivePurchaseOrder($restock, $staff->id, [$purchaseLine->id => 1]);
         $this->assertDatabaseHas('returns', ['id' => $return, 'estimated_available_on' => null]);
@@ -293,9 +332,10 @@ class CommerceWorkflowTest extends TestCase
 
         $this->actingAs($customer)->withSession(['cart' => [$product => 2]])
             ->get('/cart')->assertOk()->assertSee('Đặt hàng nhận tại kho')->assertSee('Yêu cầu báo giá công trình');
-        $this->post('/pickup-orders', ['warehouse_id' => $warehouse])->assertRedirect('/my/orders');
+        $this->post('/pickup-orders', ['warehouse_id' => $warehouse, 'idempotency_key' => session('pickup_order_key')])->assertRedirect('/my/orders');
         $order = DB::table('orders')->first();
         $this->assertSame('pickup', $order->fulfillment_method);
+        $this->assertFalse((bool) $order->requires_contract);
         $this->assertNull($order->contract_id);
         $this->assertSame('awaiting_confirmation', $order->status);
         $this->assertEquals(184000, $order->total);
@@ -307,11 +347,14 @@ class CommerceWorkflowTest extends TestCase
         $commerce = app(CommerceWorkflow::class);
         $fulfillment = app(FulfillmentWorkflow::class);
         $commerce->reviewOrder($order->id, $sales->id, true);
-        $contract = $commerce->createContract($order->id, $sales->id, '184000', 'Thanh toán tại quầy', 'Nhận tại kho');
-        $commerce->submitContract($contract);
-        $commerce->reviewContract($contract, $sales->id, true);
-        $commerce->respondToContract($contract, $customer->id, true);
-        $commerce->signContract($contract, 'contracts/pickup.pdf');
+        $this->assertSame('awaiting_payment', DB::table('orders')->find($order->id)->status);
+        $this->assertDatabaseCount('contracts', 0);
+        try {
+            $commerce->issueInvoice($order->id, $accountant->id);
+            $this->fail('Không được lập hóa đơn trước khi thanh toán đủ.');
+        } catch (ValidationException) {
+            $this->assertDatabaseCount('invoices', 0);
+        }
         $commerce->recordPayment($debt->id, $accountant->id, '92000', 'cash');
         $this->assertSame('awaiting_payment', DB::table('orders')->find($order->id)->status);
         $commerce->recordPayment($debt->id, $accountant->id, '92000', 'cash');
@@ -346,6 +389,7 @@ class CommerceWorkflowTest extends TestCase
         $customer = User::factory()->create(['role' => 'customer', 'status' => 'active']);
         DB::table('customers')->insert(['user_id' => $customer->id, 'code' => 'KH-1', 'credit_limit' => 0]);
         $staff = User::factory()->create();
+        $manager = User::factory()->create(['role' => 'manager', 'status' => 'active']);
         $warehouse = DB::table('warehouses')->insertGetId(['code' => 'K1', 'name' => 'Kho chính']);
         $product = DB::table('products')->insertGetId(['code' => 'XM1', 'name' => 'Xi măng', 'unit' => 'bao', 'price' => 100]);
         DB::table('inventory')->insert(['warehouse_id' => $warehouse, 'product_id' => $product, 'quantity' => 5]);
@@ -356,8 +400,8 @@ class CommerceWorkflowTest extends TestCase
         $order = $commerce->acceptQuote($quote, $customer->id);
         $commerce->reviewOrder($order, $staff->id, true);
         $contract = $commerce->createContract($order, $staff->id, '100', 'Cọc 100', 'Giao tại công trình');
-        $commerce->submitContract($contract);
-        $commerce->reviewContract($contract, $staff->id, true);
+        $commerce->submitContract($contract, $staff->id);
+        $commerce->reviewContract($contract, $manager->id, true);
         $commerce->respondToContract($contract, $customer->id, true);
         $order = $commerce->signContract($contract, 'contracts/signed.pdf');
         $this->assertSame('awaiting_payment', DB::table('orders')->find($order)->status);
@@ -408,20 +452,33 @@ class CommerceWorkflowTest extends TestCase
         $nextOrder = $commerce->acceptQuote($nextQuote, $customer->id);
         $commerce->reviewOrder($nextOrder, $staff->id, true);
         $nextContract = $commerce->createContract($nextOrder, $staff->id, '50', 'Cọc 50', 'Giao tại công trình');
-        $commerce->submitContract($nextContract);
-        $commerce->reviewContract($nextContract, $staff->id, true);
+        $commerce->submitContract($nextContract, $staff->id);
+        $commerce->reviewContract($nextContract, $manager->id, true);
         $commerce->respondToContract($nextContract, $customer->id, true);
         $nextOrder = $commerce->signContract($nextContract, 'contracts/second.pdf');
         $nextDebt = DB::table('debts')->where('order_id', $nextOrder)->first();
-        $commerce->useCustomerCredit($credit->id, $staff->id, '60', 'offset', $nextDebt->id);
+        $offsetKey = (string) Str::uuid();
+        $offsetMovement = $commerce->useCustomerCredit($credit->id, $staff->id, '60', 'offset', $nextDebt->id,
+            idempotencyKey: $offsetKey);
+        $this->assertSame($offsetMovement, $commerce->useCustomerCredit($credit->id, $staff->id, '60', 'offset', $nextDebt->id,
+            idempotencyKey: $offsetKey));
         $this->assertEquals(60, DB::table('debts')->find($nextDebt->id)->paid);
         $this->assertSame('ready_to_issue', DB::table('orders')->find($nextOrder)->status);
-        $commerce->useCustomerCredit($credit->id, $staff->id, '40', 'refund', null, 'bank_transfer', 'REF-1');
+        $refundKey = (string) Str::uuid();
+        $refundMovement = $commerce->useCustomerCredit($credit->id, $staff->id, '40', 'refund', null, 'bank_transfer', 'REF-1', $refundKey);
+        $this->assertSame($refundMovement, $commerce->useCustomerCredit($credit->id, $staff->id, '40', 'refund', null, 'bank_transfer', 'REF-1', $refundKey));
+        $differentRefundPayloadRejected = false;
+        try {
+            $commerce->useCustomerCredit($credit->id, $staff->id, '40', 'refund', $nextDebt->id, 'bank_transfer', 'REF-1', $refundKey);
+        } catch (ValidationException) {
+            $differentRefundPayloadRejected = true;
+        }
+        $this->assertTrue($differentRefundPayloadRejected);
         $this->assertDatabaseHas('customer_credits', ['id' => $credit->id, 'status' => 'settled']);
         $this->assertDatabaseCount('customer_credit_movements', 2);
         $this->actingAs($customer)->get('/my/profile')->assertOk()->assertSee('Tiền được hoàn hoặc cấn trừ');
         $this->expectException(ValidationException::class);
-        $commerce->useCustomerCredit($credit->id, $staff->id, '1', 'refund', null, 'cash');
+        $commerce->useCustomerCredit($credit->id, $staff->id, '1', 'refund', null, 'cash', null, (string) Str::uuid());
     }
 
     public function test_exchange_issues_replacement_without_reducing_customer_debt(): void
@@ -429,6 +486,7 @@ class CommerceWorkflowTest extends TestCase
         $customer = User::factory()->create();
         DB::table('customers')->insert(['user_id' => $customer->id, 'code' => 'KH-2', 'credit_limit' => 500]);
         $staff = User::factory()->create();
+        $manager = User::factory()->create(['role' => 'manager', 'status' => 'active']);
         $warehouse = DB::table('warehouses')->insertGetId(['code' => 'K2', 'name' => 'Kho']);
         $supplier = DB::table('suppliers')->insertGetId(['code' => 'N2', 'name' => 'Nhà cung cấp gạch']);
         $otherSupplier = DB::table('suppliers')->insertGetId(['code' => 'N3', 'name' => 'Nhà cung cấp khác']);
@@ -449,8 +507,8 @@ class CommerceWorkflowTest extends TestCase
         $order = $commerce->acceptQuote($quote, $customer->id);
         $commerce->reviewOrder($order, $staff->id, true);
         $contract = $commerce->createContract($order, $staff->id, '0', 'Thanh toán sau', 'Giao công trình');
-        $commerce->submitContract($contract);
-        $commerce->reviewContract($contract, $staff->id, true);
+        $commerce->submitContract($contract, $staff->id);
+        $commerce->reviewContract($contract, $manager->id, true);
         $commerce->respondToContract($contract, $customer->id, true);
         $order = $commerce->signContract($contract, 'contracts/signed.pdf');
         $commerce->issueInvoice($order, $staff->id);
@@ -462,12 +520,28 @@ class CommerceWorkflowTest extends TestCase
         $fulfillment->collectReturn($return, $staff->id, 'Khách hàng', '1', 'Biên bản: viên vỡ');
         $fulfillment->inspectReturn($return, $warehouse, $staff->id, false, 'Hư hỏng');
         try {
-            $fulfillment->sendDamagedReturnToSupplier($return, $otherSupplier, $staff->id, 'Sai nhà cung cấp');
+            $fulfillment->sendDamagedReturnToSupplier($return, $supplier, $staff->id,
+                'Giao nhà cung cấp xử lý gạch vỡ', false, 'Đã xác minh lỗi do nhà cung cấp');
+            $this->fail('Không được trả nhà cung cấp nếu chưa xác nhận trách nhiệm.');
+        } catch (ValidationException) {
+            $this->assertDatabaseMissing('supplier_returns', ['return_id' => $return]);
+        }
+        try {
+            $fulfillment->sendDamagedReturnToSupplier($return, $supplier, $staff->id,
+                'Giao nhà cung cấp xử lý gạch vỡ', true, '   ');
+            $this->fail('Không được trả nhà cung cấp nếu thiếu căn cứ xác minh trách nhiệm.');
+        } catch (ValidationException) {
+            $this->assertDatabaseMissing('supplier_returns', ['return_id' => $return]);
+        }
+        try {
+            $fulfillment->sendDamagedReturnToSupplier($return, $otherSupplier, $staff->id,
+                'Sai nhà cung cấp', true, 'Đã đối chiếu phiếu nhập');
             $this->fail('Không được trả cho nhà cung cấp chưa giao vật liệu');
         } catch (ValidationException) {
             $this->assertDatabaseMissing('supplier_returns', ['return_id' => $return]);
         }
-        $fulfillment->sendDamagedReturnToSupplier($return, $supplier, $staff->id, 'Giao nhà cung cấp xử lý gạch vỡ');
+        $fulfillment->sendDamagedReturnToSupplier($return, $supplier, $staff->id,
+            'Giao nhà cung cấp xử lý gạch vỡ', true, 'Đã đối chiếu phiếu nhập và biên bản kiểm tra hàng lỗi.');
         $this->assertDatabaseHas('supplier_returns', ['return_id' => $return, 'supplier_id' => $supplier]);
         $this->assertEquals(8, DB::table('inventory')->first()->quantity);
         $payable = DB::table('debts')->insertGetId([
@@ -475,6 +549,9 @@ class CommerceWorkflowTest extends TestCase
             'amount' => 10, 'paid' => 0, 'status' => 'open',
         ]);
         $supplierReturn = DB::table('supplier_returns')->where('return_id', $return)->first();
+        $this->assertSame($staff->id, (int) $supplierReturn->responsibility_confirmed_by);
+        $this->assertNotNull($supplierReturn->responsibility_confirmed_at);
+        $this->assertSame('Đã đối chiếu phiếu nhập và biên bản kiểm tra hàng lỗi.', $supplierReturn->responsibility_evidence);
         app(CommerceWorkflow::class)->settleSupplierReturn($supplierReturn->id, $payable, $staff->id, '5', 'Nhà cung cấp xác nhận giảm công nợ');
         $this->assertEquals(5, DB::table('debts')->find($payable)->amount);
         try {
@@ -484,7 +561,8 @@ class CommerceWorkflowTest extends TestCase
             $this->assertEquals(5, DB::table('debts')->find($payable)->amount);
         }
         try {
-            $fulfillment->sendDamagedReturnToSupplier($return, $supplier, $staff->id, 'Gửi lại');
+            $fulfillment->sendDamagedReturnToSupplier($return, $supplier, $staff->id,
+                'Gửi lại', true, 'Đã đối chiếu phiếu nhập');
             $this->fail('Không được trả nhà cung cấp hai lần');
         } catch (ValidationException) {
             $this->assertDatabaseCount('supplier_returns', 1);
@@ -501,6 +579,7 @@ class CommerceWorkflowTest extends TestCase
     {
         $customer = User::factory()->create();
         $staff = User::factory()->create();
+        $manager = User::factory()->create(['role' => 'manager', 'status' => 'active']);
         $product = DB::table('products')->insertGetId(['code' => 'XM', 'name' => 'Xi măng', 'unit' => 'bao', 'price' => 100]);
         $workflow = app(CommerceWorkflow::class);
         $quote = $workflow->requestQuote($customer->id, [$product => 2], 'Công trình A');
@@ -513,7 +592,7 @@ class CommerceWorkflowTest extends TestCase
         } catch (ValidationException) {
             $this->assertSame('pending_discount_approval', DB::table('quotes')->find($quote)->status);
         }
-        $workflow->reviewQuoteDiscount($quote, $staff->id, true);
+        $workflow->reviewQuoteDiscount($quote, $manager->id, true);
         $workflow->acceptQuote($quote, $customer->id);
         $this->assertSame('accepted', DB::table('quotes')->find($quote)->status);
     }
@@ -523,6 +602,7 @@ class CommerceWorkflowTest extends TestCase
         $customer = User::factory()->create();
         $other = User::factory()->create();
         $staff = User::factory()->create();
+        $manager = User::factory()->create(['role' => 'manager', 'status' => 'active']);
         $product = DB::table('products')->insertGetId(['code' => 'G-QA', 'name' => 'Gạch', 'unit' => 'viên', 'price' => 100]);
         $workflow = app(CommerceWorkflow::class);
         $quote = $workflow->requestQuote($customer->id, [$product => 2], 'Công trình A');
@@ -539,8 +619,8 @@ class CommerceWorkflowTest extends TestCase
         $workflow->reviewOrder($order, $staff->id, true);
         $this->assertDatabaseHas('orders', ['id' => $order, 'status' => 'awaiting_contract']);
         $contract = $workflow->createContract($order, $staff->id, '0', 'Thanh toán sau', 'Giao tại công trình');
-        $workflow->submitContract($contract);
-        $workflow->reviewContract($contract, $staff->id, true);
+        $workflow->submitContract($contract, $staff->id);
+        $workflow->reviewContract($contract, $manager->id, true);
 
         foreach ([fn () => $workflow->respondToContract($contract, $other->id, true),
             fn () => $workflow->signContract($contract, 'contracts/signed.pdf')] as $action) {
@@ -553,8 +633,21 @@ class CommerceWorkflowTest extends TestCase
         }
         $workflow->respondToContract($contract, $customer->id, false, 'Cần sửa thời gian giao.');
         $this->assertDatabaseHas('contracts', ['id' => $contract, 'status' => 'changes_requested']);
-        $workflow->submitContract($contract);
-        $workflow->reviewContract($contract, $staff->id, true);
+        $customerChangeEvent = DB::table('approval_events')->where('subject_type', 'contract')
+            ->where('subject_id', $contract)->where('decision', 'customer_changes_requested')->first();
+        $this->assertNotNull($customerChangeEvent);
+        $this->assertSame($customer->id, (int) $customerChangeEvent->actor_id);
+        $this->assertSame('Cần sửa thời gian giao.', $customerChangeEvent->reason);
+        $this->assertSame(hash('sha256', $customerChangeEvent->content_snapshot), $customerChangeEvent->content_hash);
+        $customerResponseSnapshot = json_decode($customerChangeEvent->content_snapshot, true, flags: JSON_THROW_ON_ERROR);
+        $this->assertSame('Cần sửa thời gian giao.', $customerResponseSnapshot['customer_response']['note']);
+        $workflow->submitContract($contract, $staff->id);
+        $workflow->reviewContract($contract, $manager->id, true);
+        $this->assertDatabaseHas('approval_events', [
+            'id' => $customerChangeEvent->id, 'decision' => 'customer_changes_requested',
+            'reason' => 'Cần sửa thời gian giao.',
+        ]);
+        $this->assertDatabaseHas('contracts', ['id' => $contract, 'customer_note' => null]);
         $workflow->respondToContract($contract, $customer->id, true);
         $order = $workflow->signContract($contract, 'contracts/signed.pdf');
         $this->assertDatabaseCount('orders', 1);
@@ -579,13 +672,14 @@ class CommerceWorkflowTest extends TestCase
     public function test_purchase_receipt_changes_stock_only_after_approval(): void
     {
         $staff = User::factory()->create();
+        $manager = User::factory()->create(['role' => 'manager', 'status' => 'active']);
         $supplier = DB::table('suppliers')->insertGetId(['code' => 'N1', 'name' => 'Nhà cung cấp']);
         $warehouse = DB::table('warehouses')->insertGetId(['code' => 'K1', 'name' => 'Kho chính']);
         $product = DB::table('products')->insertGetId(['code' => 'G1', 'name' => 'Gạch', 'unit' => 'viên', 'price' => 2]);
         $service = app(FulfillmentWorkflow::class);
         $purchase = $service->createPurchaseOrder($supplier, $warehouse, $staff->id, [['product_id' => $product, 'quantity' => 10, 'unit_price' => 1]]);
         $this->assertDatabaseCount('inventory', 0);
-        $service->approvePurchaseOrder($purchase, $staff->id);
+        $service->approvePurchaseOrder($purchase, $manager->id);
         $line = DB::table('purchase_items')->where('purchase_order_id', $purchase)->first();
         $service->receivePurchaseOrder($purchase, $staff->id, [$line->id => 7]);
         $this->assertEquals(7, DB::table('inventory')->first()->quantity);
@@ -700,7 +794,7 @@ class CommerceWorkflowTest extends TestCase
         $this->assertDatabaseHas('orders', ['id' => $order, 'status' => 'cancelled']);
         $this->assertDatabaseHas('debts', ['order_id' => $order, 'amount' => 0, 'status' => 'settled']);
         try {
-            $workflow->submitContract($contract);
+            $workflow->submitContract($contract, $manager->id);
             $this->fail('Hợp đồng đã hủy không thể trình duyệt');
         } catch (ValidationException) {
             $this->assertDatabaseHas('orders', ['id' => $order, 'contract_id' => null]);

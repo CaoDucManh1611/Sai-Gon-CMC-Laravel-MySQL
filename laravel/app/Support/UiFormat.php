@@ -23,6 +23,9 @@ class UiFormat
         return [
             'requested' => 'Chờ xử lý', 'draft' => 'Bản nháp', 'sent' => 'Đã gửi',
             'accepted' => 'Đã chấp nhận', 'pending' => 'Chờ duyệt',
+            'confirmed' => 'Khách đã xác nhận', 'disputed' => 'Khách báo chênh lệch',
+            'customer_confirmation' => 'Khách xác nhận', 'customer_dispute' => 'Khách báo chênh lệch',
+            'accounting_resolution' => 'Kế toán ghi cách xử lý',
             'pending_approval' => 'Chờ phê duyệt', 'approved' => 'Đã duyệt',
             'rejected' => 'Đã từ chối', 'changes_requested' => 'Yêu cầu chỉnh sửa',
             'signed' => 'Đã ký', 'cancelled' => 'Đã hủy',

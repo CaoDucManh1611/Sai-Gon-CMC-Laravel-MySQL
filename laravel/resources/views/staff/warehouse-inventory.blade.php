@@ -12,6 +12,7 @@
                     <tr><td>{{ $movement->created_at }}</td><td>{{ $movement->document_code }} · {{ ['opening'=>'Tồn đầu kỳ','receipt'=>'Nhập kho','issue'=>'Xuất kho','return'=>'Nhập hàng trả','return_receipt'=>'Nhập hàng trả','exchange_issue'=>'Xuất hàng thay thế','adjustment'=>'Điều chỉnh kiểm kê'][$movement->document_type] ?? 'Giao dịch kho' }}</td><td>{{ $movement->warehouse_name }}</td><td>{{ $movement->product_name }}</td><td>{{ \App\Support\UiFormat::quantity($movement->change) }}</td><td>{{ \App\Support\UiFormat::quantity($movement->balance_after) }}</td></tr>
                 @empty<tr><td colspan="6" class="text-center">Chưa có giao dịch kho.</td></tr>@endforelse
             </tbody></table></div>
+            @if(method_exists($stockMovements, 'links')){{ $stockMovements->links() }}@endif
         </section>
     @elseif(request('view') !== 'stocktakes')
         <section class="warehouse-stock-panel" aria-labelledby="current-stock-heading">
@@ -23,7 +24,7 @@
             </tbody></table></div>
         </section>
     @else
-        @if(in_array($role, ['warehouse', 'admin']))
+        @if(auth()->user()->hasPermission('stocktakes.create'))
             <section class="warehouse-stock-panel" aria-labelledby="stocktake-heading"><h2 id="stocktake-heading">Lập phiếu kiểm kê</h2>
                 <form method="post" action="{{ route('staff.stocktakes.create') }}" class="warehouse-stocktake-form">@csrf
                     <label class="form-label">Kho<select class="form-select" name="warehouse_id">@foreach($warehouses as $warehouse)<option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>@endforeach</select></label>
@@ -38,9 +39,10 @@
             <section class="warehouse-stock-panel" aria-labelledby="stocktake-list-heading"><h2 id="stocktake-list-heading">Phiếu kiểm kê gần đây</h2>
                 @foreach($stocktakes as $stocktake)
                     <div class="warehouse-stocktake-row"><div><strong>{{ $stocktake->code }}</strong> · {{ \App\Support\UiFormat::status($stocktake->status) }} · {{ $stocktake->note }}<small>{{ $stocktakeItems[$stocktake->id]->product_name ?? '' }}: sổ sách {{ \App\Support\UiFormat::quantity($stocktakeItems[$stocktake->id]->book_quantity ?? 0) }}, đếm thực tế {{ \App\Support\UiFormat::quantity($stocktakeItems[$stocktake->id]->quantity ?? 0) }}</small></div>
-                        @if($stocktake->status === 'pending' && in_array($role, ['manager', 'admin']))<form method="post" action="{{ route('staff.stocktakes.review', $stocktake->id) }}">@csrf<button class="btn btn-dark" name="decision" value="approve">Duyệt điều chỉnh</button><button class="btn btn-outline-danger" name="decision" value="reject">Từ chối</button></form>@endif
+                        @if($stocktake->status === 'pending' && auth()->user()->hasPermission('stocktakes.review'))<form method="post" action="{{ route('staff.stocktakes.review', $stocktake->id) }}">@csrf<button class="btn btn-dark" name="decision" value="approve">Duyệt điều chỉnh</button><button class="btn btn-outline-danger" name="decision" value="reject">Từ chối</button></form>@endif
                     </div>
                 @endforeach
+                @if(method_exists($stocktakes, 'links')){{ $stocktakes->links() }}@endif
             </section>
         @endif
     @endif

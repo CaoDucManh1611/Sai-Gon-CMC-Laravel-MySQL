@@ -2,7 +2,7 @@
     $quotesToReview = $quotes->where('status', 'pending_discount_approval');
     $contractsToReview = $contracts->where('status', 'pending_approval');
     $purchasesToReview = $purchases->where('status', 'pending');
-    $openDebts = $debts->filter(fn ($debt) => $debt->status === 'open' && $debt->paid < $debt->amount && ($debt->direction === 'payable' || (!in_array($debt->order_status, ['rejected', 'cancelled'], true) && (!$debt->requires_contract || $debt->contract_status === 'signed'))));
+    $openDebts = $debts->filter(fn ($debt) => $debt->status === 'open' && $debt->paid < $debt->amount && ($debt->direction === 'payable' || (!in_array($debt->order_status, ['awaiting_confirmation', 'awaiting_contract', 'rejected', 'cancelled'], true) && (!$debt->requires_contract || $debt->contract_status === 'signed'))));
 @endphp
 <section class="manager-overview" aria-label="Tổng quan quản lý">
     <div class="manager-heading"><div><span class="manager-kicker">CẦN QUẢN LÝ XỬ LÝ</span><h2>Việc chờ phê duyệt</h2></div></div>
@@ -32,3 +32,4 @@
         </section>
     </div>
 </section>
+@include('staff.partials.approval-history')

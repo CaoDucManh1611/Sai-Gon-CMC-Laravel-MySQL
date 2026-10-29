@@ -8,6 +8,31 @@
             <div class="order-head"><strong>{{ $contract->code }}</strong><span class="status status-{{ $contract->status }}">{{ $contract->status === 'approved' && !$contract->customer_confirmed_at ? 'Chờ bạn xác nhận' : \App\Support\UiFormat::status($contract->status) }}</span></div>
             <div class="row g-3"><div class="col-md-4"><span class="muted">Giá trị</span><strong class="d-block">{{ number_format($contract->total,0,',','.') }} ₫</strong></div><div class="col-md-4"><span class="muted">Đặt cọc yêu cầu</span><strong class="d-block">{{ number_format($contract->deposit_required,0,',','.') }} ₫</strong></div><div class="col-md-4"><span class="muted">Ngày lập</span><strong class="d-block">{{ $contract->created_at }}</strong></div></div>
             <div class="mt-3">@if($contract->order_code)<p><strong>Đơn hàng:</strong> {{ $contract->order_code }}</p>@endif<strong>Điều khoản thanh toán</strong><p>{{ $contract->payment_terms }}</p><strong>Điều khoản giao hàng</strong><p>{{ $contract->delivery_terms }}</p></div>
+            @if($contract->debt_id)
+                <h2 class="h5 mt-3">Lịch thanh toán</h2>
+                @include('shared.payment-schedule-table', ['scheduleRows' => $paymentSchedules[$contract->debt_id] ?? []])
+            @elseif($contract->payment_schedule_draft)
+                @php($draftPaymentRows = json_decode($contract->payment_schedule_draft, true) ?? [])
+                <h2 class="h5 mt-3">Lịch thanh toán đã đề xuất</h2>
+                <div class="table-responsive"><table class="table table-sm"><thead><tr><th>Đợt</th><th>Mốc</th><th>Số tiền</th><th>Trước xuất</th></tr></thead><tbody>
+                    @foreach($draftPaymentRows as $draftPaymentRow)
+                        <tr>
+                            <td>{{ $draftPaymentRow['sequence'] }}. {{ $draftPaymentRow['label'] }}</td>
+                            <td>
+                                {{ ['on_signing' => 'Khi ký hợp đồng', 'before_issue' => 'Trước khi xuất', 'after_handover' => 'Sau bàn giao', 'fixed_date' => 'Ngày cố định'][$draftPaymentRow['trigger']] ?? $draftPaymentRow['trigger'] }}
+                                @if($draftPaymentRow['trigger'] === 'after_handover')
+                                    · {{ $draftPaymentRow['days_after_trigger'] }} ngày
+                                @endif
+                                @if($draftPaymentRow['trigger'] === 'fixed_date')
+                                    · {{ $draftPaymentRow['due_on'] }}
+                                @endif
+                            </td>
+                            <td>{{ number_format((float) $draftPaymentRow['amount'],2,',','.') }} ₫</td>
+                            <td>{{ $draftPaymentRow['required_before_issue'] ? 'Có' : 'Không' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody></table></div>
+            @endif
             @if($contract->order_id)<div class="table-responsive"><table class="table"><thead><tr><th>Vật liệu</th><th>Quy cách</th><th>Số lượng</th><th>Đơn giá</th></tr></thead><tbody>@foreach($contractItems[$contract->order_id] ?? [] as $item)<tr><td>{{ $item->product_name }}</td><td>{{ $item->specification }}</td><td>{{ \App\Support\UiFormat::quantity($item->quantity) }} {{ $item->unit }}</td><td>{{ number_format($item->unit_price,0,',','.') }} ₫</td></tr>@endforeach</tbody></table></div>@endif
             @if($contract->customer_note)<p class="muted">Ý kiến của bạn: {{ $contract->customer_note }}</p>@endif
             @if($contract->cancellation_note)<p class="muted">Lý do hủy: {{ $contract->cancellation_note }}</p>@endif

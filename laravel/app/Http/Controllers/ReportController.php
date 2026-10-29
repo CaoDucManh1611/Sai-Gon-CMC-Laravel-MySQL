@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ApprovalWorkflow;
 use Dompdf\Dompdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -149,7 +150,7 @@ class ReportController extends Controller
         $debtQuery = DB::table('debts')->leftJoin('orders', 'orders.id', '=', 'debts.order_id')
             ->leftJoin('contracts', 'contracts.id', '=', 'orders.contract_id')
             ->where('debts.created_at', '<=', $to)
-            ->select('debts.*', 'orders.status as order_status', 'orders.requires_contract',
+            ->select('debts.*', 'orders.status as order_status', 'orders.requires_contract', 'orders.reviewed_at',
                 'contracts.status as contract_status', 'contracts.signed_at');
         if ($orderIds !== null || $supplierId !== null) {
             $debtQuery->where(function ($query) use ($orderIds, $supplierId) {
@@ -163,9 +164,15 @@ class ReportController extends Controller
         }
         $debts = $debtQuery->get();
         foreach ($debts as $debt) {
-            if ($debt->direction === 'receivable' && (in_array($debt->order_status, ['rejected', 'cancelled'], true)
-                || ($debt->requires_contract && ($debt->contract_status !== 'signed'
-                    || ($debt->signed_at && $debt->signed_at > $to))))) {
+            if (
+                $debt->direction === 'receivable'
+                && (
+                    in_array($debt->order_status, ['awaiting_confirmation', 'awaiting_contract', 'rejected', 'cancelled'], true)
+                    || ($debt->reviewed_at && $debt->reviewed_at > $to)
+                    || ($debt->requires_contract && ($debt->contract_status !== 'signed'
+                        || ($debt->signed_at && $debt->signed_at > $to)))
+                )
+            ) {
                 continue;
             }
             $direction = $debt->direction;
@@ -197,23 +204,40 @@ class ReportController extends Controller
         }
 
         return $stock->get()->map(function ($row) use ($laterChanges, $to) {
-                $row->quantity = $row->stocked_at && $row->stocked_at > $to ? '0.000' : bcsub(
-                    (string) $row->quantity,
-                    (string) ($laterChanges[$row->warehouse_id.':'.$row->product_id]->total ?? '0'), 3);
-                unset($row->warehouse_id, $row->product_id, $row->stocked_at);
+            $row->quantity = $row->stocked_at && $row->stocked_at > $to ? '0.000' : bcsub(
+                (string) $row->quantity,
+                (string) ($laterChanges[$row->warehouse_id.':'.$row->product_id]->total ?? '0'), 3);
+            unset($row->warehouse_id, $row->product_id, $row->stocked_at);
 
-                return $row;
-            })->all();
+            return $row;
+        })->all();
     }
 
     public function review(Request $request, int $id): RedirectResponse
     {
-        $data = $request->validate(['decision' => ['required', Rule::in(['approved', 'rejected'])], 'note' => ['nullable', 'string', 'max:2000']]);
-        $changed = DB::table('reports')->where('id', $id)->where('status', 'pending')->update([
-            'status' => $data['decision'], 'approved_by' => $request->user()->id,
-            'review_note' => $data['note'] ?? null, 'updated_at' => now(),
+        $data = $request->validate([
+            'decision' => ['required', Rule::in(['approved', 'rejected'])],
+            'note' => ['required_if:decision,rejected', 'nullable', 'string', 'max:2000'],
         ]);
-        abort_unless($changed, 422);
+        DB::transaction(function () use ($request, $id, $data) {
+            $report = DB::table('reports')->where('id', $id)->lockForUpdate()->first();
+            abort_unless($report && $report->status === 'pending', 422);
+            app(ApprovalWorkflow::class)->assertIndependent((int) $report->created_by, $request->user()->id, 'báo cáo');
+            $content = [
+                'report' => array_intersect_key((array) $report, array_flip([
+                    'id', 'code', 'type', 'created_by', 'from_date', 'to_date', 'snapshot',
+                ])),
+                'snapshot' => $report->snapshot ? json_decode($report->snapshot, true, flags: JSON_THROW_ON_ERROR) : null,
+            ];
+            $note = trim((string) ($data['note'] ?? ''));
+            $changed = DB::table('reports')->where('id', $id)->where('status', 'pending')->update([
+                'status' => $data['decision'], 'approved_by' => $request->user()->id,
+                'review_note' => $note !== '' ? $note : null, 'updated_at' => now(),
+            ]);
+            abort_unless($changed, 422);
+            app(ApprovalWorkflow::class)->recordDecision('report', $id, $data['decision'], 'pending', $data['decision'],
+                $request->user()->id, $note !== '' ? $note : null, $content);
+        });
 
         return back()->with('success', 'Đã xử lý báo cáo.');
     }

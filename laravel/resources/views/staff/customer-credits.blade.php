@@ -4,9 +4,10 @@
         @php($remaining = bcsub((string) $credit->amount, (string) ($creditUsed[$credit->id] ?? 0), 2))
         <article class="order-card">
             <strong>{{ $credit->customer_name }}</strong> · phiếu trả #{{ $credit->return_id }} · còn {{ number_format($remaining, 0, ',', '.') }} ₫
-            @if($credit->status === 'open' && in_array($role, ['accounting', 'admin']))
+            @if($credit->status === 'open' && auth()->user()->hasPermission('credits.manage'))
                 <form method="post" action="{{ route('staff.customer-credits.use', $credit->id) }}" class="d-flex gap-2 flex-wrap align-items-end mt-2">
                     @csrf
+                    <input type="hidden" name="idempotency_key" value="{{ (string) \Illuminate\Support\Str::uuid() }}">
                     <label>Hình thức
                         <select class="form-select" name="type" required>
                             <option value="refund">Hoàn tiền</option>
@@ -37,4 +38,5 @@
     @empty
         <p>Chưa có khoản cần hoàn hoặc cấn trừ.</p>
     @endforelse
+    @if(method_exists($customerCredits, 'links')){{ $customerCredits->links() }}@endif
 </section>

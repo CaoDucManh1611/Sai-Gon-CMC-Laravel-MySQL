@@ -4,28 +4,99 @@ namespace App\Http\Controllers;
 
 use App\Services\CommerceWorkflow;
 use App\Services\FulfillmentWorkflow;
+use App\Services\PaymentScheduleWorkflow;
+use App\Support\UiFormat;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Throwable;
 
 class StaffController extends Controller
 {
     public function dashboard(Request $request): View
     {
-        $contracts = DB::table('contracts')->leftJoin('orders', 'orders.id', '=', 'contracts.order_id')
+        $section = $request->route('section');
+        $contractsQuery = DB::table('contracts')->leftJoin('orders', 'orders.id', '=', 'contracts.order_id')
             ->leftJoin('quotes', 'quotes.id', '=', 'contracts.quote_id')
             ->select('contracts.*', 'orders.code as order_code')
             ->when($request->filled('contract'), fn ($query) => $query->where('contracts.code', 'like', '%'.$request->query('contract').'%'))
-            ->orderByDesc('contracts.id')->limit(30)->get();
-        $salesOrders = DB::table('orders')->join('users', 'users.id', '=', 'orders.customer_id')
+            ->orderByDesc('contracts.id');
+        $contracts = $section === 'contracts' ? $contractsQuery->paginate(30)->withQueryString() : $contractsQuery->limit(30)->get();
+        $salesOrdersQuery = DB::table('orders')->join('users', 'users.id', '=', 'orders.customer_id')
             ->leftJoin('contracts', 'contracts.order_id', '=', 'orders.id')
             ->leftJoin('quotes', 'quotes.id', '=', 'orders.quote_id')
             ->select('orders.*', 'users.name as customer_name', 'contracts.code as draft_contract_code', 'quotes.staff_note as quote_stock_note')
-            ->when($request->route('section') === 'sales_orders' && $request->filled('q'), fn ($query) => $query->where(fn ($matches) => $matches->where('orders.code', 'like', '%'.$request->query('q').'%')->orWhere('users.name', 'like', '%'.$request->query('q').'%')))
-            ->when($request->route('section') === 'sales_orders' && $request->filled('status'), fn ($query) => $query->where('orders.status', $request->query('status')))
-            ->orderByDesc('orders.id')->limit(100)->get();
+            ->when($section === 'sales_orders' && $request->filled('q'), fn ($query) => $query->where(fn ($matches) => $matches->where('orders.code', 'like', '%'.$request->query('q').'%')->orWhere('users.name', 'like', '%'.$request->query('q').'%')))
+            ->when($section === 'sales_orders' && $request->filled('status'), fn ($query) => $query->where('orders.status', $request->query('status')))
+            ->orderByDesc('orders.id');
+        $salesOrders = $section === 'sales_orders'
+            ? $salesOrdersQuery->paginate(30)->withQueryString()
+            : $salesOrdersQuery->limit(100)->get();
+        $quotesQuery = DB::table('quotes')->join('users', 'users.id', '=', 'quotes.customer_id')
+            ->select('quotes.*', 'users.name as customer_name')
+            ->when($section === 'quotes' && $request->filled('q'), fn ($query) => $query->where(fn ($matches) => $matches->where('quotes.code', 'like', '%'.$request->query('q').'%')->orWhere('users.name', 'like', '%'.$request->query('q').'%')))
+            ->when($section === 'quotes' && $request->filled('status'), function ($query) use ($request) {
+                $request->query('status') === 'actionable'
+                    ? $query->whereIn('quotes.status', ['requested', 'draft'])
+                    : $query->where('quotes.status', $request->query('status'));
+            })
+            ->orderBy('quotes.id', $section === 'quotes' && $request->query('sort') === 'oldest' ? 'asc' : 'desc');
+        $quotes = $section === 'quotes' ? $quotesQuery->paginate(30)->withQueryString() : $quotesQuery->limit(30)->get();
+        $debtsQuery = DB::table('debts')->leftJoin('orders', 'orders.id', '=', 'debts.order_id')
+            ->leftJoin('contracts', 'contracts.id', '=', 'orders.contract_id')
+            ->select('debts.*', 'orders.status as order_status', 'orders.requires_contract',
+                'orders.code as order_code', 'contracts.code as contract_code', 'contracts.status as contract_status')
+            ->orderByDesc('debts.id');
+        $debts = $section === 'finance'
+            ? $debtsQuery->paginate(30, ['*'], 'debts_page')->withQueryString()
+            : $debtsQuery->limit(30)->get();
+        $contractDebtIds = DB::table('debts')->whereIn('order_id', $contracts->pluck('order_id')->filter())
+            ->where('direction', 'receivable')->pluck('id', 'order_id');
+        $contracts->each(function ($contract) use ($contractDebtIds) {
+            $contract->debt_id = $contractDebtIds[$contract->order_id] ?? null;
+        });
+        $paymentSchedules = app(PaymentScheduleWorkflow::class)->summariesForDebts(
+            $debts->pluck('id')->merge($contractDebtIds->values())->unique()->all()
+        );
+
+        $purchasesQuery = DB::table('purchase_orders')->orderByDesc('id');
+        $purchases = $section === 'purchases'
+            ? $purchasesQuery->paginate(30, ['*'], 'purchases_page')->withQueryString()
+            : $purchasesQuery->limit(30)->get();
+        $customerCreditsQuery = DB::table('customer_credits')->join('users', 'users.id', '=', 'customer_credits.customer_id')
+            ->select('customer_credits.*', 'users.name as customer_name')->orderByDesc('customer_credits.id');
+        $customerCredits = $section === 'finance'
+            ? $customerCreditsQuery->paginate(30, ['*'], 'credits_page')->withQueryString()
+            : $customerCreditsQuery->limit(30)->get();
+        $supplierIncidentsQuery = DB::table('supplier_incidents')->join('purchase_items', 'purchase_items.id', '=', 'supplier_incidents.purchase_item_id')
+            ->join('products', 'products.id', '=', 'purchase_items.product_id')
+            ->select('supplier_incidents.*', 'products.name as product_name')->orderByDesc('supplier_incidents.id');
+        $supplierIncidents = $section === 'purchases'
+            ? $supplierIncidentsQuery->paginate(30, ['*'], 'incidents_page')->withQueryString()
+            : $supplierIncidentsQuery->limit(30)->get();
+        $ordersQuery = DB::table('orders')->orderByDesc('id');
+        $orders = $section === 'orders' ? $ordersQuery->paginate(30, ['*'], 'orders_page')->withQueryString() : $ordersQuery->limit(30)->get();
+        $shipmentsQuery = DB::table('shipments')->join('orders', 'orders.id', '=', 'shipments.order_id')
+            ->select('shipments.*', 'orders.delivery_address')->orderByDesc('shipments.id');
+        $shipments = $section === 'orders' ? $shipmentsQuery->paginate(30, ['*'], 'shipments_page')->withQueryString() : $shipmentsQuery->limit(30)->get();
+        $deliveryRunsQuery = DB::table('delivery_runs')->orderByDesc('id');
+        $deliveryRuns = $section === 'orders' ? $deliveryRunsQuery->paginate(30, ['*'], 'runs_page')->withQueryString() : $deliveryRunsQuery->limit(30)->get();
+        $returnsQuery = DB::table('returns')->orderByDesc('id');
+        $returns = $section === 'returns' ? $returnsQuery->paginate(30, ['*'], 'returns_page')->withQueryString() : $returnsQuery->limit(30)->get();
+        $stocktakesQuery = DB::table('stock_documents')->where('type', 'stocktake')->orderByDesc('id');
+        $stocktakes = $section === 'inventory' && $request->query('view') === 'stocktakes'
+            ? $stocktakesQuery->paginate(30, ['*'], 'stocktakes_page')->withQueryString()
+            : $stocktakesQuery->limit(30)->get();
+        $stockMovementQuery = DB::table('stock_movements')->join('stock_documents', 'stock_documents.id', '=', 'stock_movements.stock_document_id')
+            ->join('products', 'products.id', '=', 'stock_movements.product_id')
+            ->join('warehouses', 'warehouses.id', '=', 'stock_movements.warehouse_id')
+            ->select('stock_movements.*', 'stock_documents.code as document_code', 'stock_documents.type as document_type',
+                'products.name as product_name', 'warehouses.name as warehouse_name')->orderByDesc('stock_movements.id');
+        $stockMovements = $section === 'inventory' && $request->query('view') === 'movements'
+            ? $stockMovementQuery->paginate(100, ['*'], 'movements_page')->withQueryString()
+            : $stockMovementQuery->limit(100)->get();
 
         return view('staff.dashboard', [
             'activeSection' => 'overview',
@@ -34,55 +105,50 @@ class StaffController extends Controller
             'salesOrderItems' => DB::table('order_items')->join('products', 'products.id', '=', 'order_items.product_id')
                 ->whereIn('order_items.order_id', $salesOrders->pluck('id'))
                 ->select('order_items.*', 'products.name as product_name', 'products.unit')->get()->groupBy('order_id'),
-            'quotes' => DB::table('quotes')->join('users', 'users.id', '=', 'quotes.customer_id')
-                ->select('quotes.*', 'users.name as customer_name')
-                ->when($request->route('section') === 'quotes' && $request->filled('q'), fn ($query) => $query->where(fn ($matches) => $matches->where('quotes.code', 'like', '%'.$request->query('q').'%')->orWhere('users.name', 'like', '%'.$request->query('q').'%')))
-                ->when($request->route('section') === 'quotes' && $request->filled('status'), function ($query) use ($request) {
-                    $request->query('status') === 'actionable'
-                        ? $query->whereIn('quotes.status', ['requested', 'draft'])
-                        : $query->where('quotes.status', $request->query('status'));
-                })
-                ->orderBy('quotes.id', $request->route('section') === 'quotes' && $request->query('sort') === 'oldest' ? 'asc' : 'desc')->limit(30)->get(),
+            'quotes' => $quotes,
             'quoteItems' => DB::table('quote_items')->join('products', 'products.id', '=', 'quote_items.product_id')
                 ->leftJoinSub(DB::table('inventory')->select('product_id')->selectRaw('SUM(quantity) as available')->groupBy('product_id'),
                     'stock', 'stock.product_id', '=', 'quote_items.product_id')
+                ->whereIn('quote_items.quote_id', $quotes->pluck('id'))
                 ->select('quote_items.*', 'products.name as product_name')->selectRaw('COALESCE(stock.available, 0) as available')
                 ->get()->groupBy('quote_id'),
-            'purchaseItems' => DB::table('purchase_items')->join('products', 'products.id', '=', 'purchase_items.product_id')->select('purchase_items.*', 'products.name as product_name')->get()->groupBy('purchase_order_id'),
+            'purchaseItems' => DB::table('purchase_items')->join('products', 'products.id', '=', 'purchase_items.product_id')
+                ->whereIn('purchase_items.purchase_order_id', $purchases->pluck('id'))
+                ->select('purchase_items.*', 'products.name as product_name')->get()->groupBy('purchase_order_id'),
             'contracts' => $contracts,
             'contractItems' => DB::table('order_items')->join('products', 'products.id', '=', 'order_items.product_id')
                 ->whereIn('order_items.order_id', $contracts->pluck('order_id')->filter())
                 ->select('order_items.*', 'products.name as product_name', 'products.unit', 'products.specification')
                 ->get()->groupBy('order_id'),
-            'orders' => DB::table('orders')->orderByDesc('id')->limit(30)->get(),
+            'orders' => $orders,
             'staffAccountCount' => DB::table('users')->where('role', '!=', 'customer')->count(),
             'invoices' => DB::table('invoices')->get()->keyBy('order_id'),
-            'debts' => DB::table('debts')->leftJoin('orders', 'orders.id', '=', 'debts.order_id')
-                ->leftJoin('contracts', 'contracts.id', '=', 'orders.contract_id')
-                ->select('debts.*', 'orders.status as order_status', 'orders.requires_contract',
-                    'orders.code as order_code', 'contracts.code as contract_code', 'contracts.status as contract_status')
-                ->orderByDesc('debts.id')->limit(30)->get(),
-            'customerCredits' => DB::table('customer_credits')->join('users', 'users.id', '=', 'customer_credits.customer_id')
-                ->select('customer_credits.*', 'users.name as customer_name')->orderByDesc('customer_credits.id')->limit(30)->get(),
+            'debts' => $debts,
+            'paymentSchedules' => $paymentSchedules,
+            'customerCredits' => $customerCredits,
             'creditUsed' => DB::table('customer_credit_movements')->select('customer_credit_id')
                 ->selectRaw('SUM(amount) as total')->groupBy('customer_credit_id')->pluck('total', 'customer_credit_id'),
             'customerDebts' => DB::table('debts')->leftJoin('orders', 'orders.id', '=', 'debts.order_id')
                 ->leftJoin('contracts', 'contracts.id', '=', 'orders.contract_id')
                 ->where('debts.direction', 'receivable')->where('debts.status', 'open')
                 ->where(fn ($query) => $query->whereNull('orders.id')->orWhere(function ($orderQuery) {
-                    $orderQuery->whereNotIn('orders.status', ['rejected', 'cancelled'])
+                    $orderQuery->whereNotIn('orders.status', ['awaiting_confirmation', 'awaiting_contract', 'rejected', 'cancelled'])
                         ->where(fn ($contractQuery) => $contractQuery->where('orders.requires_contract', false)
                             ->orWhere('contracts.status', 'signed'));
                 }))->select('debts.*')->get(),
-            'purchases' => DB::table('purchase_orders')->orderByDesc('id')->limit(30)->get(),
-            'supplierIncidents' => DB::table('supplier_incidents')->join('purchase_items', 'purchase_items.id', '=', 'supplier_incidents.purchase_item_id')
-                ->join('products', 'products.id', '=', 'purchase_items.product_id')
-                ->select('supplier_incidents.*', 'products.name as product_name')->orderByDesc('supplier_incidents.id')->limit(30)->get(),
-            'shipments' => DB::table('shipments')->join('orders', 'orders.id', '=', 'shipments.order_id')
-                ->select('shipments.*', 'orders.delivery_address')->orderByDesc('shipments.id')->limit(30)->get(),
-            'deliveryRuns' => DB::table('delivery_runs')->orderByDesc('id')->limit(30)->get(),
-            'returns' => DB::table('returns')->orderByDesc('id')->limit(30)->get(),
-            'supplierReturns' => DB::table('supplier_returns')->get()->keyBy('return_id'),
+            'purchases' => $purchases,
+            'supplierIncidents' => $supplierIncidents,
+            'shipments' => $shipments,
+            'deliveryRuns' => $deliveryRuns,
+            'returns' => $returns,
+            'supplierReturns' => DB::table('supplier_returns')
+                ->leftJoin('users as responsibility_confirmers', 'responsibility_confirmers.id', '=', 'supplier_returns.responsibility_confirmed_by')
+                ->select('supplier_returns.*', 'responsibility_confirmers.name as responsibility_confirmer_name')
+                ->get()->keyBy('return_id'),
+            'approvalHistory' => in_array($request->user()->role, ['manager', 'admin'], true)
+                ? DB::table('approval_events')->join('users', 'users.id', '=', 'approval_events.actor_id')
+                    ->select('approval_events.*', 'users.name as actor_name')->orderByDesc('decided_at')->limit(20)->get()
+                : collect(),
             'eligibleReturnSuppliers' => DB::table('purchase_orders')
                 ->join('purchase_items', 'purchase_items.purchase_order_id', '=', 'purchase_orders.id')
                 ->join('suppliers', 'suppliers.id', '=', 'purchase_orders.supplier_id')
@@ -92,32 +158,37 @@ class StaffController extends Controller
             'products' => DB::table('products')->orderBy('name')->get(),
             'suppliers' => DB::table('suppliers')->where('active', true)->get(),
             'warehouses' => DB::table('warehouses')->where('active', true)->get(),
-            'stocktakes' => DB::table('stock_documents')->where('type', 'stocktake')->orderByDesc('id')->limit(30)->get(),
-            'stocktakeItems' => DB::table('stock_document_items')->join('stock_documents', 'stock_documents.id', '=', 'stock_document_items.stock_document_id')->join('products', 'products.id', '=', 'stock_document_items.product_id')->where('stock_documents.type', 'stocktake')->select('stock_document_items.*', 'products.name as product_name')->get()->keyBy('stock_document_id'),
+            'stocktakes' => $stocktakes,
+            'stocktakeItems' => DB::table('stock_document_items')->join('stock_documents', 'stock_documents.id', '=', 'stock_document_items.stock_document_id')
+                ->join('products', 'products.id', '=', 'stock_document_items.product_id')->whereIn('stock_documents.id', $stocktakes->pluck('id'))
+                ->select('stock_document_items.*', 'products.name as product_name')->get()->keyBy('stock_document_id'),
             'inventory' => DB::table('inventory')->join('products', 'products.id', '=', 'inventory.product_id')
                 ->join('warehouses', 'warehouses.id', '=', 'inventory.warehouse_id')
                 ->select('inventory.*', 'products.name as product_name', 'products.minimum_stock', 'warehouses.name as warehouse_name')->get(),
-            'stockMovements' => DB::table('stock_movements')->join('stock_documents', 'stock_documents.id', '=', 'stock_movements.stock_document_id')
-                ->join('products', 'products.id', '=', 'stock_movements.product_id')
-                ->join('warehouses', 'warehouses.id', '=', 'stock_movements.warehouse_id')
-                ->select('stock_movements.*', 'stock_documents.code as document_code', 'stock_documents.type as document_type',
-                    'products.name as product_name', 'warehouses.name as warehouse_name')
-                ->orderByDesc('stock_movements.id')->limit(100)->get(),
+            'stockMovements' => $stockMovements,
         ]);
+    }
+
+    public function approvalHistory(Request $request): View
+    {
+        abort_unless(in_array($request->user()->role, ['manager', 'admin'], true), 403);
+        $approvalHistory = DB::table('approval_events')->join('users', 'users.id', '=', 'approval_events.actor_id')
+            ->select('approval_events.*', 'users.name as actor_name')
+            ->orderByDesc('decided_at')->orderByDesc('approval_events.id')->paginate(20)->withQueryString();
+
+        return view('staff.approval-history', compact('approvalHistory'));
     }
 
     public function section(Request $request, string $section): View
     {
-        $roles = [
-            'quotes' => ['sales', 'manager', 'admin'], 'contracts' => ['sales', 'manager', 'admin'],
-            'sales_orders' => ['sales', 'manager', 'admin'],
-            'finance' => ['accounting', 'manager', 'admin'], 'purchases' => ['warehouse', 'manager', 'admin'],
-            'orders' => ['warehouse', 'delivery', 'accounting', 'manager', 'admin'],
-            'returns' => ['warehouse', 'delivery', 'accounting', 'manager', 'admin'],
-            'inventory' => ['warehouse', 'manager', 'admin'],
+        $permissions = [
+            'quotes' => ['quotes.view'], 'contracts' => ['contracts.view'],
+            'sales_orders' => ['sales.orders.view'], 'finance' => ['finance.view'],
+            'purchases' => ['purchases.view'], 'orders' => ['orders.view'],
+            'returns' => ['returns.view'], 'inventory' => ['inventory.view'],
         ];
-        abort_unless(isset($roles[$section]), 404);
-        abort_unless(in_array(auth()->user()->role, $roles[$section], true), 403);
+        abort_unless(isset($permissions[$section]), 404);
+        abort_unless(collect($permissions[$section])->contains(fn (string $permission) => $request->user()->hasPermission($permission)), 403);
 
         return $this->dashboard($request)->with('activeSection', $section);
     }
@@ -126,8 +197,9 @@ class StaffController extends Controller
     {
         $data = $request->validate(['decision' => ['required', 'in:confirm,reject'], 'reason' => ['required_if:decision,reject', 'nullable', 'string', 'max:2000']]);
         $workflow->reviewOrder($id, $request->user()->id, $data['decision'] === 'confirm', $data['reason'] ?? null);
+        $order = DB::table('orders')->select('code', 'status')->find($id);
 
-        return back()->with('success', $data['decision'] === 'confirm' ? 'Đã xác nhận đơn hàng.' : 'Đã từ chối đơn hàng và gửi lý do cho khách.');
+        return back()->with('success', 'Đơn '.$order->code.' đã '.($data['decision'] === 'confirm' ? 'được xác nhận' : 'bị từ chối').'; trạng thái: '.UiFormat::status($order->status).'.');
     }
 
     public function sendQuote(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
@@ -141,7 +213,10 @@ class StaffController extends Controller
         $workflow->sendQuote($id, $request->user()->id, $data['prices'] ?? [], $data['valid_until'],
             $data['estimated_available_on'] ?? null, $data['alternative_material'] ?? null);
 
-        return back()->with('success', 'Đã gửi báo giá cho khách hàng.');
+        $message = DB::table('quotes')->where('id', $id)->value('status') === 'pending_discount_approval'
+            ? 'Đã trình duyệt chiết khấu.' : 'Đã gửi báo giá cho khách hàng.';
+
+        return back()->with('success', $message);
     }
 
     public function rejectQuote(Request $request, int $id): RedirectResponse
@@ -156,7 +231,10 @@ class StaffController extends Controller
 
     public function reviewQuoteDiscount(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
     {
-        $data = $request->validate(['decision' => ['required', 'in:approve,reject'], 'note' => ['nullable', 'string', 'max:2000']]);
+        $data = $request->validate([
+            'decision' => ['required', 'in:approve,reject'],
+            'note' => ['required_if:decision,reject', 'nullable', 'string', 'max:2000'],
+        ]);
         $workflow->reviewQuoteDiscount($id, $request->user()->id, $data['decision'] === 'approve', $data['note'] ?? null);
 
         return back()->with('success', 'Đã xử lý đề xuất chiết khấu.');
@@ -165,12 +243,20 @@ class StaffController extends Controller
     public function createContract(Request $request, CommerceWorkflow $workflow, int $orderId): RedirectResponse
     {
         $data = $request->validate([
-            'deposit_required' => ['required', 'numeric', 'min:0'],
+            'deposit_required' => ['required', 'numeric', 'regex:/^\d+(?:\.\d{1,2})?$/', 'min:0'],
             'payment_terms' => ['required', 'string', 'max:5000'],
             'delivery_terms' => ['required', 'string', 'max:5000'],
+            'installments' => ['required', 'array', 'min:1'],
+            'installments.*.sequence' => ['required', 'integer', 'min:1', 'distinct'],
+            'installments.*.label' => ['required', 'string', 'max:150'],
+            'installments.*.amount' => ['required', 'numeric', 'gt:0'],
+            'installments.*.trigger' => ['required', 'in:on_signing,before_issue,after_handover,fixed_date'],
+            'installments.*.due_on' => ['nullable', 'date'],
+            'installments.*.days_after_trigger' => ['nullable', 'integer', 'min:0'],
+            'installments.*.required_before_issue' => ['sometimes', 'boolean'],
         ]);
         $id = $workflow->createContract($orderId, $request->user()->id,
-            (string) $data['deposit_required'], $data['payment_terms'], $data['delivery_terms']);
+            (string) $data['deposit_required'], $data['payment_terms'], $data['delivery_terms'], $data['installments']);
 
         return back()->with('success', 'Đã lập hợp đồng '.DB::table('contracts')->find($id)->code.'.');
     }
@@ -178,31 +264,62 @@ class StaffController extends Controller
     public function updateContract(Request $request, int $id): RedirectResponse
     {
         $data = $request->validate([
-            'deposit_required' => ['required', 'numeric', 'min:0'],
+            'deposit_required' => ['required', 'numeric', 'regex:/^\d+(?:\.\d{1,2})?$/', 'min:0'],
             'payment_terms' => ['required', 'string', 'max:5000'],
             'delivery_terms' => ['required', 'string', 'max:5000'],
+            'installments' => ['required', 'array', 'min:1'],
+            'installments.*.sequence' => ['required', 'integer', 'min:1', 'distinct'],
+            'installments.*.label' => ['required', 'string', 'max:150'],
+            'installments.*.amount' => ['required', 'numeric', 'gt:0'],
+            'installments.*.trigger' => ['required', 'in:on_signing,before_issue,after_handover,fixed_date'],
+            'installments.*.due_on' => ['nullable', 'date'],
+            'installments.*.days_after_trigger' => ['nullable', 'integer', 'min:0'],
+            'installments.*.required_before_issue' => ['sometimes', 'boolean'],
         ]);
         $contract = DB::table('contracts')->where('id', $id)->firstOrFail();
         abort_if(bccomp((string) $data['deposit_required'], (string) $contract->total, 2) > 0, 422);
-        $changed = DB::table('contracts')->where('id', $id)->whereIn('status', ['draft', 'changes_requested'])->update([
-            'deposit_required' => $data['deposit_required'], 'payment_terms' => $data['payment_terms'],
-            'delivery_terms' => $data['delivery_terms'], 'updated_at' => now(),
-        ]);
-        abort_unless($changed, 422);
+        DB::transaction(function () use ($request, $id, $data, $contract) {
+            $changed = DB::table('contracts')->where('id', $id)->whereIn('status', ['draft', 'changes_requested'])->update([
+                'deposit_required' => $data['deposit_required'], 'payment_terms' => $data['payment_terms'],
+                'delivery_terms' => $data['delivery_terms'], 'last_edited_by' => $request->user()->id,
+                'last_submitted_by' => null, 'updated_at' => now(),
+            ]);
+            abort_unless($changed, 422);
+            if ($contract->order_id) {
+                $debtId = DB::table('debts')->where('order_id', $contract->order_id)
+                    ->where('direction', 'receivable')->value('id');
+                if ($debtId) {
+                    app(PaymentScheduleWorkflow::class)->replaceDraftSchedule(
+                        (int) $debtId, $data['installments'], $request->user()->id
+                    );
+                } else {
+                    app(PaymentScheduleWorkflow::class)->saveContractDraftSchedule(
+                        $id, $data['installments'], $request->user()->id, (string) $data['deposit_required']
+                    );
+                }
+            } else {
+                app(PaymentScheduleWorkflow::class)->saveContractDraftSchedule(
+                    $id, $data['installments'], $request->user()->id, (string) $data['deposit_required']
+                );
+            }
+        });
 
         return back()->with('success', 'Đã sửa hợp đồng.');
     }
 
-    public function submitContract(CommerceWorkflow $workflow, int $id): RedirectResponse
+    public function submitContract(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
     {
-        $workflow->submitContract($id);
+        $workflow->submitContract($id, $request->user()->id);
 
         return back()->with('success', 'Đã trình hợp đồng lên Ban quản lý.');
     }
 
     public function reviewContract(Request $request, CommerceWorkflow $workflow, int $id): RedirectResponse
     {
-        $data = $request->validate(['decision' => ['required', 'in:approve,revise'], 'note' => ['nullable', 'string', 'max:2000']]);
+        $data = $request->validate([
+            'decision' => ['required', 'in:approve,revise'],
+            'note' => ['required_if:decision,revise', 'nullable', 'string', 'max:2000'],
+        ]);
         $workflow->reviewContract($id, $request->user()->id, $data['decision'] === 'approve', $data['note'] ?? null);
 
         return back()->with('success', 'Đã xử lý phê duyệt hợp đồng.');
@@ -213,8 +330,8 @@ class StaffController extends Controller
         $request->validate(['document' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240']]);
         $path = $request->file('document')->store('contracts', 'local');
         try {
-            $workflow->signContract($id, $path);
-        } catch (\Throwable $e) {
+            $workflow->signContract($id, $path, $request->user()->id);
+        } catch (Throwable $e) {
             Storage::disk('local')->delete($path);
             throw $e;
         }
@@ -225,11 +342,13 @@ class StaffController extends Controller
     public function recordPayment(Request $request, CommerceWorkflow $workflow, int $debtId): RedirectResponse
     {
         $data = $request->validate([
-            'amount' => ['required', 'numeric', 'gt:0'],
+            'amount' => ['required', 'numeric', 'regex:/^\d+(?:\.\d{1,2})?$/', 'gt:0'],
             'method' => ['required', 'in:cash,bank_transfer'],
             'reference' => ['nullable', 'string', 'max:100'],
+            'idempotency_key' => ['required', 'uuid'],
         ]);
-        $workflow->recordPayment($debtId, $request->user()->id, (string) $data['amount'], $data['method'], $data['reference'] ?? null);
+        $workflow->recordPayment($debtId, $request->user()->id, (string) $data['amount'], $data['method'],
+            $data['reference'] ?? null, $data['idempotency_key']);
 
         return back()->with('success', 'Đã ghi nhận thanh toán.');
     }
@@ -260,9 +379,10 @@ class StaffController extends Controller
             'debt_id' => ['nullable', 'integer', 'exists:debts,id'],
             'method' => ['nullable', 'in:cash,bank_transfer'],
             'reference' => ['nullable', 'string', 'max:150'],
+            'idempotency_key' => ['required', 'uuid'],
         ]);
         $workflow->useCustomerCredit($id, $request->user()->id, (string) $data['amount'], $data['type'],
-            $data['debt_id'] ?? null, $data['method'] ?? null, $data['reference'] ?? null);
+            $data['debt_id'] ?? null, $data['method'] ?? null, $data['reference'] ?? null, $data['idempotency_key']);
 
         return back()->with('success', 'Đã ghi nhận hoàn tiền hoặc cấn trừ cho khách hàng.');
     }
@@ -446,8 +566,11 @@ class StaffController extends Controller
         $data = $request->validate([
             'supplier_id' => ['required', 'exists:suppliers,id'],
             'note' => ['required', 'string', 'max:2000'],
+            'responsibility_confirmed' => ['required', 'accepted'],
+            'responsibility_evidence' => ['required', 'string', 'max:2000'],
         ]);
-        $workflow->sendDamagedReturnToSupplier($id, $data['supplier_id'], $request->user()->id, $data['note']);
+        $workflow->sendDamagedReturnToSupplier($id, $data['supplier_id'], $request->user()->id,
+            $data['note'], true, $data['responsibility_evidence']);
 
         return back()->with('success', 'Đã ghi nhận trả hàng hỏng cho nhà cung cấp.');
     }
